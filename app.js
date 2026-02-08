@@ -219,8 +219,10 @@ const PlacarApp = (function() {
     }
     
     const btn = document.getElementById("btnIniciar");
-    btn.classList.add("btn-animating-green");
-    setTimeout(() => btn.classList.remove("btn-animating-green"), 600);
+    if (btn) {
+      btn.classList.add("btn-animating-green");
+      setTimeout(() => btn.classList.remove("btn-animating-green"), 600);
+    }
     
     state.placar = { A: 0, B: 0 };
     state.faltas = { A: 0, B: 0 };
@@ -237,7 +239,9 @@ const PlacarApp = (function() {
     document.getElementById('listaGols').innerHTML = '';
     document.getElementById('tempo').textContent = '00:00';
     document.getElementById('tempo').classList.remove('tempo-pausado');
-    document.getElementById('tituloGols').classList.remove('hidden');
+    
+    const tituloGols = document.getElementById('tituloGols');
+    if (tituloGols) tituloGols.classList.remove('hidden');
     
     state.partida = {
       data: new Date().toLocaleString("pt-BR"),
@@ -249,8 +253,8 @@ const PlacarApp = (function() {
       if (!state.pausado) {
         state.segundos++;
         const minutos = String(Math.floor(state.segundos / 60)).padStart(2, "0");
-        const segundos = String(state.segundos % 60).padStart(2, "0");
-        document.getElementById('tempo').textContent = `${minutos}:${segundos}`;
+        const segundosStr = String(state.segundos % 60).padStart(2, "0");
+        document.getElementById('tempo').textContent = `${minutos}:${segundosStr}`;
       }
     }, 1000);
     
@@ -302,7 +306,9 @@ const PlacarApp = (function() {
     document.getElementById('listaGols').innerHTML = '';
     document.getElementById('tempo').textContent = '00:00';
     document.getElementById('tempo').classList.remove('tempo-pausado');
-    document.getElementById('tituloGols').classList.add('hidden');
+    
+    const tituloGols = document.getElementById('tituloGols');
+    if (tituloGols) tituloGols.classList.add('hidden');
     
     esconderUndo();
     
@@ -317,8 +323,10 @@ const PlacarApp = (function() {
     }
     
     const btn = document.getElementById("btnFim");
-    btn.classList.add("btn-animating-red");
-    setTimeout(() => btn.classList.remove("btn-animating-red"), 600);
+    if (btn) {
+      btn.classList.add("btn-animating-red");
+      setTimeout(() => btn.classList.remove("btn-animating-red"), 600);
+    }
     
     clearInterval(state.timer);
     
@@ -353,15 +361,7 @@ const PlacarApp = (function() {
     localStorage.setItem("historico", JSON.stringify(historico));
     
     mostrarOverlay("FIM DE JOGO", "🏆", 2000, () => {
-      const mensagem = `
-        Jogo finalizado!
-        
-        ${state.nomeA} ${state.placar.A} × ${state.placar.B} ${state.nomeB}
-        
-        🏆 Craque: ${state.partida.craque}
-        
-        ⏱️ Duração: ${Math.floor(state.segundos / 60)}:${String(state.segundos % 60).padStart(2, '0')}
-      `;
+      const mensagem = `Jogo finalizado!\n\n${state.nomeA} ${state.placar.A} × ${state.placar.B} ${state.nomeB}\n\n🏆 Craque: ${state.partida.craque}\n\n⏱️ Duração: ${Math.floor(state.segundos / 60)}:${String(state.segundos % 60).padStart(2, '0')}`;
       
       alert(mensagem);
       resetar();
@@ -372,8 +372,16 @@ const PlacarApp = (function() {
 
   function mostrarOverlay(texto, icone, duracao, callback) {
     const overlay = document.getElementById("gameOverlay");
-    document.getElementById("overlayText").textContent = texto;
-    document.getElementById("overlayIcon").textContent = icone;
+    const overlayText = document.getElementById("overlayText");
+    const overlayIcon = document.getElementById("overlayIcon");
+    
+    if (!overlay || !overlayText || !overlayIcon) {
+      if (callback) callback();
+      return;
+    }
+    
+    overlayText.textContent = texto;
+    overlayIcon.textContent = icone;
     
     overlay.classList.add("show");
     
@@ -398,20 +406,19 @@ const PlacarApp = (function() {
   }
 
   function animarGol() {
-  const placarDiv = document.querySelector('.placar');
-  
-  // Adicione a classe de animação
-  placarDiv.classList.add("gol-animation");
-  
-  if (navigator.vibrate) {
-    navigator.vibrate([100, 50, 100, 50, 100]);
+    const placarDiv = document.querySelector('.placar');
+    if (!placarDiv) return;
+    
+    placarDiv.classList.add("gol-animation");
+    
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 100, 50, 100]);
+    }
+    
+    setTimeout(() => {
+      placarDiv.classList.remove("gol-animation");
+    }, 600);
   }
-  
-  setTimeout(() => {
-    placarDiv.classList.remove("gol-animation");
-  }, 600);
-}
-
 
   function aumentarGol(time) {
     if (!state.partida) {
@@ -420,8 +427,10 @@ const PlacarApp = (function() {
     }
     
     state.timeAtual = time;
-    document.getElementById('popupTitulo').textContent = 
-      `⚽ Gol do ${time === 'A' ? state.nomeA : state.nomeB}! Quem fez?`;
+    const popupTitulo = document.getElementById('popupTitulo');
+    if (popupTitulo) {
+      popupTitulo.textContent = `⚽ Gol do ${time === 'A' ? state.nomeA : state.nomeB}! Quem fez?`;
+    }
     
     const ranking = obterRankingGeral();
     
@@ -430,6 +439,8 @@ const PlacarApp = (function() {
       .sort((a, b) => b.gols - a.gols);
     
     const popup = document.getElementById('popupJogadores');
+    if (!popup) return;
+    
     popup.innerHTML = '';
     
     jogadoresOrdenados.forEach(jogador => {
@@ -506,6 +517,8 @@ const PlacarApp = (function() {
     }
     
     const popup = document.getElementById('popupGols');
+    if (!popup) return;
+    
     popup.innerHTML = '';
     
     ultimosGols.forEach(gol => {
@@ -540,6 +553,7 @@ const PlacarApp = (function() {
 
   function renderGols() {
     const lista = document.getElementById('listaGols');
+    if (!lista) return;
     
     const golsPorJogador = {};
     state.historicaGols.forEach(gol => {
@@ -573,8 +587,10 @@ const PlacarApp = (function() {
     }
     
     state.timeAtualFalta = time;
-    document.getElementById('popupTituloFalta').textContent = 
-      `⚠️ Falta do ${time === 'A' ? state.nomeA : state.nomeB}. Quem fez?`;
+    const popupTituloFalta = document.getElementById('popupTituloFalta');
+    if (popupTituloFalta) {
+      popupTituloFalta.textContent = `⚠️ Falta do ${time === 'A' ? state.nomeA : state.nomeB}. Quem fez?`;
+    }
     
     const ranking = obterRankingGeral();
     
@@ -583,6 +599,8 @@ const PlacarApp = (function() {
       .sort((a, b) => b.gols - a.gols);
     
     const popup = document.getElementById('popupJogadoresFalta');
+    if (!popup) return;
+    
     popup.innerHTML = '';
     
     jogadoresOrdenados.forEach(jogador => {
@@ -629,7 +647,9 @@ const PlacarApp = (function() {
 
   function mostrarUndo() {
     const undoBtn = document.getElementById('undoBtn');
-    undoBtn.style.display = 'block';
+    if (undoBtn) {
+      undoBtn.style.display = 'block';
+    }
     
     clearTimeout(state.undoTimer);
     state.undoTimer = setTimeout(() => {
@@ -638,7 +658,10 @@ const PlacarApp = (function() {
   }
 
   function esconderUndo() {
-    document.getElementById('undoBtn').style.display = 'none';
+    const undoBtn = document.getElementById('undoBtn');
+    if (undoBtn) {
+      undoBtn.style.display = 'none';
+    }
     state.ultimaAcao = null;
   }
 
@@ -677,24 +700,28 @@ const PlacarApp = (function() {
 
   function fecharPopup(event) {
     if (event) event.stopPropagation();
-    document.getElementById('popupJogador').classList.remove('show');
+    const popup = document.getElementById('popupJogador');
+    if (popup) popup.classList.remove('show');
     state.timeAtual = null;
   }
 
   function fecharPopupFalta(event) {
     if (event) event.stopPropagation();
-    document.getElementById('popupFalta').classList.remove('show');
+    const popup = document.getElementById('popupFalta');
+    if (popup) popup.classList.remove('show');
     state.timeAtualFalta = null;
   }
 
   function fecharPopupRemover(event) {
     if (event) event.stopPropagation();
-    document.getElementById('popupRemover').classList.remove('show');
+    const popup = document.getElementById('popupRemover');
+    if (popup) popup.classList.remove('show');
   }
 
   function fecharPopupNome(event) {
     if (event) event.stopPropagation();
-    document.getElementById('popupNomeTime').classList.remove('show');
+    const popup = document.getElementById('popupNomeTime');
+    if (popup) popup.classList.remove('show');
     state.timeEditando = null;
   }
 
@@ -717,6 +744,8 @@ const PlacarApp = (function() {
     // Ranking Geral de Gols
     const rankingGeral = obterRankingGeral();
     const listaGeral = document.getElementById('listaRankingGeral');
+    
+    if (!listaGeral) return;
     
     if (Object.keys(rankingGeral).length === 0) {
       listaGeral.innerHTML = '<li>Nenhum gol registrado ainda.</li>';
@@ -747,24 +776,22 @@ const PlacarApp = (function() {
       listaGeral.appendChild(fragment);
     }
     
-    // Ranking Mensal - CORRIGIDO!
+    // Ranking Mensal
     const hoje = new Date();
-    const mesAtual = hoje.getMonth(); // 0-11
+    const mesAtual = hoje.getMonth();
     const anoAtual = hoje.getFullYear();
     
     const partidasMes = historico.filter(partida => {
       try {
-        // A data está salva como "DD/MM/YYYY, HH:MM:SS"
         const dataStr = partida.data.split(",")[0].trim();
         const partes = dataStr.split("/");
         
         if (partes.length !== 3) return false;
         
         const dia = parseInt(partes[0], 10);
-        const mes = parseInt(partes[1], 10); // 1-12
+        const mes = parseInt(partes[1], 10);
         const ano = parseInt(partes[2], 10);
         
-        // Comparar mês e ano (subtrair 1 do mês porque getMonth() retorna 0-11)
         return (mes - 1) === mesAtual && ano === anoAtual;
         
       } catch (error) {
@@ -781,6 +808,7 @@ const PlacarApp = (function() {
     });
     
     const listaMes = document.getElementById('listaRankingMes');
+    if (!listaMes) return;
     
     if (Object.keys(rankingMes).length === 0) {
       listaMes.innerHTML = `<li>Sem partidas em ${mesAtual + 1}/${anoAtual}</li>`;
@@ -822,6 +850,7 @@ const PlacarApp = (function() {
     });
     
     const listaFaltas = document.getElementById('listaRankingFaltas');
+    if (!listaFaltas) return;
     
     if (Object.keys(rankingFaltas).length === 0) {
       listaFaltas.innerHTML = '<li>Nenhuma falta registrada ainda.</li>';
@@ -852,8 +881,10 @@ const PlacarApp = (function() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     const lista = document.getElementById('listaHistorico');
     
+    if (!lista) return;
+    
     if (historico.length === 0) {
-      lista.innerHTML = '<div class="card text-center"><p style="color:var(--text-sec)">Nenhuma partida registrada ainda</p></div>';
+      lista.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary)">Nenhuma partida registrada ainda</div>';
       return;
     }
     
@@ -956,24 +987,26 @@ const PlacarApp = (function() {
     const mediaGols = totalJogos > 0 ? (totalGols / totalJogos).toFixed(1) : '0';
     
     const statsGerais = document.getElementById('statsGerais');
-    statsGerais.innerHTML = `
-      <div class="stat-row">
-        <span class="stat-label">Total de Jogos</span>
-        <span class="stat-value">${totalJogos}</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Total de Gols</span>
-        <span class="stat-value">${totalGols}</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Média de Gols/Jogo</span>
-        <span class="stat-value">${mediaGols}</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Total de Faltas</span>
-        <span class="stat-value">${totalFaltas}</span>
-      </div>
-    `;
+    if (statsGerais) {
+      statsGerais.innerHTML = `
+        <div class="stat-row">
+          <span class="stat-label">Total de Jogos</span>
+          <span class="stat-value">${totalJogos}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total de Gols</span>
+          <span class="stat-value">${totalGols}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Média de Gols/Jogo</span>
+          <span class="stat-value">${mediaGols}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Total de Faltas</span>
+          <span class="stat-value">${totalFaltas}</span>
+        </div>
+      `;
+    }
     
     // Últimas 5 Partidas
     const ultimas5 = historico.slice(-5).reverse();
@@ -986,34 +1019,35 @@ const PlacarApp = (function() {
     });
     
     const statsRecentes = document.getElementById('statsRecentes');
-    
-    if (Object.keys(golsRecentes).length === 0) {
-      statsRecentes.innerHTML = '<p style="color:var(--text-sec);text-align:center">Nenhuma partida recente</p>';
-    } else {
-      const fragment = document.createDocumentFragment();
-      const rankingRecentes = Object.entries(golsRecentes)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-      
-      rankingRecentes.forEach(([jogador, gols]) => {
-        const div = document.createElement('div');
-        div.className = 'stat-row';
+    if (statsRecentes) {
+      if (Object.keys(golsRecentes).length === 0) {
+        statsRecentes.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Nenhuma partida recente</p>';
+      } else {
+        const fragment = document.createDocumentFragment();
+        const rankingRecentes = Object.entries(golsRecentes)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 5);
         
-        const label = document.createElement('span');
-        label.className = 'stat-label';
-        label.textContent = jogador;
+        rankingRecentes.forEach(([jogador, gols]) => {
+          const div = document.createElement('div');
+          div.className = 'stat-row';
+          
+          const label = document.createElement('span');
+          label.className = 'stat-label';
+          label.textContent = jogador;
+          
+          const value = document.createElement('span');
+          value.className = 'stat-value';
+          value.innerHTML = `${gols} gol${gols > 1 ? 's' : ''} <span class="badge">🔥</span>`;
+          
+          div.appendChild(label);
+          div.appendChild(value);
+          fragment.appendChild(div);
+        });
         
-        const value = document.createElement('span');
-        value.className = 'stat-value';
-        value.innerHTML = `${gols} gol${gols > 1 ? 's' : ''} <span class="badge">🔥</span>`;
-        
-        div.appendChild(label);
-        div.appendChild(value);
-        fragment.appendChild(div);
-      });
-      
-      statsRecentes.innerHTML = '';
-      statsRecentes.appendChild(fragment);
+        statsRecentes.innerHTML = '';
+        statsRecentes.appendChild(fragment);
+      }
     }
     
     // Estatísticas por Jogador
@@ -1071,51 +1105,53 @@ const PlacarApp = (function() {
     });
     
     const container = document.getElementById('statsPorJogador');
-    container.innerHTML = '';
-    
-    if (Object.keys(statsPorJogador).length === 0) {
-      container.innerHTML = '<p style="color:var(--text-sec);text-align:center">Nenhum jogador com estatísticas</p>';
-    } else {
-      const fragment = document.createDocumentFragment();
-      const ranking = Object.entries(statsPorJogador)
-        .sort((a, b) => b[1].gols - a[1].gols);
+    if (container) {
+      container.innerHTML = '';
       
-      ranking.forEach(([jogador, stats]) => {
-        const card = document.createElement('div');
-        card.className = 'stat-card';
+      if (Object.keys(statsPorJogador).length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Nenhum jogador com estatísticas</p>';
+      } else {
+        const fragment = document.createDocumentFragment();
+        const ranking = Object.entries(statsPorJogador)
+          .sort((a, b) => b[1].gols - a[1].gols);
         
-        card.innerHTML = `
-          <h4>${escapeHTML(jogador)}</h4>
-          <div class="stat-row">
-            <span class="stat-label">Jogos</span>
-            <span class="stat-value">${stats.jogos}</span>
-          </div>
-          <div class="stat-row">
-            <span class="stat-label">Gols</span>
-            <span class="stat-value">${stats.gols} (${stats.media}/jogo)</span>
-          </div>
-          <div class="stat-row">
-            <span class="stat-label">Aproveitamento</span>
-            <span class="stat-value">
-              ${stats.aproveitamento}% 
-              <span class="badge ${stats.aproveitamento >= 60 ? '' : 'warning'}">
-                ${stats.vitorias}V ${stats.empates}E ${stats.derrotas}D
+        ranking.forEach(([jogador, stats]) => {
+          const card = document.createElement('div');
+          card.className = 'stat-card';
+          
+          card.innerHTML = `
+            <h4>${escapeHTML(jogador)}</h4>
+            <div class="stat-row">
+              <span class="stat-label">Jogos</span>
+              <span class="stat-value">${stats.jogos}</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Gols</span>
+              <span class="stat-value">${stats.gols} (${stats.media}/jogo)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Aproveitamento</span>
+              <span class="stat-value">
+                ${stats.aproveitamento}% 
+                <span class="badge ${stats.aproveitamento >= 60 ? '' : 'warning'}">
+                  ${stats.vitorias}V ${stats.empates}E ${stats.derrotas}D
+                </span>
               </span>
-            </span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width:${stats.aproveitamento}%"></div>
-          </div>
-          <div class="stat-row">
-            <span class="stat-label">Faltas</span>
-            <span class="stat-value">${stats.faltas}</span>
-          </div>
-        `;
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${stats.aproveitamento}%"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Faltas</span>
+              <span class="stat-value">${stats.faltas}</span>
+            </div>
+          `;
+          
+          fragment.appendChild(card);
+        });
         
-        fragment.appendChild(card);
-      });
-      
-      container.appendChild(fragment);
+        container.appendChild(fragment);
+      }
     }
     
     // Gerar gráfico
@@ -1126,8 +1162,10 @@ const PlacarApp = (function() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     const container = document.getElementById('graficoEvolucao');
     
+    if (!container) return;
+    
     if (historico.length < 2) {
-      container.innerHTML = '<p style="color:var(--text-sec);text-align:center">Mínimo de 2 partidas necessário</p>';
+      container.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Mínimo de 2 partidas necessário</p>';
       return;
     }
     
@@ -1137,7 +1175,7 @@ const PlacarApp = (function() {
       .slice(0, 3);
     
     if (top3.length === 0) {
-      container.innerHTML = '<p style="color:var(--text-sec);text-align:center">Sem dados</p>';
+      container.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Sem dados</p>';
       return;
     }
     
@@ -1168,8 +1206,8 @@ const PlacarApp = (function() {
     
     for (let i = 0; i <= maxValor; i += Math.ceil(maxValor / 5)) {
       const y = escalaY(i);
-      svg += `<line x1="${margem}" y1="${y}" x2="${largura - 20}" y2="${y}" stroke="var(--border)" stroke-width="1"/>`;
-      svg += `<text x="${margem - 10}" y="${y + 5}" text-anchor="end" fill="var(--text-sec)">${i}</text>`;
+      svg += `<line x1="${margem}" y1="${y}" x2="${largura - 20}" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>`;
+      svg += `<text x="${margem - 10}" y="${y + 5}" text-anchor="end" fill="#4a5568">${i}</text>`;
     }
     
     top3.forEach(([jogador], index) => {
@@ -1191,7 +1229,7 @@ const PlacarApp = (function() {
     
     top3.forEach(([jogador], index) => {
       svg += `<rect x="${largura - 150}" y="${20 + 20 * index}" width="15" height="3" fill="${cores[index]}"/>`;
-      svg += `<text x="${largura - 130}" y="${25 + 20 * index}" fill="var(--text)">${jogador}</text>`;
+      svg += `<text x="${largura - 130}" y="${25 + 20 * index}" fill="#1a1a2e">${jogador}</text>`;
     });
     
     svg += `</svg>`;
@@ -1201,6 +1239,8 @@ const PlacarApp = (function() {
   function carregarComparacao() {
     const select1 = document.getElementById('jogador1');
     const select2 = document.getElementById('jogador2');
+    
+    if (!select1 || !select2) return;
     
     select1.innerHTML = '<option value="">Selecione jogador 1</option>';
     select2.innerHTML = '<option value="">Selecione jogador 2</option>';
@@ -1266,31 +1306,33 @@ const PlacarApp = (function() {
     const stats1 = calcularEstatisticas(jogador1);
     const stats2 = calcularEstatisticas(jogador2);
     
+    if (!resultado) return;
+    
     resultado.innerHTML = `
       <div class="comparacao-container">
         <div class="jogador-compare">
           <h3>${escapeHTML(jogador1)}</h3>
           <div class="compare-stat">
             <div class="compare-stat-label">Gols</div>
-            <div class="compare-stat-value" style="color:${stats1.gols >= stats2.gols ? 'var(--green)' : 'var(--text-sec)'}">
+            <div class="compare-stat-value" style="color:${stats1.gols >= stats2.gols ? '#0fb858' : '#4a5568'}">
               ${stats1.gols}
             </div>
           </div>
           <div class="compare-stat">
             <div class="compare-stat-label">Média</div>
-            <div class="compare-stat-value" style="color:${parseFloat(stats1.media) >= parseFloat(stats2.media) ? 'var(--green)' : 'var(--text-sec)'}">
+            <div class="compare-stat-value" style="color:${parseFloat(stats1.media) >= parseFloat(stats2.media) ? '#0fb858' : '#4a5568'}">
               ${stats1.media}
             </div>
           </div>
           <div class="compare-stat">
             <div class="compare-stat-label">Aproveitamento</div>
-            <div class="compare-stat-value" style="color:${stats1.aprov >= stats2.aprov ? 'var(--green)' : 'var(--text-sec)'}">
+            <div class="compare-stat-value" style="color:${stats1.aprov >= stats2.aprov ? '#0fb858' : '#4a5568'}">
               ${stats1.aprov}%
             </div>
           </div>
           <div class="compare-stat">
             <div class="compare-stat-label">Faltas</div>
-            <div class="compare-stat-value" style="color:${stats1.faltas <= stats2.faltas ? 'var(--green)' : 'var(--yellow)'}">
+            <div class="compare-stat-value" style="color:${stats1.faltas <= stats2.faltas ? '#0fb858' : '#ffa502'}">
               ${stats1.faltas}
             </div>
           </div>
@@ -1300,25 +1342,25 @@ const PlacarApp = (function() {
           <h3>${escapeHTML(jogador2)}</h3>
           <div class="compare-stat">
             <div class="compare-stat-label">Gols</div>
-            <div class="compare-stat-value" style="color:${stats2.gols >= stats1.gols ? 'var(--green)' : 'var(--text-sec)'}">
+            <div class="compare-stat-value" style="color:${stats2.gols >= stats1.gols ? '#0fb858' : '#4a5568'}">
               ${stats2.gols}
             </div>
           </div>
           <div class="compare-stat">
             <div class="compare-stat-label">Média</div>
-            <div class="compare-stat-value" style="color:${parseFloat(stats2.media) >= parseFloat(stats1.media) ? 'var(--green)' : 'var(--text-sec)'}">
+            <div class="compare-stat-value" style="color:${parseFloat(stats2.media) >= parseFloat(stats1.media) ? '#0fb858' : '#4a5568'}">
               ${stats2.media}
             </div>
           </div>
           <div class="compare-stat">
             <div class="compare-stat-label">Aproveitamento</div>
-            <div class="compare-stat-value" style="color:${stats2.aprov >= stats1.aprov ? 'var(--green)' : 'var(--text-sec)'}">
+            <div class="compare-stat-value" style="color:${stats2.aprov >= stats1.aprov ? '#0fb858' : '#4a5568'}">
               ${stats2.aprov}%
             </div>
           </div>
           <div class="compare-stat">
             <div class="compare-stat-label">Faltas</div>
-            <div class="compare-stat-value" style="color:${stats2.faltas <= stats1.faltas ? 'var(--green)' : 'var(--yellow)'}">
+            <div class="compare-stat-value" style="color:${stats2.faltas <= stats1.faltas ? '#0fb858' : '#ffa502'}">
               ${stats2.faltas}
             </div>
           </div>
@@ -1333,24 +1375,28 @@ const PlacarApp = (function() {
       state.deferredPrompt = e;
       
       const installBtn = document.getElementById('installBtn');
-      installBtn.style.display = 'block';
-      
-      setTimeout(() => {
-        if (installBtn.style.display === 'block') {
-          installBtn.style.display = 'none';
-        }
-      }, 30000);
+      if (installBtn) {
+        installBtn.style.display = 'block';
+        
+        setTimeout(() => {
+          if (installBtn.style.display === 'block') {
+            installBtn.style.display = 'none';
+          }
+        }, 30000);
+      }
     });
     
     window.addEventListener('appinstalled', () => {
       console.log('PWA instalado!');
-      document.getElementById('installBtn').style.display = 'none';
+      const installBtn = document.getElementById('installBtn');
+      if (installBtn) installBtn.style.display = 'none';
       state.deferredPrompt = null;
       showToast('App instalado com sucesso!', 'success');
     });
     
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      document.getElementById('installBtn').style.display = 'none';
+      const installBtn = document.getElementById('installBtn');
+      if (installBtn) installBtn.style.display = 'none';
     }
   }
 
@@ -1367,10 +1413,79 @@ const PlacarApp = (function() {
         }
         
         state.deferredPrompt = null;
-        document.getElementById('installBtn').style.display = 'none';
+        const installBtn = document.getElementById('installBtn');
+        if (installBtn) installBtn.style.display = 'none';
       });
     } else {
       showToast('App já instalado ou navegador não suporta', 'info');
+    }
+  }
+
+  function verificarBackupDados() {
+    const backupKey = 'placar_backup_v1';
+    const currentData = {
+      jogadores: localStorage.getItem("jogadores"),
+      historico: localStorage.getItem("historico"),
+      nomes: {
+        timeA: localStorage.getItem("nomeTimeA"),
+        timeB: localStorage.getItem("nomeTimeB")
+      },
+      theme: localStorage.getItem("theme"),
+      lastBackup: new Date().toISOString()
+    };
+    
+    // Fazer backup
+    localStorage.setItem(backupKey, JSON.stringify(currentData));
+    console.log('Backup realizado:', currentData.lastBackup);
+    
+    // Verificar se precisa restaurar
+    const mainJogadores = localStorage.getItem("jogadores");
+    const mainHistorico = localStorage.getItem("historico");
+    
+    const precisaRestaurar = 
+      !mainJogadores || 
+      mainJogadores === '[]' || 
+      mainJogadores === 'null' ||
+      mainJogadores === '' ||
+      (!mainHistorico || mainHistorico === '[]' || mainHistorico === 'null');
+    
+    if (precisaRestaurar) {
+      const backup = localStorage.getItem(backupKey);
+      if (backup) {
+        try {
+          const parsed = JSON.parse(backup);
+          let restaurouAlgo = false;
+          
+          if (parsed.jogadores && parsed.jogadores !== 'null' && parsed.jogadores !== '[]') {
+            localStorage.setItem("jogadores", parsed.jogadores);
+            restaurouAlgo = true;
+          }
+          
+          if (parsed.historico && parsed.historico !== 'null' && parsed.historico !== '[]') {
+            localStorage.setItem("historico", parsed.historico);
+            restaurouAlgo = true;
+          }
+          
+          if (parsed.nomes.timeA) {
+            localStorage.setItem("nomeTimeA", parsed.nomes.timeA);
+          }
+          
+          if (parsed.nomes.timeB) {
+            localStorage.setItem("nomeTimeB", parsed.nomes.timeB);
+          }
+          
+          if (parsed.theme) {
+            localStorage.setItem("theme", parsed.theme);
+          }
+          
+          if (restaurouAlgo) {
+            console.log('Dados restaurados do backup!');
+            showToast('Dados restaurados do backup automático', 'success');
+          }
+        } catch (e) {
+          console.log('Erro ao restaurar backup:', e);
+        }
+      }
     }
   }
 
@@ -1379,106 +1494,16 @@ const PlacarApp = (function() {
     carregarNomesTimes();
     renderJogadores();
     configurarPWA();
+    verificarBackupDados();
     
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('Service Worker registrado com sucesso!'))
+      navigator.serviceWorker.register('./sw.js?v=3')
+        .then(() => console.log('Service Worker v3 registrado!'))
         .catch(err => console.log('Erro no Service Worker:', err));
     }
     
     console.log('PlacarApp inicializado com sucesso!');
   }
-
-  // === NOVA FUNÇÃO: Backup de dados ===
-function verificarBackupDados() {
-  const backupKey = 'placar_backup_v1';
-  const currentData = {
-    jogadores: localStorage.getItem("jogadores"),
-    historico: localStorage.getItem("historico"),
-    nomes: {
-      timeA: localStorage.getItem("nomeTimeA"),
-      timeB: localStorage.getItem("nomeTimeB")
-    },
-    theme: localStorage.getItem("theme"),
-    lastBackup: new Date().toISOString()
-  };
-  
-  // Fazer backup
-  localStorage.setItem(backupKey, JSON.stringify(currentData));
-  console.log('Backup realizado:', currentData.lastBackup);
-  
-  // Verificar se precisa restaurar
-  const mainJogadores = localStorage.getItem("jogadores");
-  const mainHistorico = localStorage.getItem("historico");
-  
-  const precisaRestaurar = 
-    !mainJogadores || 
-    mainJogadores === '[]' || 
-    mainJogadores === 'null' ||
-    mainJogadores === '' ||
-    (!mainHistorico || mainHistorico === '[]' || mainHistorico === 'null');
-  
-  if (precisaRestaurar) {
-    const backup = localStorage.getItem(backupKey);
-    if (backup) {
-      try {
-        const parsed = JSON.parse(backup);
-        let restaurouAlgo = false;
-        
-        if (parsed.jogadores && parsed.jogadores !== 'null' && parsed.jogadores !== '[]') {
-          localStorage.setItem("jogadores", parsed.jogadores);
-          restaurouAlgo = true;
-        }
-        
-        if (parsed.historico && parsed.historico !== 'null' && parsed.historico !== '[]') {
-          localStorage.setItem("historico", parsed.historico);
-          restaurouAlgo = true;
-        }
-        
-        if (parsed.nomes.timeA) {
-          localStorage.setItem("nomeTimeA", parsed.nomes.timeA);
-        }
-        
-        if (parsed.nomes.timeB) {
-          localStorage.setItem("nomeTimeB", parsed.nomes.timeB);
-        }
-        
-        if (parsed.theme) {
-          localStorage.setItem("theme", parsed.theme);
-        }
-        
-        if (restaurouAlgo) {
-          console.log('Dados restaurados do backup!');
-          showToast('Dados restaurados do backup automático', 'success');
-        }
-      } catch (e) {
-        console.log('Erro ao restaurar backup:', e);
-      }
-    }
-  }
-}
-
-// === MODIFICAR a função init() ===
-// Encontre a função init() no seu app.js (por volta da linha ~900)
-// E adicione a linha de verificação de backup:
-
-function init() {
-  carregarTema();
-  carregarNomesTimes();
-  renderJogadores();
-  configurarPWA();
-  
-  // === NOVO: VERIFICAR BACKUP DE DADOS ===
-  verificarBackupDados();
-  
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js?v=3')
-      .then(() => console.log('Service Worker v3 registrado!'))
-      .catch(err => console.log('Erro no Service Worker:', err));
-  }
-  
-  console.log('PlacarApp inicializado com sucesso!');
-}
 
   return {
     init: init,
