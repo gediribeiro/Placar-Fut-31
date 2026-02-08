@@ -6,9 +6,8 @@
 <meta name="description" content="Sistema de placar profissional">
 <meta name="theme-color" content="#1a1a2e">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<!-- Manifest simplificado e correto -->
 <link rel="manifest" href="./manifest.json">
-<title>Placar Pro</title>
+<title>Placar Fut 31</title>
 <style>
 :root {
   --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -50,7 +49,9 @@ body {
   background: #f8f9fa;
   color: var(--text);
   overflow-x: hidden;
-  transition: background 0.3s
+  transition: background 0.3s;
+  min-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 body::before {
@@ -102,7 +103,7 @@ body::before {
   to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* Resto do CSS permanece igual */
+/* Header corrigido */
 header {
   position: sticky;
   top: 0;
@@ -113,18 +114,21 @@ header {
   box-shadow: var(--shadow);
   display: flex;
   align-items: center;
-  justify-content: space-between
+  justify-content: space-between;
+  width: 100%;
 }
 
 .header-content {
   display: flex;
   align-items: center;
-  gap: 12px
+  gap: 12px;
+  flex: 1;
 }
 
 .header-logo {
   font-size: 32px;
-  animation: rotate 20s linear infinite
+  animation: rotate 20s linear infinite;
+  flex-shrink: 0;
 }
 
 @keyframes rotate {
@@ -137,7 +141,10 @@ header {
   font-weight: 800;
   color: white;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2)
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .theme-toggle {
@@ -151,13 +158,15 @@ header {
   justify-content: center;
   cursor: pointer;
   font-size: 20px;
-  transition: all 0.3s
+  transition: all 0.3s;
+  flex-shrink: 0;
 }
 
 .theme-toggle:active {
   transform: scale(0.9) rotate(180deg)
 }
 
+/* Tabs corrigidas */
 .tabs {
   display: flex;
   background: var(--bg-card);
@@ -165,7 +174,8 @@ header {
   scrollbar-width: none;
   box-shadow: var(--shadow);
   position: relative;
-  z-index: 10
+  z-index: 10;
+  width: 100%;
 }
 
 .tabs::-webkit-scrollbar {
@@ -184,7 +194,8 @@ header {
   cursor: pointer;
   transition: all 0.3s;
   position: relative;
-  white-space: nowrap
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tabs button::after {
@@ -208,13 +219,17 @@ header {
   transform: translateX(-50%) scaleX(1)
 }
 
+/* Sections corrigidas */
 section {
   display: none;
   padding: 16px;
   padding-bottom: 80px;
   animation: fadeIn 0.4s;
   position: relative;
-  z-index: 1
+  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 section.active {
@@ -236,7 +251,8 @@ section.active {
   border: 1px solid var(--border);
   transition: all 0.3s;
   position: relative;
-  overflow: hidden
+  overflow: hidden;
+  width: 100%;
 }
 
 .card::before {
@@ -258,7 +274,8 @@ section.active {
 .placar-container {
   position: relative;
   overflow: hidden;
-  border-radius: 20px
+  border-radius: 20px;
+  width: 100%;
 }
 
 .placar-container::before {
@@ -284,7 +301,9 @@ section.active {
   align-items: center;
   margin-bottom: 16px;
   position: relative;
-  z-index: 2
+  z-index: 2;
+  width: 100%;
+  gap: 10px;
 }
 
 .nome-time {
@@ -298,7 +317,16 @@ section.active {
   padding: 8px 12px;
   background: rgba(15, 184, 88, 0.1);
   border-radius: 8px;
-  backdrop-filter: blur(5px)
+  backdrop-filter: blur(5px);
+  min-width: 0;
+  overflow: hidden;
+}
+
+.nome-time span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
 }
 
 .nome-time.left {
@@ -317,7 +345,8 @@ section.active {
   cursor: pointer;
   opacity: 0.6;
   transition: all 0.2s;
-  padding: 4px
+  padding: 4px;
+  flex-shrink: 0;
 }
 
 .btn-edit:active {
@@ -336,7 +365,9 @@ section.active {
   padding: 24px 0;
   position: relative;
   z-index: 2;
-  font-variant-numeric: tabular-nums
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .placar.gol-animation {
@@ -353,18 +384,23 @@ section.active {
 .placar-time {
   display: flex;
   align-items: center;
-  gap: 16px
+  gap: 16px;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
 }
 
 .placar span {
   min-width: 80px;
-  text-align: center
+  text-align: center;
+  display: block;
 }
 
 .botoes-verticais {
   display: flex;
   flex-direction: column;
-  gap: 8px
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-mais, .btn-menos, .btn-falta {
@@ -378,7 +414,8 @@ section.active {
   transition: all 0.2s;
   box-shadow: var(--shadow);
   position: relative;
-  overflow: hidden
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .btn-mais::before, .btn-menos::before, .btn-falta::before {
@@ -431,14 +468,16 @@ section.active {
   font-size: 40px;
   color: var(--text-sec);
   font-weight: 400;
-  opacity: 0.5
+  opacity: 0.5;
+  flex-shrink: 0;
 }
 
 .tempo-container {
   text-align: center;
   margin: 20px 0;
   position: relative;
-  z-index: 2
+  z-index: 2;
+  width: 100%;
 }
 
 #tempo {
@@ -481,7 +520,9 @@ section.active {
   font-size: 14px;
   color: var(--text-sec);
   position: relative;
-  z-index: 2
+  z-index: 2;
+  width: 100%;
+  flex-wrap: wrap;
 }
 
 .falta-item {
@@ -491,7 +532,10 @@ section.active {
   padding: 8px 16px;
   background: rgba(255, 165, 2, 0.1);
   border-radius: 20px;
-  border: 1px solid rgba(255, 165, 2, 0.2)
+  border: 1px solid rgba(255, 165, 2, 0.2);
+  flex: 1;
+  min-width: 140px;
+  justify-content: center;
 }
 
 .falta-numero {
@@ -505,7 +549,8 @@ section.active {
 .actions {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .actions button {
@@ -603,7 +648,8 @@ input:focus, select:focus {
 
 ul {
   list-style: none;
-  padding: 0
+  padding: 0;
+  width: 100%;
 }
 
 li {
@@ -616,7 +662,8 @@ li {
   align-items: center;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: all 0.3s
+  transition: all 0.3s;
+  width: 100%;
 }
 
 li:hover {
@@ -645,7 +692,8 @@ li button:active {
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: all 0.3s
+  transition: all 0.3s;
+  width: 100%;
 }
 
 .historico-item:active {
@@ -671,7 +719,9 @@ li button:active {
   color: var(--text);
   display: flex;
   align-items: center;
-  gap: 12px
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .historico-placar .vs {
@@ -686,7 +736,9 @@ li button:active {
   justify-content: space-between;
   margin-top: 8px;
   padding-top: 12px;
-  border-top: 1px solid var(--border)
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .historico-craque {
@@ -754,7 +806,8 @@ li button:active {
   z-index: 1000;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.3s
+  animation: fadeIn 0.3s;
+  padding: 20px;
 }
 
 .popup-overlay.show {
@@ -765,7 +818,8 @@ li button:active {
   background: var(--bg-card);
   padding: 24px;
   border-radius: 20px;
-  max-width: 90%;
+  width: 100%;
+  max-width: 500px;
   max-height: 80%;
   overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -871,7 +925,8 @@ li button:active {
   z-index: 2000;
   align-items: center;
   justify-content: center;
-  animation: fadeIn 0.4s
+  animation: fadeIn 0.4s;
+  padding: 20px;
 }
 
 .game-overlay.show {
@@ -880,7 +935,9 @@ li button:active {
 
 .game-overlay-content {
   text-align: center;
-  animation: zoomIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)
+  animation: zoomIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 100%;
+  max-width: 500px;
 }
 
 @keyframes zoomIn {
@@ -895,7 +952,8 @@ li button:active {
   text-transform: uppercase;
   letter-spacing: 3px;
   text-shadow: 0 4px 20px rgba(15, 184, 88, 0.8);
-  margin-bottom: 20px
+  margin-bottom: 20px;
+  word-break: break-word;
 }
 
 .game-overlay-icon {
@@ -915,7 +973,8 @@ li button:active {
   margin: 12px 0;
   border-left: 4px solid var(--green);
   box-shadow: var(--shadow);
-  transition: all 0.3s
+  transition: all 0.3s;
+  width: 100%;
 }
 
 .stat-card:hover {
@@ -933,7 +992,9 @@ li button:active {
   display: flex;
   justify-content: space-between;
   padding: 10px 0;
-  border-bottom: 1px solid var(--border)
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .stat-row:last-child {
@@ -986,7 +1047,8 @@ li button:active {
   grid-template-columns: 1fr auto 1fr;
   gap: 16px;
   align-items: center;
-  margin: 20px 0
+  margin: 20px 0;
+  width: 100%;
 }
 
 .jogador-compare {
@@ -994,19 +1056,24 @@ li button:active {
   padding: 20px;
   border-radius: 16px;
   text-align: center;
-  border: 2px solid rgba(15, 184, 88, 0.2)
+  border: 2px solid rgba(15, 184, 88, 0.2);
+  min-width: 0;
 }
 
 .jogador-compare h3 {
   margin: 0 0 16px 0;
   font-size: 18px;
-  color: var(--text)
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .compare-vs {
   font-size: 28px;
   font-weight: 900;
-  color: var(--text-sec)
+  color: var(--text-sec);
+  flex-shrink: 0;
 }
 
 .compare-stat {
@@ -1033,7 +1100,8 @@ li button:active {
   border-radius: 16px;
   margin: 16px 0;
   overflow-x: auto;
-  box-shadow: var(--shadow)
+  box-shadow: var(--shadow);
+  width: 100%;
 }
 
 .grafico-container h4 {
@@ -1064,7 +1132,8 @@ svg {
   box-shadow: 0 8px 24px rgba(15, 184, 88, 0.4);
   cursor: pointer;
   z-index: 1000;
-  animation: bounceIn 1s, float 3s ease-in-out infinite
+  animation: bounceIn 1s, float 3s ease-in-out infinite;
+  white-space: nowrap;
 }
 
 @keyframes bounceIn {
@@ -1114,17 +1183,140 @@ svg {
   display: none !important
 }
 
+/* Correções específicas para iPhone */
+@supports (padding: max(0px)) {
+  body, header, section {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  
+  #installBtn {
+    bottom: max(24px, env(safe-area-inset-bottom) + 10px);
+  }
+  
+  #undoBtn {
+    bottom: max(90px, env(safe-area-inset-bottom) + 70px);
+    right: max(24px, env(safe-area-inset-right) + 10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .placar { 
+    font-size: 52px; 
+    gap: 16px;
+    flex-direction: column;
+  }
+  
+  .placar-time {
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .placar .vs {
+    font-size: 32px;
+    order: -1;
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  .comparacao-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+  }
+  
+  .compare-vs {
+    order: -1;
+    margin: 10px 0;
+  }
+  
+  .game-overlay-text {
+    font-size: 32px;
+  }
+  
+  .header-title {
+    font-size: 18px;
+  }
+  
+  .tabs button {
+    min-width: 70px;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 480px) {
-  .placar { font-size: 52px; gap: 16px }
-  .btn-mais { width: 50px; height: 64px; font-size: 32px }
-  .btn-menos, .btn-falta { width: 50px; height: 42px }
-  .popup-jogadores { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) }
+  .placar { 
+    font-size: 48px;
+    gap: 12px;
+  }
+  
+  .btn-mais { 
+    width: 50px; 
+    height: 64px; 
+    font-size: 32px 
+  }
+  
+  .btn-menos, .btn-falta { 
+    width: 50px; 
+    height: 42px;
+  }
+  
+  .popup-jogadores { 
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)) 
+  }
+  
+  .game-overlay-text {
+    font-size: 28px;
+    letter-spacing: 1px;
+  }
+  
+  .contador-faltas {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .falta-item {
+    width: 100%;
+    max-width: 200px;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 500px) {
-  .placar { font-size: 48px; padding: 12px 0 }
-  header { padding: 12px 20px }
-  .card { padding: 16px }
+  .placar { 
+    font-size: 48px; 
+    padding: 12px 0;
+    flex-direction: row;
+  }
+  
+  header { 
+    padding: 12px 20px 
+  }
+  
+  .card { 
+    padding: 16px 
+  }
+  
+  section {
+    padding-bottom: 60px;
+  }
+}
+
+/* Correção para não quebrar layout */
+.no-wrap {
+  white-space: nowrap;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flex-fix {
+  flex: 1;
+  min-width: 0;
 }
 </style>
 </head>
@@ -1287,12 +1479,7 @@ svg {
 <button id="installBtn" onclick="PlacarApp.instalarApp()">📱 Instalar App</button>
 <button id="undoBtn" onclick="PlacarApp.desfazer()">↶</button>
 <script>
-// ============================================
-// ARQUIVO: placar-app.js (Código JavaScript Corrigido)
-// ============================================
-
 const PlacarApp = (function() {
-  // Estado centralizado da aplicação
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || [],
     historicaGols: [],
@@ -1313,18 +1500,12 @@ const PlacarApp = (function() {
     undoTimer: null
   };
 
-  // ============================================
-  // FUNÇÕES DE UTILIDADE
-  // ============================================
-
-  // Função para escapar HTML (prevenção XSS)
   function escapeHTML(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   }
 
-  // Função para mostrar toast/notificação
   function showToast(message, type = 'info', duration = 3000) {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
@@ -1337,13 +1518,9 @@ const PlacarApp = (function() {
       setTimeout(() => toast.remove(), 300);
     }, duration);
     
-    // Vibração tátil se disponível
-    if (navigator.vibrate) {
-      navigator.vibrate(30);
-    }
+    if (navigator.vibrate) navigator.vibrate(30);
   }
 
-  // Função para confirmar ações
   function confirmAction(message) {
     return new Promise((resolve) => {
       if (window.confirm(message)) {
@@ -1353,10 +1530,6 @@ const PlacarApp = (function() {
       }
     });
   }
-
-  // ============================================
-  // FUNÇÕES DE GESTÃO DO JOGO
-  // ============================================
 
   function toggleTheme() {
     const html = document.documentElement;
@@ -1376,21 +1549,17 @@ const PlacarApp = (function() {
   }
 
   function trocarTab(tabId, button) {
-    // Esconder todas as seções
     document.querySelectorAll("section").forEach(section => {
       section.classList.remove("active");
     });
     
-    // Remover classe active de todos os botões
     document.querySelectorAll(".tabs button").forEach(btn => {
       btn.classList.remove("active");
     });
     
-    // Mostrar seção selecionada
     document.getElementById(tabId).classList.add("active");
     button.classList.add("active");
     
-    // Executar funções específicas da tab
     switch(tabId) {
       case 'ranking':
         ranking();
@@ -1406,19 +1575,13 @@ const PlacarApp = (function() {
         break;
     }
     
-    // Feedback tátil
     if (navigator.vibrate) navigator.vibrate(5);
   }
-
-  // ============================================
-  // GESTÃO DE JOGADORES
-  // ============================================
 
   function addJogador() {
     const input = document.getElementById('novoJogador');
     const nome = input.value.trim();
     
-    // Validações
     if (!nome) {
       showToast('Digite um nome para o jogador', 'error');
       return;
@@ -1429,27 +1592,21 @@ const PlacarApp = (function() {
       return;
     }
     
-    // Validar caracteres (permitir letras, números, espaços e acentos)
     if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(nome)) {
       showToast('Use apenas letras, números e espaços', 'error');
       return;
     }
     
-    // Verificar se já existe
     if (state.jogadores.includes(nome)) {
       showToast('Jogador já existe!', 'warning');
       return;
     }
     
-    // Adicionar jogador
     state.jogadores.push(nome);
     localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
-    
-    // Limpar input e renderizar
     input.value = '';
     renderJogadores();
     
-    // Feedback
     if (navigator.vibrate) navigator.vibrate(10);
     showToast(`${nome} adicionado!`, 'success');
   }
@@ -1471,7 +1628,6 @@ const PlacarApp = (function() {
     
     state.jogadores.forEach((jogador, index) => {
       const li = document.createElement('li');
-      
       const span = document.createElement('span');
       span.textContent = jogador;
       
@@ -1487,10 +1643,6 @@ const PlacarApp = (function() {
     lista.innerHTML = '';
     lista.appendChild(fragment);
   }
-
-  // ============================================
-  // GESTÃO DE TIMES
-  // ============================================
 
   function editarNomeTime(time) {
     state.timeEditando = time;
@@ -1540,10 +1692,6 @@ const PlacarApp = (function() {
     document.getElementById('nomeFaltaB').textContent = state.nomeB;
   }
 
-  // ============================================
-  // CONTROLE DO JOGO
-  // ============================================
-
   async function iniciar() {
     if (state.partida) {
       if (!await confirmAction("Já existe um jogo em andamento. Deseja iniciar um novo?")) {
@@ -1551,12 +1699,10 @@ const PlacarApp = (function() {
       }
     }
     
-    // Animação do botão
     const btn = document.getElementById("btnIniciar");
     btn.classList.add("btn-animating-green");
     setTimeout(() => btn.classList.remove("btn-animating-green"), 600);
     
-    // Resetar estado
     state.placar = { A: 0, B: 0 };
     state.faltas = { A: 0, B: 0 };
     state.historicaGols = [];
@@ -1565,7 +1711,6 @@ const PlacarApp = (function() {
     state.segundos = 0;
     state.pausado = false;
     
-    // Atualizar UI
     document.getElementById('placarA').textContent = '0';
     document.getElementById('placarB').textContent = '0';
     document.getElementById('faltasA').textContent = '0';
@@ -1575,13 +1720,11 @@ const PlacarApp = (function() {
     document.getElementById('tempo').classList.remove('tempo-pausado');
     document.getElementById('tituloGols').classList.remove('hidden');
     
-    // Criar nova partida
     state.partida = {
       data: new Date().toLocaleString("pt-BR"),
       nomeTimes: { A: state.nomeA, B: state.nomeB }
     };
     
-    // Iniciar cronômetro
     clearInterval(state.timer);
     state.timer = setInterval(() => {
       if (!state.pausado) {
@@ -1592,7 +1735,6 @@ const PlacarApp = (function() {
       }
     }, 1000);
     
-    // Feedback
     mostrarOverlay("INÍCIO DE JOGO", "⚽", 1500);
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     showToast('Jogo iniciado!', 'success');
@@ -1624,10 +1766,7 @@ const PlacarApp = (function() {
       }
     }
     
-    // Parar cronômetro
     clearInterval(state.timer);
-    
-    // Resetar estado
     state.placar = { A: 0, B: 0 };
     state.faltas = { A: 0, B: 0 };
     state.historicaGols = [];
@@ -1637,7 +1776,6 @@ const PlacarApp = (function() {
     state.segundos = 0;
     state.pausado = false;
     
-    // Resetar UI
     document.getElementById('placarA').textContent = '0';
     document.getElementById('placarB').textContent = '0';
     document.getElementById('faltasA').textContent = '0';
@@ -1659,15 +1797,12 @@ const PlacarApp = (function() {
       return;
     }
     
-    // Animação do botão
     const btn = document.getElementById("btnFim");
     btn.classList.add("btn-animating-red");
     setTimeout(() => btn.classList.remove("btn-animating-red"), 600);
     
-    // Parar cronômetro
     clearInterval(state.timer);
     
-    // Calcular estatísticas da partida
     const golsPorJogador = {};
     state.historicaGols.forEach(gol => {
       if (!golsPorJogador[gol.jogador]) {
@@ -1684,7 +1819,6 @@ const PlacarApp = (function() {
       faltasPorJogador[falta.jogador]++;
     });
     
-    // Completar dados da partida
     state.partida.placar = [state.placar.A, state.placar.B];
     state.partida.gols = golsPorJogador;
     state.partida.faltas = {
@@ -1695,12 +1829,10 @@ const PlacarApp = (function() {
     state.partida.craque = calcularCraque(golsPorJogador);
     state.partida.duracao = state.segundos;
     
-    // Salvar no histórico
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     historico.push(state.partida);
     localStorage.setItem("historico", JSON.stringify(historico));
     
-    // Mostrar overlay e finalizar
     mostrarOverlay("FIM DE JOGO", "🏆", 2000, () => {
       const mensagem = `
         Jogo finalizado!
@@ -1718,10 +1850,6 @@ const PlacarApp = (function() {
     
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
   }
-
-  // ============================================
-  // FUNÇÕES AUXILIARES DO JOGO
-  // ============================================
 
   function mostrarOverlay(texto, icone, duracao, callback) {
     const overlay = document.getElementById("gameOverlay");
@@ -1763,10 +1891,6 @@ const PlacarApp = (function() {
     }, 600);
   }
 
-  // ============================================
-  // CONTROLE DE GOLS
-  // ============================================
-
   function aumentarGol(time) {
     if (!state.partida) {
       showToast('Inicie o jogo primeiro!', 'error');
@@ -1777,15 +1901,12 @@ const PlacarApp = (function() {
     document.getElementById('popupTitulo').textContent = 
       `⚽ Gol do ${time === 'A' ? state.nomeA : state.nomeB}! Quem fez?`;
     
-    // Obter ranking para ordenar jogadores
     const ranking = obterRankingGeral();
     
-    // Ordenar jogadores por gols (mais gols primeiro)
     const jogadoresOrdenados = state.jogadores
       .map(jogador => ({ nome: jogador, gols: ranking[jogador] || 0 }))
       .sort((a, b) => b.gols - a.gols);
     
-    // Renderizar botões dos jogadores
     const popup = document.getElementById('popupJogadores');
     popup.innerHTML = '';
     
@@ -1796,14 +1917,12 @@ const PlacarApp = (function() {
       popup.appendChild(button);
     });
     
-    // Mostrar popup
     document.getElementById('popupJogador').classList.add('show');
   }
 
   function registrarGol(jogador) {
     if (!state.timeAtual) return;
     
-    // Registrar ação para undo
     state.ultimaAcao = {
       tipo: "gol",
       time: state.timeAtual,
@@ -1813,18 +1932,15 @@ const PlacarApp = (function() {
     
     mostrarUndo();
     
-    // Atualizar placar
     if (state.timeAtual === 'A') {
       state.placar.A++;
     } else {
       state.placar.B++;
     }
     
-    // Atualizar UI
     document.getElementById('placarA').textContent = state.placar.A;
     document.getElementById('placarB').textContent = state.placar.B;
     
-    // Registrar gol
     state.historicaGols.push({
       time: state.timeAtual,
       jogador: jogador,
@@ -1832,14 +1948,9 @@ const PlacarApp = (function() {
       timestamp: Date.now()
     });
     
-    // Atualizar lista de gols
     renderGols();
-    
-    // Animar e fechar popup
     animarGol();
     fecharPopup();
-    
-    // Feedback
     showToast(`Gol de ${jogador}!`, 'success');
   }
 
@@ -1854,14 +1965,12 @@ const PlacarApp = (function() {
       return;
     }
     
-    // Buscar últimos 3 gols do time
     const ultimosGols = state.historicaGols
       .map((gol, index) => ({ ...gol, index }))
       .filter(gol => gol.time === time)
       .slice(-3)
       .reverse();
     
-    // Se não houver gols registrados, remover do placar geral
     if (ultimosGols.length === 0) {
       if (time === 'A') {
         state.placar.A = Math.max(0, state.placar.A - 1);
@@ -1874,7 +1983,6 @@ const PlacarApp = (function() {
       return;
     }
     
-    // Mostrar popup para escolher qual gol remover
     const popup = document.getElementById('popupGols');
     popup.innerHTML = '';
     
@@ -1891,24 +1999,18 @@ const PlacarApp = (function() {
   function removerGolEspecifico(index) {
     const gol = state.historicaGols[index];
     
-    // Atualizar placar
     if (gol.time === 'A') {
       state.placar.A = Math.max(0, state.placar.A - 1);
     } else {
       state.placar.B = Math.max(0, state.placar.B - 1);
     }
     
-    // Atualizar UI
     document.getElementById('placarA').textContent = state.placar.A;
     document.getElementById('placarB').textContent = state.placar.B;
     
-    // Remover gol
     state.historicaGols.splice(index, 1);
-    
-    // Atualizar lista
     renderGols();
     
-    // Fechar popup e dar feedback
     fecharPopupRemover();
     if (navigator.vibrate) navigator.vibrate(15);
     showToast('Gol removido', 'warning');
@@ -1917,7 +2019,6 @@ const PlacarApp = (function() {
   function renderGols() {
     const lista = document.getElementById('listaGols');
     
-    // Agrupar gols por jogador
     const golsPorJogador = {};
     state.historicaGols.forEach(gol => {
       if (!golsPorJogador[gol.jogador]) {
@@ -1926,11 +2027,9 @@ const PlacarApp = (function() {
       golsPorJogador[gol.jogador]++;
     });
     
-    // Criar lista ordenada (mais gols primeiro)
     const listaOrdenada = Object.entries(golsPorJogador)
       .sort((a, b) => b[1] - a[1]);
     
-    // Renderizar usando fragment
     const fragment = document.createDocumentFragment();
     
     listaOrdenada.forEach(([jogador, quantidade]) => {
@@ -1945,10 +2044,6 @@ const PlacarApp = (function() {
     lista.appendChild(fragment);
   }
 
-  // ============================================
-  // CONTROLE DE FALTAS
-  // ============================================
-
   function registrarFalta(time) {
     if (!state.partida) {
       showToast('Inicie o jogo primeiro!', 'error');
@@ -1959,15 +2054,12 @@ const PlacarApp = (function() {
     document.getElementById('popupTituloFalta').textContent = 
       `⚠️ Falta do ${time === 'A' ? state.nomeA : state.nomeB}. Quem fez?`;
     
-    // Obter ranking para ordenar
     const ranking = obterRankingGeral();
     
-    // Ordenar jogadores
     const jogadoresOrdenados = state.jogadores
       .map(jogador => ({ nome: jogador, gols: ranking[jogador] || 0 }))
       .sort((a, b) => b.gols - a.gols);
     
-    // Renderizar botões
     const popup = document.getElementById('popupJogadoresFalta');
     popup.innerHTML = '';
     
@@ -1984,7 +2076,6 @@ const PlacarApp = (function() {
   function confirmarFalta(jogador) {
     if (!state.timeAtualFalta) return;
     
-    // Registrar para undo
     state.ultimaAcao = {
       tipo: "falta",
       time: state.timeAtualFalta,
@@ -1994,7 +2085,6 @@ const PlacarApp = (function() {
     
     mostrarUndo();
     
-    // Atualizar faltas
     if (state.timeAtualFalta === 'A') {
       state.faltas.A++;
       document.getElementById('faltasA').textContent = state.faltas.A;
@@ -2003,7 +2093,6 @@ const PlacarApp = (function() {
       document.getElementById('faltasB').textContent = state.faltas.B;
     }
     
-    // Registrar falta
     state.historicaFaltas.push({
       time: state.timeAtualFalta,
       jogador: jogador,
@@ -2011,24 +2100,16 @@ const PlacarApp = (function() {
       timestamp: Date.now()
     });
     
-    // Fechar popup e dar feedback
     fecharPopupFalta();
     if (navigator.vibrate) navigator.vibrate(10);
     showToast(`Falta de ${jogador}`, 'warning');
   }
 
-  // ============================================
-  // FUNÇÃO UNDO
-  // ============================================
-
   function mostrarUndo() {
     const undoBtn = document.getElementById('undoBtn');
     undoBtn.style.display = 'block';
     
-    // Limpar timer anterior
     clearTimeout(state.undoTimer);
-    
-    // Esconder após 10 segundos (aumentado de 5)
     state.undoTimer = setTimeout(() => {
       esconderUndo();
     }, 10000);
@@ -2043,7 +2124,6 @@ const PlacarApp = (function() {
     if (!state.ultimaAcao) return;
     
     if (state.ultimaAcao.tipo === "gol") {
-      // Desfazer gol
       if (state.ultimaAcao.time === 'A') {
         state.placar.A = Math.max(0, state.placar.A - 1);
       } else {
@@ -2053,12 +2133,10 @@ const PlacarApp = (function() {
       document.getElementById('placarA').textContent = state.placar.A;
       document.getElementById('placarB').textContent = state.placar.B;
       
-      // Remover do histórico
       state.historicaGols.splice(state.ultimaAcao.index, 1);
       renderGols();
       
     } else if (state.ultimaAcao.tipo === "falta") {
-      // Desfazer falta
       if (state.ultimaAcao.time === 'A') {
         state.faltas.A = Math.max(0, state.faltas.A - 1);
         document.getElementById('faltasA').textContent = state.faltas.A;
@@ -2067,7 +2145,6 @@ const PlacarApp = (function() {
         document.getElementById('faltasB').textContent = state.faltas.B;
       }
       
-      // Remover do histórico
       state.historicaFaltas.splice(state.ultimaAcao.index, 1);
     }
     
@@ -2075,10 +2152,6 @@ const PlacarApp = (function() {
     if (navigator.vibrate) navigator.vibrate(15);
     showToast('Ação desfeita', 'success');
   }
-
-  // ============================================
-  // POPUPS
-  // ============================================
 
   function fecharPopup(event) {
     if (event) event.stopPropagation();
@@ -2102,10 +2175,6 @@ const PlacarApp = (function() {
     document.getElementById('popupNomeTime').classList.remove('show');
     state.timeEditando = null;
   }
-
-  // ============================================
-  // RANKING E ESTATÍSTICAS
-  // ============================================
 
   function obterRankingGeral() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
@@ -2133,11 +2202,10 @@ const PlacarApp = (function() {
       const fragment = document.createDocumentFragment();
       const rankingOrdenado = Object.entries(rankingGeral)
         .sort((a, b) => b[1] - a[1])
-        .slice(0, 10); // Limitar a top 10
+        .slice(0, 10);
       
       rankingOrdenado.forEach(([jogador, gols], index) => {
         const li = document.createElement('li');
-        
         const medalha = index === 0 ? '🥇' : 
                        index === 1 ? '🥈' : 
                        index === 2 ? '🥉' : `${index + 1}º`;
@@ -2157,17 +2225,28 @@ const PlacarApp = (function() {
       listaGeral.appendChild(fragment);
     }
     
-    // Ranking Mensal
+    // Ranking Mensal - CORRIGIDO!
     const hoje = new Date();
-    const mesAtual = hoje.getMonth();
+    const mesAtual = hoje.getMonth(); // 0-11
     const anoAtual = hoje.getFullYear();
     
     const partidasMes = historico.filter(partida => {
       try {
+        // A data está salva como "DD/MM/YYYY, HH:MM:SS"
         const dataStr = partida.data.split(",")[0].trim();
-        const [dia, mes, ano] = dataStr.split("/").map(Number);
+        const partes = dataStr.split("/");
+        
+        if (partes.length !== 3) return false;
+        
+        const dia = parseInt(partes[0], 10);
+        const mes = parseInt(partes[1], 10); // 1-12
+        const ano = parseInt(partes[2], 10);
+        
+        // Comparar mês e ano (subtrair 1 do mês porque getMonth() retorna 0-11)
         return (mes - 1) === mesAtual && ano === anoAtual;
-      } catch {
+        
+      } catch (error) {
+        console.log('Erro ao processar data:', error);
         return false;
       }
     });
@@ -2182,7 +2261,7 @@ const PlacarApp = (function() {
     const listaMes = document.getElementById('listaRankingMes');
     
     if (Object.keys(rankingMes).length === 0) {
-      listaMes.innerHTML = '<li>Sem partidas registradas neste mês.</li>';
+      listaMes.innerHTML = `<li>Sem partidas em ${mesAtual + 1}/${anoAtual}</li>`;
     } else {
       const fragment = document.createDocumentFragment();
       const rankingOrdenado = Object.entries(rankingMes)
@@ -2191,7 +2270,6 @@ const PlacarApp = (function() {
       
       rankingOrdenado.forEach(([jogador, gols], index) => {
         const li = document.createElement('li');
-        
         const medalha = index === 0 ? '🥇' : 
                        index === 1 ? '🥈' : 
                        index === 2 ? '🥉' : `${index + 1}º`;
@@ -2232,7 +2310,6 @@ const PlacarApp = (function() {
       
       rankingOrdenado.forEach(([jogador, faltas]) => {
         const li = document.createElement('li');
-        
         const spanNome = document.createElement('span');
         spanNome.textContent = jogador;
         
@@ -2249,10 +2326,6 @@ const PlacarApp = (function() {
     }
   }
 
-  // ============================================
-  // HISTÓRICO
-  // ============================================
-
   function historico() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     const lista = document.getElementById('listaHistorico');
@@ -2262,7 +2335,6 @@ const PlacarApp = (function() {
       return;
     }
     
-    // Ordenar do mais recente para o mais antigo
     const historicoOrdenado = [...historico].reverse();
     const fragment = document.createDocumentFragment();
     
@@ -2274,7 +2346,6 @@ const PlacarApp = (function() {
       const item = document.createElement('div');
       item.className = 'historico-item';
       
-      // Formatar dados dos gols
       let golsHTML = '';
       if (partida.gols) {
         golsHTML = Object.entries(partida.gols)
@@ -2284,7 +2355,6 @@ const PlacarApp = (function() {
           .join('');
       }
       
-      // Formatar dados das faltas
       let faltasHTML = '';
       if (partida.faltas && partida.faltas.jogadores) {
         faltasHTML = Object.entries(partida.faltas.jogadores)
@@ -2323,7 +2393,6 @@ const PlacarApp = (function() {
         </div>
       `;
       
-      // Adicionar evento de clique para expandir
       item.addEventListener('click', () => {
         item.classList.toggle('expanded');
         if (navigator.vibrate) navigator.vibrate(5);
@@ -2343,10 +2412,6 @@ const PlacarApp = (function() {
       showToast('Histórico apagado!', 'success');
     }
   }
-
-  // ============================================
-  // ESTATÍSTICAS
-  // ============================================
 
   function estatisticas() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
@@ -2447,7 +2512,6 @@ const PlacarApp = (function() {
           jogosComGols++;
           totalGolsJogador += dadosGol.q;
           
-          // Verificar resultado
           const placar = partida.placar;
           const timeJogador = dadosGol.t;
           const placarTime = placar[timeJogador === 'A' ? 0 : 1];
@@ -2462,7 +2526,6 @@ const PlacarApp = (function() {
           }
         }
         
-        // Contar faltas
         if (partida.faltas && partida.faltas.jogadores) {
           totalFaltasJogador += partida.faltas.jogadores[jogador] || 0;
         }
@@ -2546,7 +2609,6 @@ const PlacarApp = (function() {
       return;
     }
     
-    // Obter top 3 jogadores
     const ranking = obterRankingGeral();
     const top3 = Object.entries(ranking)
       .sort((a, b) => b[1] - a[1])
@@ -2557,7 +2619,6 @@ const PlacarApp = (function() {
       return;
     }
     
-    // Preparar dados
     const dados = {};
     top3.forEach(([jogador]) => {
       dados[jogador] = [];
@@ -2571,30 +2632,24 @@ const PlacarApp = (function() {
       });
     });
     
-    // Configurações do gráfico
     const largura = Math.min(600, window.innerWidth - 60);
     const altura = 200;
     const margem = 40;
     const maxValor = Math.max(...Object.values(dados).flat());
     
-    // Funções auxiliares
     const escalaY = (valor) => altura - margem - (valor / maxValor) * (altura - 2 * margem);
     const escalaX = (index, total) => margem + (index / (total - 1)) * (largura - 2 * margem);
     
-    // Cores
     const cores = ["#0fb858", "#2196f3", "#ffa502"];
     
-    // Criar SVG
     let svg = `<svg width="${largura}" height="${altura}" style="font-family:Arial;font-size:12px">`;
     
-    // Linhas horizontais (grid)
     for (let i = 0; i <= maxValor; i += Math.ceil(maxValor / 5)) {
       const y = escalaY(i);
       svg += `<line x1="${margem}" y1="${y}" x2="${largura - 20}" y2="${y}" stroke="var(--border)" stroke-width="1"/>`;
       svg += `<text x="${margem - 10}" y="${y + 5}" text-anchor="end" fill="var(--text-sec)">${i}</text>`;
     }
     
-    // Linhas dos jogadores
     top3.forEach(([jogador], index) => {
       const pontos = dados[jogador];
       let path = `M ${escalaX(0, pontos.length)} ${escalaY(pontos[0])}`;
@@ -2607,13 +2662,11 @@ const PlacarApp = (function() {
       
       svg += `<path d="${path}" stroke="${cores[index]}" stroke-width="2" fill="none"/>`;
       
-      // Pontos
       pontos.forEach((valor, idx) => {
         svg += `<circle cx="${escalaX(idx, pontos.length)}" cy="${escalaY(valor)}" r="4" fill="${cores[index]}"/>`;
       });
     });
     
-    // Legenda
     top3.forEach(([jogador], index) => {
       svg += `<rect x="${largura - 150}" y="${20 + 20 * index}" width="15" height="3" fill="${cores[index]}"/>`;
       svg += `<text x="${largura - 130}" y="${25 + 20 * index}" fill="var(--text)">${jogador}</text>`;
@@ -2622,10 +2675,6 @@ const PlacarApp = (function() {
     svg += `</svg>`;
     container.innerHTML = svg;
   }
-
-  // ============================================
-  // COMPARAÇÃO
-  // ============================================
 
   function carregarComparacao() {
     const select1 = document.getElementById('jogador1');
@@ -2670,7 +2719,6 @@ const PlacarApp = (function() {
           jogos++;
           gols += dadosGol.q;
           
-          // Verificar vitória
           const placar = partida.placar;
           const timeJogador = dadosGol.t;
           const placarTime = placar[timeJogador === 'A' ? 0 : 1];
@@ -2679,7 +2727,6 @@ const PlacarApp = (function() {
           if (placarTime > placarAdversario) vitorias++;
         }
         
-        // Contar faltas
         if (partida.faltas && partida.faltas.jogadores) {
           faltas += partida.faltas.jogadores[nome] || 0;
         }
@@ -2758,21 +2805,14 @@ const PlacarApp = (function() {
     `;
   }
 
-  // ============================================
-  // PWA E INSTALAÇÃO
-  // ============================================
-
   function configurarPWA() {
-    // Evento para capturar prompt de instalação
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       state.deferredPrompt = e;
       
-      // Mostrar botão de instalação
       const installBtn = document.getElementById('installBtn');
       installBtn.style.display = 'block';
       
-      // Esconder após 30 segundos
       setTimeout(() => {
         if (installBtn.style.display === 'block') {
           installBtn.style.display = 'none';
@@ -2780,7 +2820,6 @@ const PlacarApp = (function() {
       }, 30000);
     });
     
-    // Evento quando o app é instalado
     window.addEventListener('appinstalled', () => {
       console.log('PWA instalado!');
       document.getElementById('installBtn').style.display = 'none';
@@ -2788,7 +2827,6 @@ const PlacarApp = (function() {
       showToast('App instalado com sucesso!', 'success');
     });
     
-    // Verificar se já está instalado
     if (window.matchMedia('(display-mode: standalone)').matches) {
       document.getElementById('installBtn').style.display = 'none';
     }
@@ -2814,24 +2852,12 @@ const PlacarApp = (function() {
     }
   }
 
-  // ============================================
-  // INICIALIZAÇÃO
-  // ============================================
-
   function init() {
-    // Carregar tema
     carregarTema();
-    
-    // Carregar nomes dos times
     carregarNomesTimes();
-    
-    // Renderizar jogadores
     renderJogadores();
-    
-    // Configurar PWA
     configurarPWA();
     
-    // Registrar Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js')
         .then(() => console.log('Service Worker registrado com sucesso!'))
@@ -2841,71 +2867,39 @@ const PlacarApp = (function() {
     console.log('PlacarApp inicializado com sucesso!');
   }
 
-  // ============================================
-  // API PÚBLICA
-  // ============================================
-
   return {
-    // Inicialização
     init: init,
-    
-    // Tema
     toggleTheme: toggleTheme,
-    
-    // Navegação
     trocarTab: trocarTab,
-    
-    // Jogadores
     addJogador: addJogador,
     removerJogador: removerJogador,
-    
-    // Times
     editarNomeTime: editarNomeTime,
     salvarNomeTime: salvarNomeTime,
-    
-    // Jogo
     iniciar: iniciar,
     togglePause: togglePause,
     resetar: resetar,
     fim: fim,
-    
-    // Gols
     aumentarGol: aumentarGol,
     diminuirGol: diminuirGol,
     registrarGol: registrarGol,
-    
-    // Faltas
     registrarFalta: registrarFalta,
     confirmarFalta: confirmarFalta,
-    
-    // Undo
     desfazer: desfazer,
-    
-    // Popups
     fecharPopup: fecharPopup,
     fecharPopupFalta: fecharPopupFalta,
     fecharPopupRemover: fecharPopupRemover,
     fecharPopupNome: fecharPopupNome,
-    
-    // Histórico
     limparHistorico: limparHistorico,
-    
-    // Estatísticas e Ranking
     ranking: ranking,
     historico: historico,
     estatisticas: estatisticas,
     compararJogadores: compararJogadores,
     carregarComparacao: carregarComparacao,
-    
-    // PWA
     instalarApp: instalarApp,
-    
-    // Estado (apenas leitura para debug)
     getState: () => ({ ...state })
   };
 })();
 
-// Inicializar quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', PlacarApp.init);
 </script>
 </body>
