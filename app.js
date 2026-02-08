@@ -1,6 +1,6 @@
 const PlacarApp = (function() {
   const state = {
-    jogadores: JSON.parse(localStorage.getItem("jogadores")) || [],
+    jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
     historicaGols: [],
     historicaFaltas: [],
     ultimaAcao: null,
@@ -19,6 +19,7 @@ const PlacarApp = (function() {
     undoTimer: null
   };
 
+  // ===== FUNÇÕES AUXILIARES =====
   function escapeHTML(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -50,6 +51,7 @@ const PlacarApp = (function() {
     });
   }
 
+  // ===== TEMA =====
   function toggleTheme() {
     const html = document.documentElement;
     const currentTheme = html.getAttribute("data-theme");
@@ -67,6 +69,7 @@ const PlacarApp = (function() {
     document.documentElement.setAttribute("data-theme", savedTheme);
   }
 
+  // ===== NAVEGAÇÃO =====
   function trocarTab(tabId, button) {
     document.querySelectorAll("section").forEach(section => {
       section.classList.remove("active");
@@ -97,6 +100,7 @@ const PlacarApp = (function() {
     if (navigator.vibrate) navigator.vibrate(5);
   }
 
+  // ===== JOGADORES =====
   function addJogador() {
     const input = document.getElementById('novoJogador');
     const nome = input.value.trim();
@@ -143,7 +147,9 @@ const PlacarApp = (function() {
 
   function renderJogadores() {
     const lista = document.getElementById('listaJogadores');
-    const fragment = document.createDocumentFragment();
+    if (!lista) return;
+    
+    lista.innerHTML = '';
     
     state.jogadores.forEach((jogador, index) => {
       const li = document.createElement('li');
@@ -156,27 +162,33 @@ const PlacarApp = (function() {
       
       li.appendChild(span);
       li.appendChild(button);
-      fragment.appendChild(li);
+      lista.appendChild(li);
     });
-    
-    lista.innerHTML = '';
-    lista.appendChild(fragment);
   }
 
+  // ===== NOMES DOS TIMES =====
   function editarNomeTime(time) {
     state.timeEditando = time;
-    document.getElementById('popupTituloNome').textContent = 
-      `✏️ Editar Nome - ${time === 'A' ? state.nomeA : state.nomeB}`;
+    const popupTitulo = document.getElementById('popupTituloNome');
+    if (popupTitulo) {
+      popupTitulo.textContent = `✏️ Editar Nome - ${time === 'A' ? state.nomeA : state.nomeB}`;
+    }
     
     const input = document.getElementById('inputNomeTime');
-    input.value = time === 'A' ? state.nomeA : state.nomeB;
+    if (input) {
+      input.value = time === 'A' ? state.nomeA : state.nomeB;
+    }
     
     document.getElementById('popupNomeTime').classList.add('show');
-    setTimeout(() => input.focus(), 100);
+    setTimeout(() => {
+      if (input) input.focus();
+    }, 100);
   }
 
   function salvarNomeTime() {
     const input = document.getElementById('inputNomeTime');
+    if (!input) return;
+    
     const nome = input.value.trim();
     
     if (!nome || nome.length > 20) {
@@ -211,6 +223,7 @@ const PlacarApp = (function() {
     document.getElementById('nomeFaltaB').textContent = state.nomeB;
   }
 
+  // ===== CONTROLE DO JOGO =====
   async function iniciar() {
     if (state.partida) {
       if (!await confirmAction("Já existe um jogo em andamento. Deseja iniciar um novo?")) {
@@ -218,12 +231,14 @@ const PlacarApp = (function() {
       }
     }
     
+    // Animação do botão
     const btn = document.getElementById("btnIniciar");
     if (btn) {
       btn.classList.add("btn-animating-green");
       setTimeout(() => btn.classList.remove("btn-animating-green"), 600);
     }
     
+    // Resetar estado
     state.placar = { A: 0, B: 0 };
     state.faltas = { A: 0, B: 0 };
     state.historicaGols = [];
@@ -232,6 +247,7 @@ const PlacarApp = (function() {
     state.segundos = 0;
     state.pausado = false;
     
+    // Atualizar interface
     document.getElementById('placarA').textContent = '0';
     document.getElementById('placarB').textContent = '0';
     document.getElementById('faltasA').textContent = '0';
@@ -243,11 +259,13 @@ const PlacarApp = (function() {
     const tituloGols = document.getElementById('tituloGols');
     if (tituloGols) tituloGols.classList.remove('hidden');
     
+    // Criar nova partida
     state.partida = {
       data: new Date().toLocaleString("pt-BR"),
       nomeTimes: { A: state.nomeA, B: state.nomeB }
     };
     
+    // Iniciar timer
     clearInterval(state.timer);
     state.timer = setInterval(() => {
       if (!state.pausado) {
@@ -258,6 +276,7 @@ const PlacarApp = (function() {
       }
     }, 1000);
     
+    // Efeitos
     mostrarOverlay("INÍCIO DE JOGO", "⚽", 1500);
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     showToast('Jogo iniciado!', 'success');
@@ -322,6 +341,7 @@ const PlacarApp = (function() {
       return;
     }
     
+    // Animação do botão
     const btn = document.getElementById("btnFim");
     if (btn) {
       btn.classList.add("btn-animating-red");
@@ -330,6 +350,7 @@ const PlacarApp = (function() {
     
     clearInterval(state.timer);
     
+    // Calcular estatísticas da partida
     const golsPorJogador = {};
     state.historicaGols.forEach(gol => {
       if (!golsPorJogador[gol.jogador]) {
@@ -346,6 +367,7 @@ const PlacarApp = (function() {
       faltasPorJogador[falta.jogador]++;
     });
     
+    // Salvar partida
     state.partida.placar = [state.placar.A, state.placar.B];
     state.partida.gols = golsPorJogador;
     state.partida.faltas = {
@@ -360,6 +382,7 @@ const PlacarApp = (function() {
     historico.push(state.partida);
     localStorage.setItem("historico", JSON.stringify(historico));
     
+    // Mostrar overlay e finalizar
     mostrarOverlay("FIM DE JOGO", "🏆", 2000, () => {
       const mensagem = `Jogo finalizado!\n\n${state.nomeA} ${state.placar.A} × ${state.placar.B} ${state.nomeB}\n\n🏆 Craque: ${state.partida.craque}\n\n⏱️ Duração: ${Math.floor(state.segundos / 60)}:${String(state.segundos % 60).padStart(2, '0')}`;
       
@@ -370,6 +393,21 @@ const PlacarApp = (function() {
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
   }
 
+  function calcularCraque(gols) {
+    let craque = null;
+    let maxGols = 0;
+    
+    Object.entries(gols).forEach(([jogador, dados]) => {
+      if (dados.q > maxGols) {
+        maxGols = dados.q;
+        craque = jogador;
+      }
+    });
+    
+    return craque ? `${craque} (${maxGols})` : "—";
+  }
+
+  // ===== ANIMAÇÕES E EFEITOS =====
   function mostrarOverlay(texto, icone, duracao, callback) {
     const overlay = document.getElementById("gameOverlay");
     const overlayText = document.getElementById("overlayText");
@@ -387,22 +425,8 @@ const PlacarApp = (function() {
     
     setTimeout(() => {
       overlay.classList.remove("show");
-      if (callback) callback();
+      if (callback) setTimeout(callback, 300);
     }, duracao);
-  }
-
-  function calcularCraque(gols) {
-    let craque = null;
-    let maxGols = 0;
-    
-    Object.entries(gols).forEach(([jogador, dados]) => {
-      if (dados.q > maxGols) {
-        maxGols = dados.q;
-        craque = jogador;
-      }
-    });
-    
-    return craque ? `${craque} (${maxGols})` : "—";
   }
 
   function animarGol() {
@@ -417,9 +441,10 @@ const PlacarApp = (function() {
     
     setTimeout(() => {
       placarDiv.classList.remove("gol-animation");
-    }, 600);
+    }, 800);
   }
 
+  // ===== CONTROLE DE GOLS =====
   function aumentarGol(time) {
     if (!state.partida) {
       showToast('Inicie o jogo primeiro!', 'error');
@@ -427,28 +452,35 @@ const PlacarApp = (function() {
     }
     
     state.timeAtual = time;
+    
+    // Configurar popup
     const popupTitulo = document.getElementById('popupTitulo');
     if (popupTitulo) {
       popupTitulo.textContent = `⚽ Gol do ${time === 'A' ? state.nomeA : state.nomeB}! Quem fez?`;
     }
-    
-    const ranking = obterRankingGeral();
-    
-    const jogadoresOrdenados = state.jogadores
-      .map(jogador => ({ nome: jogador, gols: ranking[jogador] || 0 }))
-      .sort((a, b) => b.gols - a.gols);
     
     const popup = document.getElementById('popupJogadores');
     if (!popup) return;
     
     popup.innerHTML = '';
     
-    jogadoresOrdenados.forEach(jogador => {
+    // Se não houver jogadores, criar um padrão
+    if (state.jogadores.length === 0) {
       const button = document.createElement('button');
-      button.textContent = jogador.nome;
-      button.onclick = () => registrarGol(jogador.nome);
+      button.textContent = 'Jogador Desconhecido';
+      button.onclick = () => registrarGol('Jogador Desconhecido');
       popup.appendChild(button);
-    });
+    } else {
+      // Ordenar jogadores pelo ranking
+      const ranking = obterRankingGeral();
+      
+      state.jogadores.forEach(jogador => {
+        const button = document.createElement('button');
+        button.textContent = jogador;
+        button.onclick = () => registrarGol(jogador);
+        popup.appendChild(button);
+      });
+    }
     
     document.getElementById('popupJogador').classList.add('show');
   }
@@ -456,6 +488,7 @@ const PlacarApp = (function() {
   function registrarGol(jogador) {
     if (!state.timeAtual) return;
     
+    // Salvar ação para desfazer
     state.ultimaAcao = {
       tipo: "gol",
       time: state.timeAtual,
@@ -465,15 +498,16 @@ const PlacarApp = (function() {
     
     mostrarUndo();
     
+    // Atualizar placar
     if (state.timeAtual === 'A') {
       state.placar.A++;
+      document.getElementById('placarA').textContent = state.placar.A;
     } else {
       state.placar.B++;
+      document.getElementById('placarB').textContent = state.placar.B;
     }
     
-    document.getElementById('placarA').textContent = state.placar.A;
-    document.getElementById('placarB').textContent = state.placar.B;
-    
+    // Registrar gol
     state.historicaGols.push({
       time: state.timeAtual,
       jogador: jogador,
@@ -481,10 +515,44 @@ const PlacarApp = (function() {
       timestamp: Date.now()
     });
     
+    // Atualizar interface
     renderGols();
     animarGol();
     fecharPopup();
     showToast(`Gol de ${jogador}!`, 'success');
+  }
+
+  function renderGols() {
+    const lista = document.getElementById('listaGols');
+    if (!lista) return;
+    
+    const golsPorJogador = {};
+    state.historicaGols.forEach(gol => {
+      golsPorJogador[gol.jogador] = (golsPorJogador[gol.jogador] || 0) + 1;
+    });
+    
+    const listaOrdenada = Object.entries(golsPorJogador)
+      .sort((a, b) => b[1] - a[1]);
+    
+    lista.innerHTML = '';
+    
+    listaOrdenada.forEach(([jogador, quantidade]) => {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.textContent = `${jogador} — ${quantidade} gol${quantidade > 1 ? 's' : ''}`;
+      li.appendChild(span);
+      lista.appendChild(li);
+    });
+    
+    // Mostrar/ocultar título
+    const tituloGols = document.getElementById('tituloGols');
+    if (tituloGols) {
+      if (state.historicaGols.length > 0) {
+        tituloGols.classList.remove('hidden');
+      } else {
+        tituloGols.classList.add('hidden');
+      }
+    }
   }
 
   function diminuirGol(time) {
@@ -505,17 +573,18 @@ const PlacarApp = (function() {
       .reverse();
     
     if (ultimosGols.length === 0) {
+      // Remover último gol sem especificar
       if (time === 'A') {
         state.placar.A = Math.max(0, state.placar.A - 1);
+        document.getElementById('placarA').textContent = state.placar.A;
       } else {
         state.placar.B = Math.max(0, state.placar.B - 1);
+        document.getElementById('placarB').textContent = state.placar.B;
       }
-      
-      document.getElementById('placarA').textContent = state.placar.A;
-      document.getElementById('placarB').textContent = state.placar.B;
       return;
     }
     
+    // Mostrar popup para escolher qual gol remover
     const popup = document.getElementById('popupGols');
     if (!popup) return;
     
@@ -536,12 +605,11 @@ const PlacarApp = (function() {
     
     if (gol.time === 'A') {
       state.placar.A = Math.max(0, state.placar.A - 1);
+      document.getElementById('placarA').textContent = state.placar.A;
     } else {
       state.placar.B = Math.max(0, state.placar.B - 1);
+      document.getElementById('placarB').textContent = state.placar.B;
     }
-    
-    document.getElementById('placarA').textContent = state.placar.A;
-    document.getElementById('placarB').textContent = state.placar.B;
     
     state.historicaGols.splice(index, 1);
     renderGols();
@@ -551,35 +619,7 @@ const PlacarApp = (function() {
     showToast('Gol removido', 'warning');
   }
 
-  function renderGols() {
-    const lista = document.getElementById('listaGols');
-    if (!lista) return;
-    
-    const golsPorJogador = {};
-    state.historicaGols.forEach(gol => {
-      if (!golsPorJogador[gol.jogador]) {
-        golsPorJogador[gol.jogador] = 0;
-      }
-      golsPorJogador[gol.jogador]++;
-    });
-    
-    const listaOrdenada = Object.entries(golsPorJogador)
-      .sort((a, b) => b[1] - a[1]);
-    
-    const fragment = document.createDocumentFragment();
-    
-    listaOrdenada.forEach(([jogador, quantidade]) => {
-      const li = document.createElement('li');
-      const span = document.createElement('span');
-      span.textContent = `${jogador} — ${quantidade} gol${quantidade > 1 ? 's' : ''}`;
-      li.appendChild(span);
-      fragment.appendChild(li);
-    });
-    
-    lista.innerHTML = '';
-    lista.appendChild(fragment);
-  }
-
+  // ===== CONTROLE DE FALTAS =====
   function registrarFalta(time) {
     if (!state.partida) {
       showToast('Inicie o jogo primeiro!', 'error');
@@ -587,28 +627,31 @@ const PlacarApp = (function() {
     }
     
     state.timeAtualFalta = time;
+    
     const popupTituloFalta = document.getElementById('popupTituloFalta');
     if (popupTituloFalta) {
       popupTituloFalta.textContent = `⚠️ Falta do ${time === 'A' ? state.nomeA : state.nomeB}. Quem fez?`;
     }
-    
-    const ranking = obterRankingGeral();
-    
-    const jogadoresOrdenados = state.jogadores
-      .map(jogador => ({ nome: jogador, gols: ranking[jogador] || 0 }))
-      .sort((a, b) => b.gols - a.gols);
     
     const popup = document.getElementById('popupJogadoresFalta');
     if (!popup) return;
     
     popup.innerHTML = '';
     
-    jogadoresOrdenados.forEach(jogador => {
+    // Se não houver jogadores, criar um padrão
+    if (state.jogadores.length === 0) {
       const button = document.createElement('button');
-      button.textContent = jogador.nome;
-      button.onclick = () => confirmarFalta(jogador.nome);
+      button.textContent = 'Jogador Desconhecido';
+      button.onclick = () => confirmarFalta('Jogador Desconhecido');
       popup.appendChild(button);
-    });
+    } else {
+      state.jogadores.forEach(jogador => {
+        const button = document.createElement('button');
+        button.textContent = jogador;
+        button.onclick = () => confirmarFalta(jogador);
+        popup.appendChild(button);
+      });
+    }
     
     document.getElementById('popupFalta').classList.add('show');
   }
@@ -616,6 +659,7 @@ const PlacarApp = (function() {
   function confirmarFalta(jogador) {
     if (!state.timeAtualFalta) return;
     
+    // Salvar ação para desfazer
     state.ultimaAcao = {
       tipo: "falta",
       time: state.timeAtualFalta,
@@ -625,6 +669,7 @@ const PlacarApp = (function() {
     
     mostrarUndo();
     
+    // Atualizar faltas
     if (state.timeAtualFalta === 'A') {
       state.faltas.A++;
       document.getElementById('faltasA').textContent = state.faltas.A;
@@ -633,6 +678,7 @@ const PlacarApp = (function() {
       document.getElementById('faltasB').textContent = state.faltas.B;
     }
     
+    // Registrar falta
     state.historicaFaltas.push({
       time: state.timeAtualFalta,
       jogador: jogador,
@@ -645,6 +691,7 @@ const PlacarApp = (function() {
     showToast(`Falta de ${jogador}`, 'warning');
   }
 
+  // ===== DESFAZER AÇÃO =====
   function mostrarUndo() {
     const undoBtn = document.getElementById('undoBtn');
     if (undoBtn) {
@@ -671,12 +718,11 @@ const PlacarApp = (function() {
     if (state.ultimaAcao.tipo === "gol") {
       if (state.ultimaAcao.time === 'A') {
         state.placar.A = Math.max(0, state.placar.A - 1);
+        document.getElementById('placarA').textContent = state.placar.A;
       } else {
         state.placar.B = Math.max(0, state.placar.B - 1);
+        document.getElementById('placarB').textContent = state.placar.B;
       }
-      
-      document.getElementById('placarA').textContent = state.placar.A;
-      document.getElementById('placarB').textContent = state.placar.B;
       
       state.historicaGols.splice(state.ultimaAcao.index, 1);
       renderGols();
@@ -698,6 +744,7 @@ const PlacarApp = (function() {
     showToast('Ação desfeita', 'success');
   }
 
+  // ===== POPUPS =====
   function fecharPopup(event) {
     if (event) event.stopPropagation();
     const popup = document.getElementById('popupJogador');
@@ -725,6 +772,7 @@ const PlacarApp = (function() {
     state.timeEditando = null;
   }
 
+  // ===== RANKING =====
   function obterRankingGeral() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     const ranking = {};
@@ -745,35 +793,32 @@ const PlacarApp = (function() {
     const rankingGeral = obterRankingGeral();
     const listaGeral = document.getElementById('listaRankingGeral');
     
-    if (!listaGeral) return;
-    
-    if (Object.keys(rankingGeral).length === 0) {
-      listaGeral.innerHTML = '<li>Nenhum gol registrado ainda.</li>';
-    } else {
-      const fragment = document.createDocumentFragment();
-      const rankingOrdenado = Object.entries(rankingGeral)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
-      
-      rankingOrdenado.forEach(([jogador, gols], index) => {
-        const li = document.createElement('li');
-        const medalha = index === 0 ? '🥇' : 
-                       index === 1 ? '🥈' : 
-                       index === 2 ? '🥉' : `${index + 1}º`;
+    if (listaGeral) {
+      if (Object.keys(rankingGeral).length === 0) {
+        listaGeral.innerHTML = '<li>Nenhum gol registrado ainda.</li>';
+      } else {
+        listaGeral.innerHTML = '';
         
-        const spanNome = document.createElement('span');
-        spanNome.textContent = `${medalha} ${jogador}`;
-        
-        const spanGols = document.createElement('span');
-        spanGols.textContent = `${gols} gol${gols > 1 ? 's' : ''}`;
-        
-        li.appendChild(spanNome);
-        li.appendChild(spanGols);
-        fragment.appendChild(li);
-      });
-      
-      listaGeral.innerHTML = '';
-      listaGeral.appendChild(fragment);
+        Object.entries(rankingGeral)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .forEach(([jogador, gols], index) => {
+            const li = document.createElement('li');
+            const medalha = index === 0 ? '🥇' : 
+                           index === 1 ? '🥈' : 
+                           index === 2 ? '🥉' : `${index + 1}º`;
+            
+            const spanNome = document.createElement('span');
+            spanNome.textContent = `${medalha} ${jogador}`;
+            
+            const spanGols = document.createElement('span');
+            spanGols.textContent = `${gols} gol${gols > 1 ? 's' : ''}`;
+            
+            li.appendChild(spanNome);
+            li.appendChild(spanGols);
+            listaGeral.appendChild(li);
+          });
+      }
     }
     
     // Ranking Mensal
@@ -788,14 +833,11 @@ const PlacarApp = (function() {
         
         if (partes.length !== 3) return false;
         
-        const dia = parseInt(partes[0], 10);
         const mes = parseInt(partes[1], 10);
         const ano = parseInt(partes[2], 10);
         
         return (mes - 1) === mesAtual && ano === anoAtual;
-        
       } catch (error) {
-        console.log('Erro ao processar data:', error);
         return false;
       }
     });
@@ -808,35 +850,32 @@ const PlacarApp = (function() {
     });
     
     const listaMes = document.getElementById('listaRankingMes');
-    if (!listaMes) return;
-    
-    if (Object.keys(rankingMes).length === 0) {
-      listaMes.innerHTML = `<li>Sem partidas em ${mesAtual + 1}/${anoAtual}</li>`;
-    } else {
-      const fragment = document.createDocumentFragment();
-      const rankingOrdenado = Object.entries(rankingMes)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
-      
-      rankingOrdenado.forEach(([jogador, gols], index) => {
-        const li = document.createElement('li');
-        const medalha = index === 0 ? '🥇' : 
-                       index === 1 ? '🥈' : 
-                       index === 2 ? '🥉' : `${index + 1}º`;
+    if (listaMes) {
+      if (Object.keys(rankingMes).length === 0) {
+        listaMes.innerHTML = `<li>Sem partidas em ${mesAtual + 1}/${anoAtual}</li>`;
+      } else {
+        listaMes.innerHTML = '';
         
-        const spanNome = document.createElement('span');
-        spanNome.textContent = `${medalha} ${jogador}`;
-        
-        const spanGols = document.createElement('span');
-        spanGols.textContent = `${gols} gol${gols > 1 ? 's' : ''}`;
-        
-        li.appendChild(spanNome);
-        li.appendChild(spanGols);
-        fragment.appendChild(li);
-      });
-      
-      listaMes.innerHTML = '';
-      listaMes.appendChild(fragment);
+        Object.entries(rankingMes)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10)
+          .forEach(([jogador, gols], index) => {
+            const li = document.createElement('li');
+            const medalha = index === 0 ? '🥇' : 
+                           index === 1 ? '🥈' : 
+                           index === 2 ? '🥉' : `${index + 1}º`;
+            
+            const spanNome = document.createElement('span');
+            spanNome.textContent = `${medalha} ${jogador}`;
+            
+            const spanGols = document.createElement('span');
+            spanGols.textContent = `${gols} gol${gols > 1 ? 's' : ''}`;
+            
+            li.appendChild(spanNome);
+            li.appendChild(spanGols);
+            listaMes.appendChild(li);
+          });
+      }
     }
     
     // Ranking de Faltas
@@ -850,33 +889,31 @@ const PlacarApp = (function() {
     });
     
     const listaFaltas = document.getElementById('listaRankingFaltas');
-    if (!listaFaltas) return;
-    
-    if (Object.keys(rankingFaltas).length === 0) {
-      listaFaltas.innerHTML = '<li>Nenhuma falta registrada ainda.</li>';
-    } else {
-      const fragment = document.createDocumentFragment();
-      const rankingOrdenado = Object.entries(rankingFaltas)
-        .sort((a, b) => b[1] - a[1]);
-      
-      rankingOrdenado.forEach(([jogador, faltas]) => {
-        const li = document.createElement('li');
-        const spanNome = document.createElement('span');
-        spanNome.textContent = jogador;
+    if (listaFaltas) {
+      if (Object.keys(rankingFaltas).length === 0) {
+        listaFaltas.innerHTML = '<li>Nenhuma falta registrada ainda.</li>';
+      } else {
+        listaFaltas.innerHTML = '';
         
-        const spanFaltas = document.createElement('span');
-        spanFaltas.textContent = `${faltas} falta${faltas > 1 ? 's' : ''}`;
-        
-        li.appendChild(spanNome);
-        li.appendChild(spanFaltas);
-        fragment.appendChild(li);
-      });
-      
-      listaFaltas.innerHTML = '';
-      listaFaltas.appendChild(fragment);
+        Object.entries(rankingFaltas)
+          .sort((a, b) => b[1] - a[1])
+          .forEach(([jogador, faltas]) => {
+            const li = document.createElement('li');
+            const spanNome = document.createElement('span');
+            spanNome.textContent = jogador;
+            
+            const spanFaltas = document.createElement('span');
+            spanFaltas.textContent = `${faltas} falta${faltas > 1 ? 's' : ''}`;
+            
+            li.appendChild(spanNome);
+            li.appendChild(spanFaltas);
+            listaFaltas.appendChild(li);
+          });
+      }
     }
   }
 
+  // ===== HISTÓRICO =====
   function historico() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     const lista = document.getElementById('listaHistorico');
@@ -888,10 +925,9 @@ const PlacarApp = (function() {
       return;
     }
     
-    const historicoOrdenado = [...historico].reverse();
-    const fragment = document.createDocumentFragment();
+    lista.innerHTML = '';
     
-    historicoOrdenado.forEach(partida => {
+    [...historico].reverse().forEach(partida => {
       const times = partida.nomeTimes || { A: "Time A", B: "Time B" };
       const craque = partida.craque || "—";
       const placar = partida.placar || [0, 0];
@@ -899,6 +935,7 @@ const PlacarApp = (function() {
       const item = document.createElement('div');
       item.className = 'historico-item';
       
+      // Gols da partida
       let golsHTML = '';
       if (partida.gols) {
         golsHTML = Object.entries(partida.gols)
@@ -908,6 +945,7 @@ const PlacarApp = (function() {
           .join('');
       }
       
+      // Faltas da partida
       let faltasHTML = '';
       if (partida.faltas && partida.faltas.jogadores) {
         faltasHTML = Object.entries(partida.faltas.jogadores)
@@ -951,11 +989,8 @@ const PlacarApp = (function() {
         if (navigator.vibrate) navigator.vibrate(5);
       });
       
-      fragment.appendChild(item);
+      lista.appendChild(item);
     });
-    
-    lista.innerHTML = '';
-    lista.appendChild(fragment);
   }
 
   async function limparHistorico() {
@@ -966,6 +1001,7 @@ const PlacarApp = (function() {
     }
   }
 
+  // ===== ESTATÍSTICAS =====
   function estatisticas() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     
@@ -1007,235 +1043,9 @@ const PlacarApp = (function() {
         </div>
       `;
     }
-    
-    // Últimas 5 Partidas
-    const ultimas5 = historico.slice(-5).reverse();
-    const golsRecentes = {};
-    
-    ultimas5.forEach(partida => {
-      Object.entries(partida.gols || {}).forEach(([jogador, dados]) => {
-        golsRecentes[jogador] = (golsRecentes[jogador] || 0) + dados.q;
-      });
-    });
-    
-    const statsRecentes = document.getElementById('statsRecentes');
-    if (statsRecentes) {
-      if (Object.keys(golsRecentes).length === 0) {
-        statsRecentes.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Nenhuma partida recente</p>';
-      } else {
-        const fragment = document.createDocumentFragment();
-        const rankingRecentes = Object.entries(golsRecentes)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 5);
-        
-        rankingRecentes.forEach(([jogador, gols]) => {
-          const div = document.createElement('div');
-          div.className = 'stat-row';
-          
-          const label = document.createElement('span');
-          label.className = 'stat-label';
-          label.textContent = jogador;
-          
-          const value = document.createElement('span');
-          value.className = 'stat-value';
-          value.innerHTML = `${gols} gol${gols > 1 ? 's' : ''} <span class="badge">🔥</span>`;
-          
-          div.appendChild(label);
-          div.appendChild(value);
-          fragment.appendChild(div);
-        });
-        
-        statsRecentes.innerHTML = '';
-        statsRecentes.appendChild(fragment);
-      }
-    }
-    
-    // Estatísticas por Jogador
-    const statsPorJogador = {};
-    
-    state.jogadores.forEach(jogador => {
-      let jogosComGols = 0;
-      let totalGolsJogador = 0;
-      let totalFaltasJogador = 0;
-      let vitorias = 0;
-      let derrotas = 0;
-      let empates = 0;
-      
-      historico.forEach(partida => {
-        const dadosGol = partida.gols && partida.gols[jogador];
-        
-        if (dadosGol) {
-          jogosComGols++;
-          totalGolsJogador += dadosGol.q;
-          
-          const placar = partida.placar;
-          const timeJogador = dadosGol.t;
-          const placarTime = placar[timeJogador === 'A' ? 0 : 1];
-          const placarAdversario = placar[timeJogador === 'A' ? 1 : 0];
-          
-          if (placarTime > placarAdversario) {
-            vitorias++;
-          } else if (placarTime < placarAdversario) {
-            derrotas++;
-          } else {
-            empates++;
-          }
-        }
-        
-        if (partida.faltas && partida.faltas.jogadores) {
-          totalFaltasJogador += partida.faltas.jogadores[jogador] || 0;
-        }
-      });
-      
-      if (jogosComGols > 0) {
-        const media = (totalGolsJogador / jogosComGols).toFixed(1);
-        const aproveitamento = Math.round((vitorias / jogosComGols) * 100);
-        
-        statsPorJogador[jogador] = {
-          jogos: jogosComGols,
-          gols: totalGolsJogador,
-          faltas: totalFaltasJogador,
-          vitorias: vitorias,
-          derrotas: derrotas,
-          empates: empates,
-          media: media,
-          aproveitamento: isNaN(aproveitamento) ? 0 : aproveitamento
-        };
-      }
-    });
-    
-    const container = document.getElementById('statsPorJogador');
-    if (container) {
-      container.innerHTML = '';
-      
-      if (Object.keys(statsPorJogador).length === 0) {
-        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Nenhum jogador com estatísticas</p>';
-      } else {
-        const fragment = document.createDocumentFragment();
-        const ranking = Object.entries(statsPorJogador)
-          .sort((a, b) => b[1].gols - a[1].gols);
-        
-        ranking.forEach(([jogador, stats]) => {
-          const card = document.createElement('div');
-          card.className = 'stat-card';
-          
-          card.innerHTML = `
-            <h4>${escapeHTML(jogador)}</h4>
-            <div class="stat-row">
-              <span class="stat-label">Jogos</span>
-              <span class="stat-value">${stats.jogos}</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Gols</span>
-              <span class="stat-value">${stats.gols} (${stats.media}/jogo)</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Aproveitamento</span>
-              <span class="stat-value">
-                ${stats.aproveitamento}% 
-                <span class="badge ${stats.aproveitamento >= 60 ? '' : 'warning'}">
-                  ${stats.vitorias}V ${stats.empates}E ${stats.derrotas}D
-                </span>
-              </span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:${stats.aproveitamento}%"></div>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Faltas</span>
-              <span class="stat-value">${stats.faltas}</span>
-            </div>
-          `;
-          
-          fragment.appendChild(card);
-        });
-        
-        container.appendChild(fragment);
-      }
-    }
-    
-    // Gerar gráfico
-    gerarGrafico();
   }
 
-  function gerarGrafico() {
-    const historico = JSON.parse(localStorage.getItem("historico")) || [];
-    const container = document.getElementById('graficoEvolucao');
-    
-    if (!container) return;
-    
-    if (historico.length < 2) {
-      container.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Mínimo de 2 partidas necessário</p>';
-      return;
-    }
-    
-    const ranking = obterRankingGeral();
-    const top3 = Object.entries(ranking)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3);
-    
-    if (top3.length === 0) {
-      container.innerHTML = '<p style="color:var(--text-secondary);text-align:center">Sem dados</p>';
-      return;
-    }
-    
-    const dados = {};
-    top3.forEach(([jogador]) => {
-      dados[jogador] = [];
-      let acumulado = 0;
-      
-      historico.forEach(partida => {
-        if (partida.gols && partida.gols[jogador]) {
-          acumulado += partida.gols[jogador].q;
-        }
-        dados[jogador].push(acumulado);
-      });
-    });
-    
-    const largura = Math.min(600, window.innerWidth - 60);
-    const altura = 200;
-    const margem = 40;
-    const maxValor = Math.max(...Object.values(dados).flat());
-    
-    const escalaY = (valor) => altura - margem - (valor / maxValor) * (altura - 2 * margem);
-    const escalaX = (index, total) => margem + (index / (total - 1)) * (largura - 2 * margem);
-    
-    const cores = ["#0fb858", "#2196f3", "#ffa502"];
-    
-    let svg = `<svg width="${largura}" height="${altura}" style="font-family:Arial;font-size:12px">`;
-    
-    for (let i = 0; i <= maxValor; i += Math.ceil(maxValor / 5)) {
-      const y = escalaY(i);
-      svg += `<line x1="${margem}" y1="${y}" x2="${largura - 20}" y2="${y}" stroke="#e2e8f0" stroke-width="1"/>`;
-      svg += `<text x="${margem - 10}" y="${y + 5}" text-anchor="end" fill="#4a5568">${i}</text>`;
-    }
-    
-    top3.forEach(([jogador], index) => {
-      const pontos = dados[jogador];
-      let path = `M ${escalaX(0, pontos.length)} ${escalaY(pontos[0])}`;
-      
-      pontos.forEach((valor, idx) => {
-        if (idx > 0) {
-          path += ` L ${escalaX(idx, pontos.length)} ${escalaY(valor)}`;
-        }
-      });
-      
-      svg += `<path d="${path}" stroke="${cores[index]}" stroke-width="2" fill="none"/>`;
-      
-      pontos.forEach((valor, idx) => {
-        svg += `<circle cx="${escalaX(idx, pontos.length)}" cy="${escalaY(valor)}" r="4" fill="${cores[index]}"/>`;
-      });
-    });
-    
-    top3.forEach(([jogador], index) => {
-      svg += `<rect x="${largura - 150}" y="${20 + 20 * index}" width="15" height="3" fill="${cores[index]}"/>`;
-      svg += `<text x="${largura - 130}" y="${25 + 20 * index}" fill="#1a1a2e">${jogador}</text>`;
-    });
-    
-    svg += `</svg>`;
-    container.innerHTML = svg;
-  }
-
+  // ===== COMPARAÇÃO =====
   function carregarComparacao() {
     const select1 = document.getElementById('jogador1');
     const select2 = document.getElementById('jogador2');
@@ -1251,124 +1061,7 @@ const PlacarApp = (function() {
     });
   }
 
-  function compararJogadores() {
-    const jogador1 = document.getElementById('jogador1').value;
-    const jogador2 = document.getElementById('jogador2').value;
-    const resultado = document.getElementById('resultadoComparacao');
-    
-    if (!jogador1 || !jogador2) {
-      showToast('Selecione 2 jogadores', 'error');
-      return;
-    }
-    
-    if (jogador1 === jogador2) {
-      showToast('Selecione jogadores diferentes', 'error');
-      return;
-    }
-    
-    const historico = JSON.parse(localStorage.getItem("historico")) || [];
-    
-    function calcularEstatisticas(nome) {
-      let jogos = 0;
-      let gols = 0;
-      let faltas = 0;
-      let vitorias = 0;
-      
-      historico.forEach(partida => {
-        const dadosGol = partida.gols && partida.gols[nome];
-        
-        if (dadosGol) {
-          jogos++;
-          gols += dadosGol.q;
-          
-          const placar = partida.placar;
-          const timeJogador = dadosGol.t;
-          const placarTime = placar[timeJogador === 'A' ? 0 : 1];
-          const placarAdversario = placar[timeJogador === 'A' ? 1 : 0];
-          
-          if (placarTime > placarAdversario) vitorias++;
-        }
-        
-        if (partida.faltas && partida.faltas.jogadores) {
-          faltas += partida.faltas.jogadores[nome] || 0;
-        }
-      });
-      
-      return {
-        jogos: jogos,
-        gols: gols,
-        faltas: faltas,
-        media: jogos > 0 ? (gols / jogos).toFixed(1) : '0',
-        aprov: jogos > 0 ? Math.round((vitorias / jogos) * 100) : 0
-      };
-    }
-    
-    const stats1 = calcularEstatisticas(jogador1);
-    const stats2 = calcularEstatisticas(jogador2);
-    
-    if (!resultado) return;
-    
-    resultado.innerHTML = `
-      <div class="comparacao-container">
-        <div class="jogador-compare">
-          <h3>${escapeHTML(jogador1)}</h3>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Gols</div>
-            <div class="compare-stat-value" style="color:${stats1.gols >= stats2.gols ? '#0fb858' : '#4a5568'}">
-              ${stats1.gols}
-            </div>
-          </div>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Média</div>
-            <div class="compare-stat-value" style="color:${parseFloat(stats1.media) >= parseFloat(stats2.media) ? '#0fb858' : '#4a5568'}">
-              ${stats1.media}
-            </div>
-          </div>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Aproveitamento</div>
-            <div class="compare-stat-value" style="color:${stats1.aprov >= stats2.aprov ? '#0fb858' : '#4a5568'}">
-              ${stats1.aprov}%
-            </div>
-          </div>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Faltas</div>
-            <div class="compare-stat-value" style="color:${stats1.faltas <= stats2.faltas ? '#0fb858' : '#ffa502'}">
-              ${stats1.faltas}
-            </div>
-          </div>
-        </div>
-        <div class="compare-vs">VS</div>
-        <div class="jogador-compare">
-          <h3>${escapeHTML(jogador2)}</h3>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Gols</div>
-            <div class="compare-stat-value" style="color:${stats2.gols >= stats1.gols ? '#0fb858' : '#4a5568'}">
-              ${stats2.gols}
-            </div>
-          </div>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Média</div>
-            <div class="compare-stat-value" style="color:${parseFloat(stats2.media) >= parseFloat(stats1.media) ? '#0fb858' : '#4a5568'}">
-              ${stats2.media}
-            </div>
-          </div>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Aproveitamento</div>
-            <div class="compare-stat-value" style="color:${stats2.aprov >= stats1.aprov ? '#0fb858' : '#4a5568'}">
-              ${stats2.aprov}%
-            </div>
-          </div>
-          <div class="compare-stat">
-            <div class="compare-stat-label">Faltas</div>
-            <div class="compare-stat-value" style="color:${stats2.faltas <= stats1.faltas ? '#0fb858' : '#ffa502'}">
-              ${stats2.faltas}
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
-
+  // ===== PWA =====
   function configurarPWA() {
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -1421,90 +1114,90 @@ const PlacarApp = (function() {
     }
   }
 
+  // ===== BACKUP DE DADOS =====
   function verificarBackupDados() {
     const backupKey = 'placar_backup_v1';
-    const currentData = {
-      jogadores: localStorage.getItem("jogadores"),
-      historico: localStorage.getItem("historico"),
-      nomes: {
-        timeA: localStorage.getItem("nomeTimeA"),
-        timeB: localStorage.getItem("nomeTimeB")
-      },
-      theme: localStorage.getItem("theme"),
-      lastBackup: new Date().toISOString()
-    };
     
-    // Fazer backup
-    localStorage.setItem(backupKey, JSON.stringify(currentData));
-    console.log('Backup realizado:', currentData.lastBackup);
-    
-    // Verificar se precisa restaurar
-    const mainJogadores = localStorage.getItem("jogadores");
-    const mainHistorico = localStorage.getItem("historico");
-    
-    const precisaRestaurar = 
-      !mainJogadores || 
-      mainJogadores === '[]' || 
-      mainJogadores === 'null' ||
-      mainJogadores === '' ||
-      (!mainHistorico || mainHistorico === '[]' || mainHistorico === 'null');
-    
-    if (precisaRestaurar) {
-      const backup = localStorage.getItem(backupKey);
-      if (backup) {
-        try {
+    try {
+      // Verificar se dados principais existem
+      const jogadores = localStorage.getItem("jogadores");
+      const historico = localStorage.getItem("historico");
+      
+      // Se não houver dados ou estiverem vazios, tentar restaurar do backup
+      if (!jogadores || jogadores === '[]' || jogadores === 'null' || 
+          !historico || historico === '[]' || historico === 'null') {
+        
+        const backup = localStorage.getItem(backupKey);
+        if (backup) {
           const parsed = JSON.parse(backup);
-          let restaurouAlgo = false;
           
           if (parsed.jogadores && parsed.jogadores !== 'null' && parsed.jogadores !== '[]') {
             localStorage.setItem("jogadores", parsed.jogadores);
-            restaurouAlgo = true;
           }
           
           if (parsed.historico && parsed.historico !== 'null' && parsed.historico !== '[]') {
             localStorage.setItem("historico", parsed.historico);
-            restaurouAlgo = true;
           }
           
-          if (parsed.nomes.timeA) {
+          if (parsed.nomes && parsed.nomes.timeA) {
             localStorage.setItem("nomeTimeA", parsed.nomes.timeA);
           }
           
-          if (parsed.nomes.timeB) {
+          if (parsed.nomes && parsed.nomes.timeB) {
             localStorage.setItem("nomeTimeB", parsed.nomes.timeB);
           }
           
-          if (parsed.theme) {
-            localStorage.setItem("theme", parsed.theme);
-          }
-          
-          if (restaurouAlgo) {
-            console.log('Dados restaurados do backup!');
-            showToast('Dados restaurados do backup automático', 'success');
-          }
-        } catch (e) {
-          console.log('Erro ao restaurar backup:', e);
+          console.log('Dados restaurados do backup!');
+          showToast('Dados restaurados do backup automático', 'success');
         }
       }
+      
+      // Sempre fazer backup atual
+      const currentData = {
+        jogadores: localStorage.getItem("jogadores"),
+        historico: localStorage.getItem("historico"),
+        nomes: {
+          timeA: localStorage.getItem("nomeTimeA"),
+          timeB: localStorage.getItem("nomeTimeB")
+        },
+        theme: localStorage.getItem("theme"),
+        lastBackup: new Date().toISOString()
+      };
+      
+      localStorage.setItem(backupKey, JSON.stringify(currentData));
+      console.log('Backup realizado:', currentData.lastBackup);
+      
+    } catch (error) {
+      console.error('Erro no backup:', error);
     }
   }
 
+  // ===== INICIALIZAÇÃO =====
   function init() {
+    console.log('Inicializando PlacarApp...');
+    
+    // Carregar configurações
     carregarTema();
     carregarNomesTimes();
     renderJogadores();
-    configurarPWA();
+    
+    // Verificar e restaurar backup
     verificarBackupDados();
     
+    // Configurar PWA
+    configurarPWA();
+    
+    // Registrar Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=3')
-        .then(() => console.log('Service Worker v3 registrado!'))
-        .catch(err => console.log('Erro no Service Worker:', err));
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Service Worker registrado!'))
+        .catch(err => console.error('Erro no Service Worker:', err));
     }
     
     console.log('PlacarApp inicializado com sucesso!');
   }
 
+  // ===== INTERFACE PÚBLICA =====
   return {
     init: init,
     toggleTheme: toggleTheme,
@@ -1531,11 +1224,18 @@ const PlacarApp = (function() {
     ranking: ranking,
     historico: historico,
     estatisticas: estatisticas,
-    compararJogadores: compararJogadores,
+    compararJogadores: function() {
+      showToast('Funcionalidade em desenvolvimento', 'info');
+    },
     carregarComparacao: carregarComparacao,
     instalarApp: instalarApp,
     getState: () => ({ ...state })
   };
 })();
 
-document.addEventListener('DOMContentLoaded', PlacarApp.init);
+// Inicializar quando a página carregar
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', PlacarApp.init);
+} else {
+  PlacarApp.init();
+}
