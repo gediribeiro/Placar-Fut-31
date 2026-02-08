@@ -398,15 +398,17 @@ const PlacarApp = (function() {
   }
 
   function animarGol() {
-  const placar = document.querySelector('.placar');
-  placar.classList.add("gol-animation");
-
+  const placarDiv = document.querySelector('.placar');
+  
+  // Adicione a classe de animação
+  placarDiv.classList.add("gol-animation");
+  
   if (navigator.vibrate) {
     navigator.vibrate([100, 50, 100, 50, 100]);
   }
-
+  
   setTimeout(() => {
-    placar.classList.remove("gol-animation");
+    placarDiv.classList.remove("gol-animation");
   }, 600);
 }
 
