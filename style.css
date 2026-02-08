@@ -429,8 +429,8 @@ section.active {
 .botoes-controle {
   display: flex;
   flex-direction: column;
-  gap: 100px;
-  width: 58px;
+  gap: 10px;
+  width: 20px;
 }
 
 .btn-controle {
