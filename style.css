@@ -1308,23 +1308,60 @@ svg {
   }
 }
 
-@media (orientation: landscape) and (max-height: 500px) {
-  .placar { 
-    font-size: 48px; 
+/* CORREÇÃO PARA VERTICAL (iPhone 8 Plus) */
+@media (max-width: 414px) and (orientation: portrait) {
+  .placar-container {
+    padding: 0 8px; /* ← Margem interna no container */
+  }
+  
+  .placar {
+    font-size: 48px; /* ← Menor em vertical */
+    gap: 6px;        /* ← Muito mais próximo */
     padding: 12px 0;
-    flex-direction: row;
   }
   
-  header { 
-    padding: 12px 20px 
+  .placar .vs {
+    font-size: 24px;
+    margin: 0 2px;
   }
   
-  .card { 
-    padding: 16px 
+  .placar-time {
+    gap: 6px;
+    flex-wrap: nowrap;
   }
   
-  section {
-    padding-bottom: 60px;
+  .botoes-verticais {
+    gap: 4px;
+    margin: 0;
+  }
+  
+  .btn-mais {
+    width: 42px;  /* ← Ainda menor */
+    height: 50px;
+    font-size: 26px;
+  }
+  
+  .btn-menos {
+    width: 42px;
+    height: 32px;
+    font-size: 18px;
+  }
+  
+  .btn-falta {
+    width: 42px;
+    height: 32px;
+    font-size: 16px;
+  }
+  
+  /* Garante que tudo caiba */
+  .nome-time {
+    padding: 6px 8px;
+    font-size: 16px;
+  }
+  
+  .placar-header {
+    padding: 0 2px;
+    gap: 4px;
   }
 }
 
