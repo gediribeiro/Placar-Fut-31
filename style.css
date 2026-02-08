@@ -148,7 +148,7 @@ header {
 /* ===== TABS ELEGANTES ===== */
 .tabs {
   display: flex;
-  background: black;
+  background: white;
   overflow-x: auto;
   scrollbar-width: none;
   width: 100%;
@@ -429,7 +429,7 @@ section.active {
 .botoes-controle {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 100px;
   width: 58px;
 }
 
