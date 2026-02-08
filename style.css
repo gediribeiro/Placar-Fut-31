@@ -292,7 +292,8 @@ section.active {
   position: relative;
   z-index: 2;
   width: 100%;
-  gap: 10px;
+  gap: 8px;            /* ← CORRIGIDO: reduzido de 10px */
+  padding: 0 4px;      /* ← NOVO: margem interna */
 }
 
 .nome-time {
@@ -303,7 +304,7 @@ section.active {
   align-items: center;
   gap: 8px;
   flex: 1;
-  padding: 8px 12px;
+  padding: 8px 10px;   /* ← CORRIGIDO: reduzido de 12px */
   background: rgba(15, 184, 88, 0.1);
   border-radius: 8px;
   backdrop-filter: blur(5px);
@@ -350,8 +351,8 @@ section.active {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding: 24px 0;
+  gap: 12px;           /* ← CORRIGIDO: reduzido de 24px */
+  padding: 20px 0;     /* ← CORRIGIDO: reduzido de 24px */
   position: relative;
   z-index: 2;
   font-variant-numeric: tabular-nums;
@@ -373,7 +374,7 @@ section.active {
 .placar-time {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;           /* ← CORRIGIDO: reduzido de 16px */
   flex: 1;
   justify-content: center;
   min-width: 0;
@@ -388,8 +389,9 @@ section.active {
 .botoes-verticais {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;            /* ← CORRIGIDO: reduzido de 8px */
   flex-shrink: 0;
+  margin: 0 2px;       /* ← NOVO: margem interna */
 }
 
 .btn-mais, .btn-menos, .btn-falta {
@@ -428,25 +430,25 @@ section.active {
 .btn-mais {
   background: linear-gradient(135deg, #0fb858, #0ea04d);
   color: white;
-  width: 56px;
-  height: 70px;
-  font-size: 36px
+  width: 50px;         /* ← CORRIGIDO: reduzido de 56px */
+  height: 60px;        /* ← CORRIGIDO: reduzido de 70px */
+  font-size: 32px;     /* ← CORRIGIDO: reduzido de 36px */
 }
 
 .btn-menos {
   background: linear-gradient(135deg, #ff4757, #e63946);
   color: white;
-  width: 56px;
-  height: 46px;
-  font-size: 24px
+  width: 50px;         /* ← CORRIGIDO: reduzido de 56px */
+  height: 40px;        /* ← CORRIGIDO: reduzido de 46px */
+  font-size: 22px;     /* ← CORRIGIDO: reduzido de 24px */
 }
 
 .btn-falta {
   background: linear-gradient(135deg, #ffa502, #ff8c00);
   color: white;
-  width: 56px;
-  height: 46px;
-  font-size: 20px
+  width: 50px;         /* ← CORRIGIDO: reduzido de 56px */
+  height: 40px;        /* ← CORRIGIDO: reduzido de 46px */
+  font-size: 18px;     /* ← CORRIGIDO: reduzido de 20px */
 }
 
 .btn-mais:active, .btn-menos:active, .btn-falta:active {
@@ -454,11 +456,12 @@ section.active {
 }
 
 .placar .vs {
-  font-size: 40px;
+  font-size: 32px;     /* ← CORRIGIDO: reduzido de 40px */
   color: var(--text-sec);
   font-weight: 400;
   opacity: 0.5;
   flex-shrink: 0;
+  margin: 0 4px;       /* ← NOVO: menos espaçamento */
 }
 
 .tempo-container {
@@ -544,17 +547,18 @@ section.active {
 
 .actions button {
   flex: 1;
-  min-width: 100px;
-  padding: 16px;
+  min-width: 80px;      /* ← CORRIGIDO: reduzido de 100px */
+  padding: 12px 16px;   /* ← CORRIGIDO: reduzido de 16px */
   border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 700;
+  border-radius: 10px;  /* ← CORRIGIDO: reduzido de 12px */
+  font-size: 15px;      /* ← CORRIGIDO: reduzido de 16px */
+  font-weight: 600;     /* ← CORRIGIDO: reduzido de 700 */
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: var(--shadow);
   position: relative;
-  overflow: hidden
+  overflow: hidden;
+  margin: 2px;          /* ← NOVO: espaçamento */
 }
 
 .actions button::before {
@@ -1242,14 +1246,15 @@ svg {
   }
   
   .btn-mais { 
-    width: 50px; 
-    height: 64px; 
-    font-size: 32px 
+    width: 46px;       /* ← CORRIGIDO para iPhone */
+    height: 54px; 
+    font-size: 28px 
   }
   
   .btn-menos, .btn-falta { 
-    width: 50px; 
-    height: 42px;
+    width: 46px; 
+    height: 36px;
+    font-size: 20px;
   }
   
   .popup-jogadores { 
@@ -1269,6 +1274,37 @@ svg {
   .falta-item {
     width: 100%;
     max-width: 200px;
+  }
+  
+  /* BÔNUS: Otimização específica iPhone 8 Plus */
+  @media (max-width: 414px) {
+    .placar {
+      font-size: 56px;
+      gap: 8px;
+      padding: 16px 0;
+      flex-direction: row;
+    }
+    
+    .placar .vs {
+      font-size: 28px;
+      margin: 0 2px;
+    }
+    
+    .placar-time {
+      gap: 8px;
+    }
+    
+    .actions {
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .actions button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      min-height: 48px;
+    }
   }
 }
 
