@@ -34,70 +34,80 @@
     </div>
     
     <main>
-        <!-- SEÇÃO JOGO -->
-        <section id="jogo" class="active">
-            <div class="placar-container">
-                <div class="placar-header">
-                    <div class="nome-time">
-                        <span id="nomeTimeA">Time A</span>
-                    </div>
-                    <button class="btn-edit" onclick="PlacarApp.editarNomeTime('A')">✏️</button>
-                    <button class="btn-edit" onclick="PlacarApp.editarNomeTime('B')">✏️</button>
-                    <div class="nome-time">
-                        <span id="nomeTimeB">Time B</span>
-                    </div>
+        <!-- SEÇÃO JOGO - VERSÃO LIMPA -->
+<section id="jogo" class="active">
+    <div class="placar-container">
+        <!-- CABEÇALHO COM NOMES DOS TIMES -->
+        <div class="placar-header">
+            <div class="nome-time" id="nomeTimeA">Time A</div>
+            <div class="header-buttons">
+                <button class="btn-edit" onclick="PlacarApp.editarNomeTime('A')">✏️</button>
+                <button class="btn-edit" onclick="PlacarApp.editarNomeTime('B')">✏️</button>
+            </div>
+            <div class="nome-time" id="nomeTimeB">Time B</div>
+        </div>
+        
+        <!-- PLACAR PRINCIPAL -->
+        <div class="placar">
+            <!-- TIME A -->
+            <div class="time-section time-a">
+                <div class="botoes-time">
+                    <button class="btn-acao btn-plus" onclick="PlacarApp.aumentarGol('A')">+</button>
+                    <button class="btn-acao btn-minus" onclick="PlacarApp.diminuirGol('A')">−</button>
+                    <button class="btn-acao btn-foul" onclick="PlacarApp.registrarFalta('A')">!</button>
                 </div>
-                
-                <div class="placar" id="placarDiv">
-                    <!-- Time A -->
-                    <div class="placar-time">
-                        <div class="botoes-controle">
-                            <button class="btn-controle btn-gol" onclick="PlacarApp.aumentarGol('A')">+</button>
-                            <button class="btn-controle btn-remover" onclick="PlacarApp.diminuirGol('A')">−</button>
-                            <button class="btn-controle btn-falta" onclick="PlacarApp.registrarFalta('A')">!</button>
-                        </div>
-                        <div class="placar-numero" id="placarA">0</div>
-                    </div>
-                    
-                    <div class="placar-vs">×</div>
-                   
-                   <!-- Time B - CORRIGIDO -->
-                    <div class="placar-time time-b">
-                        <div class="placar-numero" id="placarB">0</div>
-                            <div class="botoes-controle">
-                                <button class="btn-controle btn-gol" onclick="PlacarApp.aumentarGol('B')">+</button>
-                                <button class="btn-controle btn-remover" onclick="PlacarApp.diminuirGol('B')">−</button>
-                                <button class="btn-controle btn-falta" onclick="PlacarApp.registrarFalta('B')">!</button>
-                            </div>
-                        </div>
-          
-                </div>
-                
-                <div class="tempo-container">
-                    <div id="tempo" onclick="PlacarApp.togglePause()">00:00</div>
-                </div>
-                
-                <div class="contador-faltas">
-                    <div class="falta-item">
-                        <span id="nomeFaltaA">Time A</span>
-                        <span class="falta-numero" id="faltasA">0</span>
-                    </div>
-                    <div class="falta-item">
-                        <span id="nomeFaltaB">Time B</span>
-                        <span class="falta-numero" id="faltasB">0</span>
-                    </div>
-                </div>
+                <div class="placar-numero" id="placarA">0</div>
             </div>
             
-            <div class="actions">
-                <button id="btnIniciar" class="btn-acao btn-iniciar" onclick="PlacarApp.iniciar()">▶ Iniciar</button>
-                <button class="btn-acao btn-reset" onclick="PlacarApp.resetar()">🔄 Reset</button>
-                <button id="btnFim" class="btn-acao btn-fim" onclick="PlacarApp.fim()">⛔ Fim</button>
-            </div>
+            <!-- DIVISÓRIA -->
+            <div class="placar-divisor">×</div>
             
-            <h3 id="tituloGols" class="hidden">📊 Visão Geral da Partida</h3>
-            <ul id="listaGols"></ul>
-        </section>
+            <!-- TIME B -->
+            <div class="time-section time-b">
+                <div class="placar-numero" id="placarB">0</div>
+                <div class="botoes-time">
+                    <button class="btn-acao btn-plus" onclick="PlacarApp.aumentarGol('B')">+</button>
+                    <button class="btn-acao btn-minus" onclick="PlacarApp.diminuirGol('B')">−</button>
+                    <button class="btn-acao btn-foul" onclick="PlacarApp.registrarFalta('B')">!</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CRONÔMETRO -->
+        <div class="timer-container">
+            <div class="timer" id="tempo" onclick="PlacarApp.togglePause()">00:00</div>
+        </div>
+        
+        <!-- CONTADOR DE FALTAS -->
+        <div class="faltas-container">
+            <div class="falta-box">
+                <span class="falta-time" id="nomeFaltaA">Time A</span>
+                <span class="falta-count" id="faltasA">0</span>
+            </div>
+            <div class="falta-box">
+                <span class="falta-time" id="nomeFaltaB">Time B</span>
+                <span class="falta-count" id="faltasB">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BOTÕES DE CONTROLE DO JOGO -->
+    <div class="game-controls">
+        <button class="control-btn start-btn" id="btnIniciar" onclick="PlacarApp.iniciar()">
+            <span class="btn-icon">▶</span> Iniciar
+        </button>
+        <button class="control-btn reset-btn" onclick="PlacarApp.resetar()">
+            <span class="btn-icon">🔄</span> Reset
+        </button>
+        <button class="control-btn end-btn" id="btnFim" onclick="PlacarApp.fim()">
+            <span class="btn-icon">⛔</span> Fim
+        </button>
+    </div>
+    
+    <!-- LISTA DE GOLS -->
+    <h3 id="tituloGols" class="hidden">📊 Visão Geral da Partida</h3>
+    <ul id="listaGols"></ul>
+</section>
         
         <!-- SEÇÃO JOGADORES -->
         <section id="jogadores">
