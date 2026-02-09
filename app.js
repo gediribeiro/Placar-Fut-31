@@ -26,19 +26,64 @@ const PlacarApp = (function() {
     return div.innerHTML;
   }
 
+  // CORREÇÃO 6: Popups bonitos para mensagens
   function showToast(message, type = 'info', duration = 3000) {
+    // Remover toasts antigos
+    document.querySelectorAll('.toast').forEach(toast => toast.remove());
+    
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.textContent = message;
+    
+    // Estilos inline para garantir funcionamento
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: ${type === 'success' ? '#0fb858' : 
+                   type === 'error' ? '#ff4757' : 
+                   type === 'warning' ? '#ffa502' : '#3498db'};
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      z-index: 9999;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: all 0.3s ease;
+      text-align: center;
+      max-width: 80%;
+      word-break: break-word;
+    `;
+    
     document.body.appendChild(toast);
     
+    // Animação de entrada
+    setTimeout(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    }, 10);
+    
+    // Vibrar se suportado
+    if (navigator.vibrate) navigator.vibrate(30);
+    
+    // Remover após duração
     setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(-50%) translateY(-20px)';
-      setTimeout(() => toast.remove(), 300);
+      setTimeout(() => {
+        if (toast.parentNode) toast.remove();
+      }, 300);
     }, duration);
     
-    if (navigator.vibrate) navigator.vibrate(30);
+    // Fechar ao clicar
+    toast.onclick = () => {
+      toast.style.opacity = '0';
+      setTimeout(() => toast.remove(), 300);
+    };
+    
+    return toast;
   }
 
   function confirmAction(message) {
@@ -76,6 +121,9 @@ const PlacarApp = (function() {
         break;
       case 'comparar':
         carregarComparacao();
+        break;
+      case 'backup':
+        // Nada especial para backup
         break;
     }
     
@@ -305,6 +353,18 @@ const PlacarApp = (function() {
     state.partida = null;
     state.segundos = 0;
     state.pausado = false;
+    
+    // CORREÇÃO 4: Resetar nomes dos times também
+    state.nomeA = "Time A";
+    state.nomeB = "Time B";
+    document.getElementById('nomeTimeA').textContent = "Time A";
+    document.getElementById('nomeTimeB').textContent = "Time B";
+    document.getElementById('nomeFaltaA').textContent = "Time A";
+    document.getElementById('nomeFaltaB').textContent = "Time B";
+    
+    // Opcional: limpar do localStorage também
+    localStorage.removeItem("nomeTimeA");
+    localStorage.removeItem("nomeTimeB");
     
     document.getElementById('placarA').textContent = '0';
     document.getElementById('placarB').textContent = '0';
@@ -1271,6 +1331,84 @@ const PlacarApp = (function() {
     showToast('Comparação realizada!', 'success');
   }
 
+  // ===== BACKUP E RESTAURAÇÃO =====
+  // CORREÇÃO 5: Funcionalidade de backup
+  function exportarBackup() {
+    const dados = {
+      versao: "1.0",
+      dataBackup: new Date().toISOString(),
+      jogadores: state.jogadores,
+      historico: JSON.parse(localStorage.getItem("historico") || "[]"),
+      nomeTimeA: state.nomeA,
+      nomeTimeB: state.nomeB
+    };
+    
+    const blob = new Blob([JSON.stringify(dados, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `placar-fut-backup-${new Date().toLocaleDateString('pt-BR')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast("Backup exportado com sucesso!", "success");
+  }
+
+  async function importarBackup(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (!await confirmAction("Importar dados? Isso substituirá seus dados atuais.")) {
+      event.target.value = "";
+      return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const dados = JSON.parse(e.target.result);
+        
+        if (dados.versao !== "1.0") {
+          showToast("Versão do backup incompatível", "error");
+          return;
+        }
+        
+        // Restaurar dados
+        state.jogadores = dados.jogadores || [];
+        localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
+        
+        if (dados.historico) {
+          localStorage.setItem("historico", JSON.stringify(dados.historico));
+        }
+        
+        if (dados.nomeTimeA) {
+          state.nomeA = dados.nomeTimeA;
+          localStorage.setItem("nomeTimeA", dados.nomeTimeA);
+          document.getElementById('nomeTimeA').textContent = dados.nomeTimeA;
+          document.getElementById('nomeFaltaA').textContent = dados.nomeTimeA;
+        }
+        
+        if (dados.nomeTimeB) {
+          state.nomeB = dados.nomeTimeB;
+          localStorage.setItem("nomeTimeB", dados.nomeTimeB);
+          document.getElementById('nomeTimeB').textContent = dados.nomeTimeB;
+          document.getElementById('nomeFaltaB').textContent = dados.nomeTimeB;
+        }
+        
+        renderJogadores();
+        showToast("Backup importado com sucesso!", "success");
+        
+      } catch (error) {
+        showToast("Erro ao importar backup", "error");
+        console.error(error);
+      }
+      event.target.value = "";
+    };
+    reader.readAsText(file);
+  }
+
   // ===== PWA =====
   function configurarPWA() {
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -1389,6 +1527,15 @@ const PlacarApp = (function() {
     carregarNomesTimes();
     renderJogadores();
     
+    // CORREÇÃO 2: Esconder botão desfazer no início
+    esconderUndo();
+    
+    // Mostrar botão de backup
+    const backupBtn = document.getElementById('backupBtn');
+    if (backupBtn) {
+      backupBtn.style.display = 'block';
+    }
+    
     // Verificar e restaurar backup
     verificarBackupDados();
     
@@ -1433,6 +1580,8 @@ const PlacarApp = (function() {
     estatisticas: estatisticas,
     compararJogadores: compararJogadores,
     carregarComparacao: carregarComparacao,
+    exportarBackup: exportarBackup,
+    importarBackup: importarBackup,
     instalarApp: instalarApp,
     getState: () => ({ ...state })
   };
@@ -1444,19 +1593,3 @@ if (document.readyState === 'loading') {
 } else {
   PlacarApp.init();
 }
-// Testar Service Worker
-function testServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready.then(registration => {
-      console.log('Service Worker registrado:', registration.active);
-      
-      // Verificar cache
-      caches.keys().then(cacheNames => {
-        console.log('Caches disponíveis:', cacheNames);
-      });
-    });
-  }
-}
-
-// Chamar após inicialização
-setTimeout(testServiceWorker, 2000);
