@@ -366,7 +366,7 @@ section.active {
 .placar-time {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   flex: 1;
   justify-content: center;
 }
@@ -428,14 +428,14 @@ section.active {
 .botoes-controle {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  width: 46px;
+  gap: 8px;
+  width: 50px;
   margin-top: 8px;
 }
 
 .btn-controle {
-  width: 46px;
-  height: 46px;
+  width:50px;
+  height: 50px;
   border: none;
   border-radius: 14px;
   font-weight: 800;
@@ -445,7 +445,7 @@ section.active {
   font-size: 22px;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
 }
@@ -477,7 +477,7 @@ section.active {
 .btn-gol {
   background: var(--gradient-green);
   color: white;
-  height: 54px;
+  height: 58px;
   font-size: 26px;
 }
 
