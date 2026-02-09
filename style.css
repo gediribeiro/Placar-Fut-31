@@ -1523,4 +1523,45 @@ li button:active {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-green-dark);
 }
+/* ===== CORREÇÃO DEFINITIVA DO PLACAR ESPELHADO ===== */
+.placar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  justify-items: center;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.placar-time {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Time A: alinhado à esquerda */
+.placar-time:first-child {
+  justify-content: flex-start;
+  flex-direction: row; /* botões → placar */
+}
+
+/* Time B: alinhado à direita */
+.time-b {
+  justify-content: flex-end;
+  flex-direction: row-reverse; /* placar ← botões */
+}
+
+.placar-vs {
+  grid-column: 2;
+  font-size: 24px;
+  padding: 0 15px;
+}
+
+.botoes-controle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 46px;
+  margin: 0 15px;
+}
 }
