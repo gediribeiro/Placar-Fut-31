@@ -363,12 +363,19 @@ section.active {
   z-index: 1;
 }
 
+/* === PLACAR-TIME === */
 .placar-time {
   display: flex;
   align-items: center;
-  gap: 12px;
   flex: 1;
-  justify-content: center;
+}
+
+.placar-time:first-child {
+  justify-content: flex-start;
+}
+
+.placar-time:last-child {
+  justify-content: flex-end;
 }
 
 .placar-numero {
@@ -425,12 +432,20 @@ section.active {
 }
 
 /* BOTÕES DE CONTROLE INTEGRADOS */
+/* === BOTÕES-CONTROLE === */
 .botoes-controle {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 50px;
-  margin-top: 8px;
+}
+
+.placar-time:first-child .botoes-controle {
+  margin-right: 12px;
+}
+
+.placar-time:last-child .botoes-controle {
+  margin-left: 12px;
 }
 
 .btn-controle {
@@ -1499,21 +1514,4 @@ li button:active {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-green-dark);
 }
-
-/* ADICIONE NO FINAL DO CSS */
-.placar-time:first-child .botoes-controle {
-  margin-right: 10px;
-}
-
-.placar-time:last-child .botoes-controle {
-  margin-left: 10px;
-}
-
-/* ADICIONE NO FINAL DO CSS */
-.placar-time:last-child {
-  justify-content: flex-end;
-}
-
-.placar-time:first-child {
-  justify-content: flex-start;
 }
