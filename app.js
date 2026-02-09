@@ -1,4 +1,4 @@
-const APP_VERSION = 'v2024.01.15';
+const APP_VERSION = 'v2026.02.09';
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
@@ -18,7 +18,8 @@ const PlacarApp = (function() {
     timeEditando: null,
     deferredPrompt: null,
     undoTimer: null,
-    backupTimer: null
+    backupTimer: null,
+    eventosTimeline: []
   };
 
   // ===== FUNÇÕES AUXILIARES =====
@@ -211,6 +212,87 @@ const PlacarApp = (function() {
     
     localStorage.setItem('app_checksum', newChecksum);
   }
+
+  // ===== LINHA DO TEMPO SIMPLIFICADA =====
+function adicionarEventoTimeline(tipo, time = null, jogador = null) {
+    if (!state.eventosTimeline) state.eventosTimeline = [];
+    
+    const min = Math.floor(state.segundos / 60);
+    const seg = state.segundos % 60;
+    const tempo = `${min}:${seg.toString().padStart(2, '0')}`;
+    
+    state.eventosTimeline.push({ tempo, tipo, time, jogador });
+    atualizarTimeline();
+}
+
+function atualizarTimeline() {
+    const lista = document.getElementById('listaTimeline');
+    if (!lista) return;
+    
+    if (state.eventosTimeline.length === 0) {
+        lista.innerHTML = '<li class="timeline-empty">Nenhum evento registrado ainda</li>';
+        return;
+    }
+    
+    // Mostrar últimos 15 eventos (do mais recente para o mais antigo)
+    const eventosParaMostrar = state.eventosTimeline.slice(-15).reverse();
+    
+    lista.innerHTML = eventosParaMostrar.map(evento => {
+        const icone = 
+            evento.tipo === 'gol' ? '⚽' :
+            evento.tipo === 'falta' ? '🟨' :
+            evento.tipo === 'inicio' ? '▶️' :
+            evento.tipo === 'fim' ? '🏁' :
+            evento.tipo === 'pause' ? '⏸️' :
+            evento.tipo === 'resume' ? '▶️' :
+            evento.tipo === 'reset' ? '🔄' : '📝';
+        
+        let texto = '';
+        let classe = 'event-center';
+        
+        switch(evento.tipo) {
+            case 'gol':
+                texto = evento.jogador ? `${evento.jogador}` : `Time ${evento.time}`;
+                classe = evento.time === 'A' ? 'event-left' : 'event-right';
+                break;
+            case 'falta':
+                texto = evento.jogador ? `${evento.jogador}` : `Time ${evento.time}`;
+                classe = evento.time === 'A' ? 'event-left' : 'event-right';
+                break;
+            case 'inicio':
+                texto = 'Jogo Iniciado';
+                classe = 'event-center';
+                break;
+            case 'fim':
+                texto = 'Jogo Finalizado';
+                classe = 'event-center';
+                break;
+            case 'pause':
+                texto = 'Jogo Pausado';
+                classe = 'event-center';
+                break;
+            case 'resume':
+                texto = 'Jogo Retomado';
+                classe = 'event-center';
+                break;
+            case 'reset':
+                texto = 'Jogo Resetado';
+                classe = 'event-center';
+                break;
+        }
+        
+        return `<li class="timeline-item ${classe}">
+            <span class="event-time">${evento.tempo}'</span>
+            <span class="event-icon">${icone}</span>
+            <span class="event-text">${texto}</span>
+        </li>`;
+    }).join('');
+}
+
+function resetarTimeline() {
+    state.eventosTimeline = [];
+    atualizarTimeline();
+}
 
   // ===== NAVEGAÇÃO =====
   function trocarTab(tabId, button) {
@@ -447,6 +529,11 @@ const PlacarApp = (function() {
       }
     }, 1000);
     
+    // ============ TIMELINE ADICIONADA ============
+    // Registrar evento na timeline
+    adicionarEventoTimeline('inicio');
+    // =============================================
+    
     // Efeitos
     mostrarOverlay("INÍCIO DE JOGO", "⚽", 1500);
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -463,6 +550,15 @@ const PlacarApp = (function() {
     
     state.pausado = !state.pausado;
     
+    // ============ TIMELINE ADICIONADA ============
+    // Registrar evento na timeline
+    if (state.pausado) {
+      adicionarEventoTimeline('pause');
+    } else {
+      adicionarEventoTimeline('resume');
+    }
+    // =============================================
+    
     // CORREÇÃO 7: Otimizar timer para economia de bateria
     if (state.pausado) {
       document.getElementById('tempo').classList.add('tempo-pausado');
@@ -476,6 +572,11 @@ const PlacarApp = (function() {
   }
 
   async function resetar() {
+    // ============ TIMELINE ADICIONADA ============
+    // Limpar timeline ao resetar
+    resetarTimeline();
+    // =============================================
+    
     if (state.partida) {
       if (!await confirmAction("Resetar jogo atual? Todos os dados serão perdidos.")) {
         return;
@@ -542,6 +643,11 @@ const PlacarApp = (function() {
     // CORREÇÃO 7: Parar completamente o timer
     clearInterval(state.timer);
     state.timer = null;
+    
+    // ============ TIMELINE ADICIONADA ============
+    // Registrar evento na timeline
+    adicionarEventoTimeline('fim');
+    // =============================================
     
     // Calcular estatísticas da partida
     const golsPorJogador = {};
@@ -713,6 +819,11 @@ const PlacarApp = (function() {
       minuto: Math.floor(state.segundos / 60),
       timestamp: Date.now()
     });
+    
+    // ============ TIMELINE ADICIONADA ============
+    // Registrar evento na timeline
+    adicionarEventoTimeline('gol', state.timeAtual, jogador);
+    // =============================================
     
     // Atualizar interface
     renderGols();
@@ -891,6 +1002,11 @@ const PlacarApp = (function() {
       minuto: Math.floor(state.segundos / 60),
       timestamp: Date.now()
     });
+    
+    // ============ TIMELINE ADICIONADA ============
+    // Registrar evento na timeline
+    adicionarEventoTimeline('falta', state.timeAtualFalta, jogador);
+    // =============================================
     
     fecharPopupFalta();
     fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
