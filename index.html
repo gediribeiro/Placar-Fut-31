@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="Sistema de placar profissional Placar Fut 31">
-    <meta name="theme-color" content="#1a1a2e">
+    <meta name="theme-color" content="#0fb858">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Placar Fut 31">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <title>Placar Fut 31</title>
@@ -18,9 +21,6 @@
                 <div class="logo-icon">⚽</div>
                 <h1 class="app-title">Placar Fut 31</h1>
             </div>
-            <button class="theme-toggle" onclick="PlacarApp.toggleTheme()" title="Alternar tema claro/escuro">
-                🌓
-            </button>
         </div>
     </header>
 
@@ -77,20 +77,23 @@
                     </div>
                 </div>
 
-                <!-- CRONÔMETRO -->
+                <!-- CRONÔMETRO (MENOR E MAIS PRÓXIMO) -->
                 <div class="timer-section">
                     <div class="game-timer" id="tempo" onclick="PlacarApp.togglePause()">00:00</div>
                 </div>
 
-                <!-- CONTADOR DE FALTAS -->
-                <div class="fouls-counter">
-                    <div class="foul-item">
-                        <span class="foul-team-name" id="nomeFaltaA">Time A</span>
-                        <span class="foul-count" id="faltasA">0</span>
-                    </div>
-                    <div class="foul-item">
-                        <span class="foul-team-name" id="nomeFaltaB">Time B</span>
-                        <span class="foul-count" id="faltasB">0</span>
+                <!-- CONTADOR DE FALTAS (MENOR E COM TÍTULO) -->
+                <div class="fouls-section">
+                    <div class="section-label">Faltas</div>
+                    <div class="fouls-counter">
+                        <div class="foul-item">
+                            <span class="foul-team-name" id="nomeFaltaA">Time A</span>
+                            <span class="foul-count" id="faltasA">0</span>
+                        </div>
+                        <div class="foul-item">
+                            <span class="foul-team-name" id="nomeFaltaB">Time B</span>
+                            <span class="foul-count" id="faltasB">0</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -143,25 +146,31 @@
 
         <!-- SEÇÃO: HISTÓRICO -->
         <section id="historico" class="content-section">
-            <button class="danger-btn clear-history-btn" onclick="PlacarApp.limparHistorico()">
-                🗑️ Limpar Histórico
-            </button>
+            <div class="history-header">
+                <h2 class="section-title">📋 Histórico de Partidas</h2>
+                <button class="danger-btn clear-history-btn" onclick="PlacarApp.limparHistorico()">
+                    🗑️ Limpar Histórico
+                </button>
+            </div>
             <div id="listaHistorico" class="history-container"></div>
         </section>
 
-        <!-- SEÇÃO: ESTATÍSTICAS -->
+        <!-- SEÇÃO: STATS -->
         <section id="stats" class="content-section">
-            <div class="stats-card">
-                <h3 class="card-title">📊 Estatísticas Gerais</h3>
-                <div id="statsGerais" class="stats-content"></div>
-            </div>
-            <div class="stats-card">
-                <h3 class="card-title">🔥 Últimas 5 Partidas</h3>
-                <div id="statsRecentes" class="stats-content"></div>
-            </div>
-            <div class="stats-card">
-                <h3 class="card-title">👤 Por Jogador</h3>
-                <div id="statsPorJogador" class="stats-content"></div>
+            <h2 class="section-title">📊 Estatísticas</h2>
+            <div class="stats-grid">
+                <div class="stats-card">
+                    <h3 class="card-title">📈 Gerais</h3>
+                    <div id="statsGerais" class="stats-content"></div>
+                </div>
+                <div class="stats-card">
+                    <h3 class="card-title">🔥 Recentes</h3>
+                    <div id="statsRecentes" class="stats-content"></div>
+                </div>
+                <div class="stats-card">
+                    <h3 class="card-title">👤 Por Jogador</h3>
+                    <div id="statsPorJogador" class="stats-content"></div>
+                </div>
             </div>
         </section>
 
@@ -251,9 +260,13 @@
     <!-- ===== SCRIPTS ===== -->
     <script src="app.js"></script>
     <script>
-        // Inicialização básica
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Placar Fut 31 - Carregado com sucesso!');
+            
+            // Verificar se é PWA instalado
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                console.log('Rodando como PWA instalado');
+            }
         });
     </script>
 </body>
