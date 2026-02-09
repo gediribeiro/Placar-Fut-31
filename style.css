@@ -165,6 +165,7 @@ body {
     transition: all 0.3s ease;
 }
 
+/* CORREÇÃO 1: Linha verde apenas na aba ativa */
 .tab-button.active {
     color: var(--primary-green);
     font-weight: 700;
@@ -180,6 +181,11 @@ body {
     height: 3px;
     background: var(--primary-green);
     border-radius: 3px 3px 0 0;
+}
+
+/* Remover linha das outras abas */
+.tab-button:not(.active)::after {
+    display: none;
 }
 
 /* ===== 5. CONTEÚDO PRINCIPAL ===== */
@@ -982,13 +988,13 @@ body {
 
 /* ===== 14. BOTÕES FLUTUANTES ===== */
 .floating-btn {
-    display: none;
     position: fixed;
     border: none;
     cursor: pointer;
     z-index: 1000;
     transition: all 0.3s ease;
     box-shadow: var(--shadow-lg);
+    display: none; /* CORREÇÃO 2: Inicialmente escondido */
 }
 
 .floating-btn:active {
@@ -1028,12 +1034,58 @@ body {
     justify-content: center;
 }
 
-/* ===== 15. UTILITÁRIOS ===== */
+/* NOVO: Botão de Backup */
+.backup-btn {
+    bottom: 160px;
+    right: var(--space-xl);
+    background: #3498db;
+    color: var(--text-white);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ===== 15. TOAST NOTIFICATIONS ===== */
+/* CORREÇÃO 6: Popups bonitos para mensagens */
+.toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #333;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: all 0.3s ease;
+    text-align: center;
+    max-width: 80%;
+    word-break: break-word;
+}
+
+.toast-success { background: var(--primary-green); }
+.toast-error { background: var(--primary-red); }
+.toast-warning { background: var(--primary-yellow); color: #000; }
+.toast-info { background: #3498db; }
+
+@keyframes slideUp {
+    from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+/* ===== 16. UTILITÁRIOS ===== */
 .hidden {
     display: none !important;
 }
 
-/* ===== 16. ANIMAÇÃO DE GOL ===== */
+/* ===== 17. ANIMAÇÃO DE GOL ===== */
 .main-scoreboard.gol-animation {
     animation: golCelebration 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1054,7 +1106,7 @@ body {
     }
 }
 
-/* ===== 17. RESPONSIVIDADE ===== */
+/* ===== 18. RESPONSIVIDADE ===== */
 
 /* TABLETS */
 @media (max-width: 768px) {
@@ -1258,6 +1310,11 @@ body {
     
     .undo-btn {
         bottom: max(90px, env(safe-area-inset-bottom) + 70px);
+        right: max(var(--space-xl), env(safe-area-inset-right) + 10px);
+    }
+    
+    .backup-btn {
+        bottom: max(160px, env(safe-area-inset-bottom) + 140px);
         right: max(var(--space-xl), env(safe-area-inset-right) + 10px);
     }
 }
