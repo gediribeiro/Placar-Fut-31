@@ -1317,11 +1317,13 @@ li button:active {
     font-size: 24px;
   }
   
-  #tempo {
-    font-size: 34px;
-    padding: 16px 30px;
-    min-width: 140px;
-  }
+  
+#tempo {
+  font-size: 28px;    /* ← Reduzir */
+  padding: 10px 20px; /* ← Reduzir */
+  min-width: 110px;   /* ← Reduzir */
+  margin: 12px 0;     /* ← Reduzir espaço */
+}
   
   .actions {
     flex-direction: column;
@@ -1496,4 +1498,22 @@ li button:active {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-green-dark);
+}
+
+/* ADICIONE NO FINAL DO CSS */
+.placar-time:first-child .botoes-controle {
+  margin-right: 10px;
+}
+
+.placar-time:last-child .botoes-controle {
+  margin-left: 10px;
+}
+
+/* ADICIONE NO FINAL DO CSS */
+.placar-time:last-child {
+  justify-content: flex-end;
+}
+
+.placar-time:first-child {
+  justify-content: flex-start;
 }
