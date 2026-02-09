@@ -368,19 +368,25 @@ section.active {
   display: flex;
   align-items: center;
   flex: 1;
-  gap: 12px;
 }
 
-/* Time A: botões à esquerda */
+/* Time A: alinhado à esquerda */
 .placar-time:first-child {
   justify-content: flex-start;
-  flex-direction: row;
 }
 
-/* Time B: botões à direita */
+/* Time B: alinhado à direita */
 .placar-time:last-child {
   justify-content: flex-end;
-  flex-direction: row-reverse;
+}
+
+/* Forçar botões à direita no Time B */
+.placar-time:last-child .botoes-controle {
+  order: 2; /* Botões vêm DEPOIS do placar */
+}
+
+.placar-time:last-child .placar-numero {
+  order: 1; /* Placar vem ANTES dos botões */
 }
 
 .placar-numero {
@@ -437,13 +443,12 @@ section.active {
 }
 
 /* BOTÕES DE CONTROLE INTEGRADOS */
-/* === BOTÕES-CONTROLE === */
 .botoes-controle {
   display: flex;
   flex-direction: column;
   gap: 8px;
   width: 46px;
-  flex-shrink: 0; /* ← IMPEDE QUE ENCOLHA */
+  flex-shrink: 0;
 }
 
 .placar-time:first-child .botoes-controle {
