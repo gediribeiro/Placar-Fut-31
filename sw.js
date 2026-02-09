@@ -1,6 +1,6 @@
-// sw.js - Service Worker para Placar Fut 31 - VERSÃO CORRIGIDA
+// sw.js - Service Worker para Placar Fut 31 - VERSÃO OTIMIZADA
 
-const CACHE_NAME = 'placar-fut-31-v3';
+const CACHE_NAME = 'placar-fut-31-v4';
 const urlsToCache = [
   './',
   './index.html',
@@ -50,12 +50,17 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Interceptação de requisições - VERSÃO SEGURA
+// Interceptação de requisições - ESTRATÉGIA SEGURA
 self.addEventListener('fetch', event => {
   // Apenas cachear requisições GET
   if (event.request.method !== 'GET') return;
   
   const requestUrl = new URL(event.request.url);
+  
+  // Ignorar requisições para APIs externas (se houver no futuro)
+  if (!requestUrl.href.startsWith(self.location.origin)) {
+    return; // Não cachear recursos externos
+  }
   
   // Estratégia: Cache First, fallback para Network
   event.respondWith(
@@ -111,7 +116,7 @@ self.addEventListener('message', event => {
   }
 });
 
-// Sincronização em background
+// Sincronização em background (para futuras funcionalidades)
 self.addEventListener('sync', event => {
   console.log('[Service Worker] Sync event:', event.tag);
   
@@ -127,7 +132,7 @@ function syncData() {
   return Promise.resolve();
 }
 
-// Notificações push (opcional - só funciona se configurar)
+// Notificações push (opcional - configurado para futuro)
 self.addEventListener('push', event => {
   console.log('[Service Worker] Push event recebido');
   
@@ -139,7 +144,17 @@ self.addEventListener('push', event => {
     data: {
       url: './index.html',
       timestamp: Date.now()
-    }
+    },
+    actions: [
+      {
+        action: 'open',
+        title: 'Abrir App'
+      },
+      {
+        action: 'close',
+        title: 'Fechar'
+      }
+    ]
   };
   
   if (event.data) {
@@ -160,6 +175,10 @@ self.addEventListener('push', event => {
 self.addEventListener('notificationclick', event => {
   console.log('[Service Worker] Notificação clicada');
   event.notification.close();
+  
+  if (event.action === 'close') {
+    return;
+  }
   
   event.waitUntil(
     clients.matchAll({ 
@@ -182,7 +201,7 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
-// Controle de versão
+// Controle de versão - verificar atualizações periodicamente
 self.addEventListener('periodicsync', event => {
   if (event.tag === 'update-check') {
     console.log('[Service Worker] Verificando atualizações...');
@@ -191,7 +210,12 @@ self.addEventListener('periodicsync', event => {
 });
 
 function checkForUpdates() {
-  return fetch('./?v=' + Date.now(), { cache: 'no-store' })
+  return fetch('./?v=' + Date.now(), { 
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache'
+    }
+  })
     .then(response => {
       if (response.status === 200) {
         console.log('[Service Worker] App está atualizado');
@@ -206,4 +230,9 @@ function checkForUpdates() {
 // Log para debugging
 self.addEventListener('error', event => {
   console.error('[Service Worker] Erro:', event.error);
+});
+
+// Tratamento de rejeição não tratada
+self.addEventListener('unhandledrejection', event => {
+  console.error('[Service Worker] Rejeição não tratada:', event.reason);
 });
