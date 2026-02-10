@@ -1,10 +1,11 @@
 // ===== SERVICE WORKER ATUALIZÁVEL - "NETWORK FIRST" =====
 // NÃO precisa mudar a versão manualmente para atualizações de código!
 
-const APP_VERSION = 'v2026.02.10.01'; // Apenas para controle interno
+// Mude as linhas 2-3 do seu sw.js para:
+const APP_VERSION = 'v2026.02.10.1'; // 👈 MUDAR SEMPRE
 const CACHE_NAME = `placar-fut-cache-${APP_VERSION}`;
 const DYNAMIC_CACHE_NAME = `placar-fut-dynamic-${APP_VERSION}`;
-const SW_VERSION = '2026.02.10.1'; // MUDAR SEMPRE QUE ATUALIZAR O SW
+const SW_VERSION = 'v2026.02.10.1'; // MUDAR SEMPRE QUE ATUALIZAR O SW
 
 // Arquivos ESSENCIAIS para funcionamento offline (cacheados na instalação)
 const CORE_ASSETS = [
