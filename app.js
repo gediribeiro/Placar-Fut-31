@@ -1688,155 +1688,208 @@ function renderJogadores() {
     reader.readAsText(file);
   }
 
-  // ===== PWA =====
-  function configurarPWA() {
+  // ===== PWA UNIVERSAL (iOS, Android, Desktop) =====
+function configurarPWA() {
+    // Detectar plataforma
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    
+    console.log(`📱 Plataforma: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'} | PWA: ${isStandalone ? 'Sim ✅' : 'Não'}`);
+    
+    // Evento de instalação (Android/Chrome)
     window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      state.deferredPrompt = e;
-      
-      const installBtn = document.getElementById('installBtn');
-      if (installBtn) {
-        setTimeout(() => {
-          installBtn.style.display = 'block';
-          
-          setTimeout(() => {
-            if (installBtn.style.display === 'block') {
-              installBtn.style.display = 'none';
-            }
-          }, 30000);
-        }, 5000);
-      }
-    });
-    
-    window.addEventListener('appinstalled', () => {
-      console.log('PWA instalado!');
-      const installBtn = document.getElementById('installBtn');
-      if (installBtn) installBtn.style.display = 'none';
-      state.deferredPrompt = null;
-      showToast('App instalado com sucesso!', 'success');
-    });
-    
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      const installBtn = document.getElementById('installBtn');
-      if (installBtn) installBtn.style.display = 'none';
-      console.log('Rodando como PWA instalado');
-    }
-  }
-
-  function instalarApp() {
-    if (state.deferredPrompt) {
-      state.deferredPrompt.prompt();
-      
-      state.deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('Usuário aceitou a instalação');
-          showToast('Instalando...', 'success');
-        } else {
-          console.log('Usuário recusou a instalação');
-          showToast('Instalação cancelada', 'info');
-        }
+        e.preventDefault();
+        state.deferredPrompt = e;
         
-        state.deferredPrompt = null;
+        const installBtn = document.getElementById('installBtn');
+        if (installBtn && !isIOS) { // iOS não tem beforeinstallprompt
+            setTimeout(() => {
+                installBtn.style.display = 'block';
+                
+                setTimeout(() => {
+                    if (installBtn.style.display === 'block') {
+                        installBtn.style.display = 'none';
+                    }
+                }, 30000);
+            }, 5000);
+        }
+    });
+    
+    // App instalado
+    window.addEventListener('appinstalled', () => {
+        console.log('📱 PWA instalado!');
         const installBtn = document.getElementById('installBtn');
         if (installBtn) installBtn.style.display = 'none';
-      });
-    } else {
-      showToast('App já instalado ou navegador não suporta', 'info');
+        state.deferredPrompt = null;
+        showToast('App instalado com sucesso! ✅', 'success');
+    });
+    
+    // Se já está rodando como PWA
+    if (isStandalone) {
+        const installBtn = document.getElementById('installBtn');
+        if (installBtn) installBtn.style.display = 'none';
+        console.log('📱 Rodando como PWA instalado');
+        
+        // Ajustes específicos para PWA instalado
+        document.body.classList.add('pwa-installed');
     }
-  }
+    
+    // iOS: Dica para instalar
+    if (isIOS && !isStandalone) {
+        setTimeout(() => {
+            console.log('💡 iOS: Use "Compartilhar" → "Adicionar à Tela de Início" para tela cheia');
+        }, 3000);
+    }
+}
 
-  // ===== INICIALIZAÇÃO =====
-  function init() {
-    console.log('Inicializando PlacarApp...');
+function instalarApp() {
+    if (state.deferredPrompt) {
+        // Android/Chrome: Mostra prompt nativo
+        state.deferredPrompt.prompt();
+        
+        state.deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('📱 Usuário aceitou a instalação');
+                showToast('Instalando... ⏳', 'success');
+            } else {
+                console.log('📱 Usuário recusou a instalação');
+                showToast('Instalação cancelada', 'info');
+            }
+            
+            state.deferredPrompt = null;
+            const installBtn = document.getElementById('installBtn');
+            if (installBtn) installBtn.style.display = 'none';
+        });
+    } else {
+        // iOS ou já instalado
+        const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        
+        if (isIOS && !isStandalone) {
+            showToast('📲 iOS: Use "Compartilhar" → "Adicionar à Tela de Início"', 'info', 5000);
+        } else if (isStandalone) {
+            showToast('✅ App já instalado!', 'success');
+        } else {
+            showToast('📱 Seu navegador suporta instalação automática', 'info');
+        }
+    }
+}
+
+// ===== INICIALIZAÇÃO UNIVERSAL =====
+function init() {
+    console.log('🚀 Inicializando PlacarApp v' + APP_VERSION + '...');
     
     carregarNomesTimes();
     renderJogadores();
-    
     esconderUndo();
-    
     verificarBackupDados();
     configurarPWA();
     fazerBackupAutomatico();
     
+    // ✅ REGISTRO ÚNICO E INTELIGENTE DO SERVICE WORKER
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('Service Worker registrado!'))
-        .catch(err => console.error('Erro no Service Worker:', err));
+        // Verifica se já temos um SW controlando
+        if (navigator.serviceWorker.controller) {
+            console.log('✅ Service Worker já está controlando a página');
+            
+            // Verifica modo atual
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            console.log('📱 Display Mode:', isStandalone ? 'standalone (PWA)' : 'browser');
+        } else {
+            // Registra novo SW
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => {
+                    console.log('✅ Service Worker registrado:', reg.scope);
+                    
+                    // Monitora atualizações
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        console.log('🔄 Novo Service Worker encontrado:', newWorker.state);
+                        
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('🔄 Nova versão disponível! Recarregue para atualizar.');
+                                showToast('🔄 Nova versão disponível!', 'info');
+                            }
+                        });
+                    });
+                })
+                .catch(err => {
+                    console.error('❌ Erro no Service Worker:', err);
+                    // Continua funcionando mesmo sem SW
+                });
+        }
     }
     
-    console.log('PlacarApp inicializado com sucesso!');
-  }
+    console.log('🎉 PlacarApp v' + APP_VERSION + ' inicializado com sucesso!');
+}
 
-  function verificarBackupDados() {
+function verificarBackupDados() {
     const backupKey = 'placar_backup_v1';
     
     try {
-      const jogadores = localStorage.getItem("jogadores");
-      const historico = localStorage.getItem("historico");
-      
-      if (!jogadores || jogadores === '[]' || jogadores === 'null' || 
-          !historico || historico === '[]' || historico === 'null') {
+        const jogadores = localStorage.getItem("jogadores");
+        const historico = localStorage.getItem("historico");
         
-        const backup = localStorage.getItem(backupKey);
-        if (backup) {
-          const parsed = JSON.parse(backup);
-          
-          if (parsed.jogadores && parsed.jogadores !== 'null' && parsed.jogadores !== '[]') {
-            localStorage.setItem("jogadores", parsed.jogadores);
-            state.jogadores = JSON.parse(parsed.jogadores);
-          }
-          
-          if (parsed.historico && parsed.historico !== 'null' && parsed.historico !== '[]') {
-            localStorage.setItem("historico", parsed.historico);
-          }
-          
-          if (parsed.nomes && parsed.nomes.timeA) {
-            localStorage.setItem("nomeTimeA", parsed.nomes.timeA);
-            state.nomeA = parsed.nomes.timeA;
-          }
-          
-          if (parsed.nomes && parsed.nomes.timeB) {
-            localStorage.setItem("nomeTimeB", parsed.nomes.timeB);
-            state.nomeB = parsed.nomes.timeB;
-          }
-          
-          console.log('Dados restaurados do backup!');
-          showToast('Dados restaurados do backup automático', 'success');
+        if (!jogadores || jogadores === '[]' || jogadores === 'null' || 
+            !historico || historico === '[]' || historico === 'null') {
+            
+            const backup = localStorage.getItem(backupKey);
+            if (backup) {
+                const parsed = JSON.parse(backup);
+                
+                if (parsed.jogadores && parsed.jogadores !== 'null' && parsed.jogadores !== '[]') {
+                    localStorage.setItem("jogadores", parsed.jogadores);
+                    state.jogadores = JSON.parse(parsed.jogadores);
+                }
+                
+                if (parsed.historico && parsed.historico !== 'null' && parsed.historico !== '[]') {
+                    localStorage.setItem("historico", parsed.historico);
+                }
+                
+                if (parsed.nomes && parsed.nomes.timeA) {
+                    localStorage.setItem("nomeTimeA", parsed.nomes.timeA);
+                    state.nomeA = parsed.nomes.timeA;
+                }
+                
+                if (parsed.nomes && parsed.nomes.timeB) {
+                    localStorage.setItem("nomeTimeB", parsed.nomes.timeB);
+                    state.nomeB = parsed.nomes.timeB;
+                }
+                
+                console.log('📂 Dados restaurados do backup!');
+                showToast('📂 Dados restaurados do backup automático', 'success');
+            }
         }
-      }
-      
-      const currentData = {
-        jogadores: localStorage.getItem("jogadores"),
-        historico: localStorage.getItem("historico"),
-        nomes: {
-          timeA: localStorage.getItem("nomeTimeA"),
-          timeB: localStorage.getItem("nomeTimeB")
-        },
-        lastBackup: new Date().toISOString()
-      };
-      
-      localStorage.setItem(backupKey, JSON.stringify(currentData));
-      console.log('Backup inicial realizado:', currentData.lastBackup);
-      
+        
+        // Cria/atualiza backup
+        const currentData = {
+            jogadores: localStorage.getItem("jogadores"),
+            historico: localStorage.getItem("historico"),
+            nomes: {
+                timeA: localStorage.getItem("nomeTimeA"),
+                timeB: localStorage.getItem("nomeTimeB")
+            },
+            lastBackup: new Date().toISOString(),
+            appVersion: APP_VERSION
+        };
+        
+        localStorage.setItem(backupKey, JSON.stringify(currentData));
+        console.log('💾 Backup realizado:', currentData.lastBackup);
+        
     } catch (error) {
-      console.error('Erro no backup:', error);
+        console.error('❌ Erro no backup:', error);
     }
-  }
+}
 
-  // ===== INTERFACE PÚBLICA =====
-  return {
+// ===== INTERFACE PÚBLICA =====
+return {
     init: function() {
-      if (typeof init === 'function') {
-        init();
-      }
-      
-      renderJogadores();
-      
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js')
-          .then(() => console.log('Service Worker registrado!'))
-          .catch(err => console.error('Erro no Service Worker:', err));
-      }
+        if (typeof init === 'function') {
+            init();
+        }
+        renderJogadores();
     },
     trocarTab: trocarTab,
     addJogador: addJogador,
@@ -1867,83 +1920,66 @@ function renderJogadores() {
     importarBackup: importarBackup,
     instalarApp: instalarApp,
     getState: () => ({ ...state })
-  };
+};
 })();
 
 // ===== EXIBIR VERSÃO NO RODAPÉ ===== 
-// Código CORRIGIDO - executa dentro do init para evitar conflitos
 function exibirVersao() {
-    const versaoEl = document.getElementById('appVersion'); // 👈 'appVersion' em vez de 'versaoApp'
+    const versaoEl = document.getElementById('appVersion');
     if (versaoEl) {
-        versaoEl.textContent = APP_VERSION; // 'v1.0.0'
-        console.log('Versão exibida:', APP_VERSION);
+        versaoEl.textContent = APP_VERSION;
+        console.log('🏷️ Versão exibida:', APP_VERSION);
     }
 }
 
 // ===== SPLASH SCREEN & INICIALIZAÇÃO =====
 function iniciarAppComSplash() {
-    // 👇 NOVO: Atualiza versão na splash screen
+    // Atualiza versão na splash screen
     function atualizarVersaoNaSplash() {
         const elementoVersao = document.querySelector('.splash-content .version');
         if (elementoVersao) {
-            elementoVersao.textContent = APP_VERSION; // Pega v1.0.1 automaticamente
+            elementoVersao.textContent = APP_VERSION;
         }
     }
     
-    // Executa a atualização imediatamente
+    // Executa a atualização
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', atualizarVersaoNaSplash);
     } else {
         atualizarVersaoNaSplash();
     }
     
-    // 👇 OPÇÃO: Controle para mostrar só 1x por dia (descomente se quiser)
-    // const hoje = new Date().toDateString();
-    // const ultimaVez = localStorage.getItem('ultimaSplash');
-    // if (ultimaVez === hoje) {
-    //     // Já viu hoje, inicia direto
-    //     PlacarApp.init();
-    //     exibirVersao();
-    //     return;
-    // }
-    // localStorage.setItem('ultimaSplash', hoje);
-    // 👆 FIM DA OPÇÃO
-    
-    // 1. Função para esconder a splash screen
+    // Função para esconder a splash screen
     function esconderSplash() {
         const splash = document.getElementById('splashScreen');
         if (splash) {
             splash.classList.add('hidden');
-            // Remove completamente após animação MAIS LENTA
             setTimeout(() => {
                 splash.style.display = 'none';
-            }, 800); // 👈 Aumentado de 500 para 800ms
+            }, 800);
         }
     }
     
-    // 2. Função para inicializar o app principal
+    // Função para inicializar o app principal
     function inicializarAppPrincipal() {
         PlacarApp.init();
         exibirVersao();
     }
     
-    // 3. Controla tempo mínimo da splash MAIS LONGO
+    // Controla tempo mínimo da splash (2 segundos)
     const tempoMinimoSplash = new Promise(resolve => {
-        setTimeout(resolve, 2000); // 👈 Aumentado de 1500 para 2000ms (2 segundos)
+        setTimeout(resolve, 2000);
     });
     
-    // 4. Verifica se o DOM já está pronto
+    // Inicialização baseada no estado do DOM
     if (document.readyState === 'loading') {
-        // DOM ainda carregando - espera
         document.addEventListener('DOMContentLoaded', function() {
-            // Espera tempo mínimo da splash
             tempoMinimoSplash.then(() => {
                 esconderSplash();
                 inicializarAppPrincipal();
             });
         });
     } else {
-        // DOM já carregado
         tempoMinimoSplash.then(() => {
             esconderSplash();
             inicializarAppPrincipal();
@@ -1951,21 +1987,10 @@ function iniciarAppComSplash() {
     }
 }
 
-// Inicia tudo (substitui a inicialização antiga)
+// ===== INICIALIZAÇÃO FINAL =====
+// Inicia tudo quando o DOM estiver pronto
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', iniciarAppComSplash);
 } else {
     iniciarAppComSplash();
 }
-
-
-window.addEventListener('load', () => {
-    // Verificar se está em modo PWA
-    const isPWA = window.matchMedia('(display-mode: standalone)').matches;
-    console.log('📱 Modo PWA:', isPWA ? 'Tela Cheia ✅' : 'Navegador ❌');
-    
-    // Forçar SW registration se não estiver em PWA
-    if (!isPWA && 'serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
-});
