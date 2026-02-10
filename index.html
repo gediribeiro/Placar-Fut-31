@@ -3,22 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Metadados básicos -->
     <meta name="description" content="Sistema de placar profissional Placar Fut 31">
-    <meta name="theme-color" content="#0fb858">
+    
+    <!-- Sistema de versão do app -->
+    <meta name="version" content="v1.0.4">
+    
+    <!-- Cores para status bar/navegadores -->
+    <!-- Primary para navegadores antigos -->
+    <meta name="theme-color" content="#1a5f23">
+    <!-- Para navegadores com suporte a dark/light mode -->
+    <meta name="theme-color" content="#1a5f23" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0d9c4d" media="(prefers-color-scheme: dark)">
+    
+    <!-- Configurações iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Placar Fut 31">
+    
+    <!-- Configurações Android/General PWA -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Placar Fut 31">
-    <meta name="theme-color" content="#1a5f23" media="(prefers-color-scheme: light)">
-    <meta name="theme-color" content="#0d9c4d" media="(prefers-color-scheme: dark)">
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon para navegadores desktop -->
+    <link rel="icon" href="icon-192.png" type="image/png">
+    
+    <!-- Ícones para iOS -->
     <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="apple-touch-startup-image" href="splash-screen.png">
-    <title>Placar Fut 31</title>
-    <meta name="version" content="v1.0.4">
+    
+    <!-- Web App Manifest (PWA) -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <title>Placar Fut 31</title>
 </head>
 <body class="clean-bg">
     <!-- ===== SPLASH SCREEN ===== -->
@@ -33,6 +54,8 @@
             <p class="loading-text">Carregando...</p>
         </div>
     </div>
+    
+    <!-- O RESTO DO SEU HTML CONTINUA AQUI... -->
 
     <!-- ===== HEADER PRINCIPAL ===== -->
     <header class="app-header">
