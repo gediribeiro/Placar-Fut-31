@@ -1712,6 +1712,16 @@ const PlacarApp = (function() {
   };
 })();
 
+// ===== EXIBIR VERSÃO NO RODAPÉ ===== 
+// ADICIONE ESTAS LINHAS AQUI
+document.addEventListener('DOMContentLoaded', function() {
+    const versaoEl = document.getElementById('versaoApp');
+    if (versaoEl) {
+        versaoEl.textContent = APP_VERSION; // 'v2026.02.10.1'
+        console.log('Versão exibida:', APP_VERSION);
+    }
+});
+
 // Inicializar quando a página carregar
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', PlacarApp.init);
