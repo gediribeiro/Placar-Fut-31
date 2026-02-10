@@ -201,7 +201,6 @@ function trocarTab(tabId, button) {
     if (navigator.vibrate) navigator.vibrate(5);
     console.log(`✅ Aba ativa: ${tabId}`);
 }
-
   // ===== JOGADORES =====
   function addJogador() {
     const input = document.getElementById('novoJogador');
@@ -252,6 +251,80 @@ function trocarTab(tabId, button) {
     }
   }
 
+  // ===== EDIÇÃO DE JOGADORES =====
+  async function editarNomeJogador(index) {
+    const nomeAtual = state.jogadores[index];
+    
+    // Usa o mesmo input padrão do sistema (prompt simples)
+    const novoNome = prompt(`Editar jogador:\n\nNome atual: ${nomeAtual}\n\nDigite o novo nome:`, nomeAtual);
+    
+    if (!novoNome || novoNome.trim() === '') {
+      return; // Usuário cancelou ou digitou vazio
+    }
+    
+    const nomeFormatado = novoNome.trim();
+    
+    // Validações (iguais ao addJogador)
+    if (nomeFormatado.length > 20) {
+      showToast('Nome muito longo (máx: 20 caracteres)', 'error');
+      return;
+    }
+    
+    if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(nomeFormatado)) {
+      showToast('Use apenas letras, números e espaços', 'error');
+      return;
+    }
+    
+    // Verifica se o novo nome já existe (e não é o próprio nome atual)
+    if (nomeFormatado !== nomeAtual && state.jogadores.includes(nomeFormatado)) {
+      showToast('Já existe um jogador com este nome!', 'warning');
+      return;
+    }
+    
+    // ATUALIZA EM TODOS OS LUGARES
+    const nomeAntigo = state.jogadores[index];
+    state.jogadores[index] = nomeFormatado;
+    
+    // 1. Atualiza histórico de GOLS
+    state.historicaGols.forEach(evento => {
+      if (evento.jogador === nomeAntigo) {
+        evento.jogador = nomeFormatado;
+      }
+    });
+    
+    // 2. Atualiza histórico de FALTAS
+    state.historicaFaltas.forEach(evento => {
+      if (evento.jogador === nomeAntigo) {
+        evento.jogador = nomeFormatado;
+      }
+    });
+    
+    // 3. Salva no localStorage
+    localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
+    
+    // 4. Atualiza a interface
+    renderJogadores();
+    
+    // 5. Atualiza rankings se estiverem visíveis
+    if (document.getElementById('ranking').classList.contains('active')) {
+      ranking();
+    }
+    
+    // 6. Atualiza histórico se estiver visível
+    if (document.getElementById('historico').classList.contains('active')) {
+      historico();
+    }
+    
+    // 7. Backup automático
+    fazerBackupAutomatico();
+    
+    // Feedback
+    if (navigator.vibrate) navigator.vibrate(10);
+    showToast(`Editado: ${nomeAntigo} → ${nomeFormatado}`, 'success');
+    
+    console.log(`Jogador editado: "${nomeAntigo}" → "${nomeFormatado}"`);
+  }
+
   function renderJogadores() {
     const lista = document.getElementById('listaJogadores');
     if (!lista) return;
@@ -260,15 +333,40 @@ function trocarTab(tabId, button) {
     
     state.jogadores.forEach((jogador, index) => {
       const li = document.createElement('li');
+      
+      // NOME DO JOGADOR
       const span = document.createElement('span');
       span.textContent = jogador;
+      span.className = 'player-name';
       
-      const button = document.createElement('button');
-      button.textContent = '❌';
-      button.onclick = () => removerJogador(index);
+      // CONTAINER DE BOTÕES
+      const divBotoes = document.createElement('div');
+      divBotoes.className = 'player-actions';
+      
+      // BOTÃO EDITAR (✏️) - NOVO!
+      const btnEditar = document.createElement('button');
+      btnEditar.textContent = '✏️';
+      btnEditar.title = 'Editar nome';
+      btnEditar.onclick = (e) => {
+        e.stopPropagation(); // Evita propagação
+        editarNomeJogador(index);
+      };
+      
+      // BOTÃO REMOVER (❌) - JÁ EXISTIA
+      const btnRemover = document.createElement('button');
+      btnRemover.textContent = '❌';
+      btnRemover.title = 'Remover jogador';
+      btnRemover.onclick = (e) => {
+        e.stopPropagation();
+        removerJogador(index);
+      };
+      
+      // MONTA A ESTRUTURA
+      divBotoes.appendChild(btnEditar);
+      divBotoes.appendChild(btnRemover);
       
       li.appendChild(span);
-      li.appendChild(button);
+      li.appendChild(divBotoes);
       lista.appendChild(li);
     });
   }
