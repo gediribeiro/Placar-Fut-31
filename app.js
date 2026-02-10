@@ -1,4 +1,4 @@
-const APP_VERSION = 'v1.0.0';
+const APP_VERSION = 'v1.0.1';
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
