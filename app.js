@@ -1716,14 +1716,53 @@ function exibirVersao() {
     }
 }
 
-// Inicializar quando a página carregar (VERSÃO CORRIGIDA)
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    PlacarApp.init();
-    exibirVersao(); // 👈 Executa APÓS o init
-  });
-} else {
-  PlacarApp.init();
-  exibirVersao(); // 👈 Executa se DOM já carregado
+// ===== SPLASH SCREEN & INICIALIZAÇÃO =====
+function iniciarAppComSplash() {
+    // 1. Função para esconder a splash screen
+    function esconderSplash() {
+        const splash = document.getElementById('splashScreen');
+        if (splash) {
+            splash.classList.add('hidden');
+            // Remove completamente após animação
+            setTimeout(() => {
+                splash.style.display = 'none';
+            }, 500);
+        }
+    }
+    
+    // 2. Função para inicializar o app principal
+    function inicializarAppPrincipal() {
+        PlacarApp.init();
+        exibirVersao();
+    }
+    
+    // 3. Controla tempo mínimo da splash (1.5 segundos)
+    const tempoMinimoSplash = new Promise(resolve => {
+        setTimeout(resolve, 1500);
+    });
+    
+    // 4. Verifica se o DOM já está pronto
+    if (document.readyState === 'loading') {
+        // DOM ainda carregando - espera
+        document.addEventListener('DOMContentLoaded', function() {
+            // Espera tempo mínimo da splash
+            tempoMinimoSplash.then(() => {
+                esconderSplash();
+                inicializarAppPrincipal();
+            });
+        });
+    } else {
+        // DOM já carregado
+        tempoMinimoSplash.then(() => {
+            esconderSplash();
+            inicializarAppPrincipal();
+        });
+    }
 }
-  
+
+// Inicia tudo (substitui a inicialização antiga)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', iniciarAppComSplash);
+} else {
+    iniciarAppComSplash();
+}
