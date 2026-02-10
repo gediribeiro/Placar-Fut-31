@@ -1,4 +1,4 @@
-const APP_VERSION = 'v2026.02.10.2';
+const APP_VERSION = 'v1.0.0';
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
@@ -1709,9 +1709,9 @@ function trocarTab(tabId, button) {
 // ===== EXIBIR VERSÃO NO RODAPÉ ===== 
 // Código CORRIGIDO - executa dentro do init para evitar conflitos
 function exibirVersao() {
-    const versaoEl = document.getElementById('versaoApp');
+    const versaoEl = document.getElementById('appVersion'); // 👈 'appVersion' em vez de 'versaoApp'
     if (versaoEl) {
-        versaoEl.textContent = APP_VERSION; // 'v2026.02.10.2'
+        versaoEl.textContent = APP_VERSION; // 'v1.0.0'
         console.log('Versão exibida:', APP_VERSION);
     }
 }
