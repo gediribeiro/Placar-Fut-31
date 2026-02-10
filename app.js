@@ -1,4 +1,4 @@
-const APP_VERSION = 'v2024.02.16';
+const APP_VERSION = 'v2026.02.10';
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
@@ -29,24 +29,19 @@ const PlacarApp = (function() {
     return div.innerHTML;
   }
 
-  // CORREÇÃO 6: Popups bonitos para mensagens + CORREÇÃO 3: Timer do desfazer
   function showToast(message, type = 'info', duration = 3000) {
-    // Remover toasts antigos
     document.querySelectorAll('.toast').forEach(toast => toast.remove());
     
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.textContent = message;
     
-    // Estilos inline para garantir funcionamento
     toast.style.cssText = `
       position: fixed;
       bottom: 100px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: ${type === 'success' ? '#0fb858' : 
-                   type === 'error' ? '#ff4757' : 
-                   type === 'warning' ? '#ffa502' : '#3498db'};
+      background: ${type === 'success' ? '#0fb858' : type === 'error' ? '#ff4757' : type === 'warning' ? '#ffa502' : '#3498db'};
       color: white;
       padding: 12px 24px;
       border-radius: 8px;
@@ -62,16 +57,13 @@ const PlacarApp = (function() {
     
     document.body.appendChild(toast);
     
-    // Animação de entrada
     setTimeout(() => {
       toast.style.opacity = '1';
       toast.style.transform = 'translateX(-50%) translateY(0)';
     }, 10);
     
-    // Vibrar se suportado
     if (navigator.vibrate) navigator.vibrate(30);
     
-    // Remover após duração
     setTimeout(() => {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(-50%) translateY(-20px)';
@@ -80,7 +72,6 @@ const PlacarApp = (function() {
       }, 300);
     }, duration);
     
-    // Fechar ao clicar
     toast.onclick = () => {
       toast.style.opacity = '0';
       setTimeout(() => toast.remove(), 300);
@@ -99,122 +90,8 @@ const PlacarApp = (function() {
     });
   }
 
-  // ===== SERVICE WORKER E CONTROLE DE VERSÃO =====
-  function initServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      // Registra o Service Worker
-      navigator.serviceWorker.register('./sw.js')
-        .then(registration => {
-          console.log(`[PlacarApp] Versão ${APP_VERSION} registrada`);
-          
-          // Monitora atualizações
-          registration.addEventListener('updatefound', () => {
-            console.log('[PlacarApp] Nova versão do Service Worker encontrada!');
-            
-            const newWorker = registration.installing;
-            
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Nova versão disponível!
-                console.log('[PlacarApp] Nova versão pronta!');
-                showUpdateNotification();
-              }
-            });
-          });
-          
-          // Verifica se já tem uma nova versão esperando
-          if (registration.waiting) {
-            showUpdateNotification();
-          }
-          
-          // Verifica atualizações periodicamente (a cada 30 minutos)
-          setInterval(() => {
-            registration.update();
-          }, 30 * 60 * 1000);
-        })
-        .catch(error => {
-          console.error('[PlacarApp] Erro no Service Worker:', error);
-        });
-      
-      // Escuta mensagens do Service Worker
-      navigator.serviceWorker.addEventListener('message', event => {
-        if (event.data && event.data.type === 'NEW_VERSION') {
-          console.log('[PlacarApp] Nova versão solicitada pelo Service Worker');
-          showUpdateNotification();
-        }
-      });
-      
-      // Recarrega quando o Service Worker assume controle
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
-      });
-    }
-  }
-  
-  function showUpdateNotification() {
-    // Mostra apenas uma vez por dia
-    const today = new Date().toDateString();
-    const lastShown = localStorage.getItem('last_update_notification');
-    
-    if (lastShown !== today) {
-      // Espera um pouco para não atrapalhar a inicialização
-      setTimeout(() => {
-        const toast = showToast(
-          '🔄 Nova versão disponível! Clique para atualizar.',
-          'warning',
-          5000
-        );
-        
-        // Fecha outros toasts se houver
-        document.querySelectorAll('.toast').forEach(t => {
-          if (t !== toast) t.remove();
-        });
-        
-        // Ao clicar no toast, atualiza
-        toast.onclick = () => {
-          localStorage.setItem('last_update_notification', today);
-          
-          // Força o Service Worker a atualizar
-          if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage('skipWaiting');
-          }
-          
-          // Recarrega após um breve delay
-          setTimeout(() => {
-            window.location.reload();
-          }, 300);
-        };
-        
-        // Mesmo se não clicar, marca como mostrado
-        setTimeout(() => {
-          localStorage.setItem('last_update_notification', today);
-        }, 5000);
-      }, 2000);
-    }
-  }
-  
-  function checkForUpdates() {
-    // Verifica se há mudanças nos arquivos principais
-    const files = ['index.html', 'style.css', 'app.js'];
-    const currentChecksum = localStorage.getItem('app_checksum');
-    
-    // Cria um checksum simples baseado na versão
-    const newChecksum = btoa(APP_VERSION + files.join('')).substr(0, 32);
-    
-    if (currentChecksum && currentChecksum !== newChecksum) {
-      console.log('[PlacarApp] Detectada mudança nos arquivos');
-      showUpdateNotification();
-    }
-    
-    localStorage.setItem('app_checksum', newChecksum);
-  }
-
-  // ===== LINHA DO TEMPO SIMPLIFICADA =====
-function adicionarEventoTimeline(tipo, time = null, jogador = null) {
+  // ===== LINHA DO TEMPO =====
+  function adicionarEventoTimeline(tipo, time = null, jogador = null) {
     if (!state.eventosTimeline) state.eventosTimeline = [];
     
     const min = Math.floor(state.segundos / 60);
@@ -223,80 +100,78 @@ function adicionarEventoTimeline(tipo, time = null, jogador = null) {
     
     state.eventosTimeline.push({ tempo, tipo, time, jogador });
     atualizarTimeline();
-}
+  }
 
-function atualizarTimeline() {
+  function atualizarTimeline() {
     const lista = document.getElementById('listaTimeline');
     if (!lista) return;
     
     if (state.eventosTimeline.length === 0) {
-        lista.innerHTML = '<li class="timeline-empty">Nenhum evento registrado ainda</li>';
-        return;
+      lista.innerHTML = '<li class="timeline-empty">Nenhum evento registrado ainda</li>';
+      return;
     }
     
-    // Mostrar últimos 15 eventos (do mais recente para o mais antigo)
     const eventosParaMostrar = state.eventosTimeline.slice(-15).reverse();
     
     lista.innerHTML = eventosParaMostrar.map(evento => {
-        const icone = 
-            evento.tipo === 'gol' ? '⚽' :
-            evento.tipo === 'falta' ? '🟨' :
-            evento.tipo === 'inicio' ? '▶️' :
-            evento.tipo === 'fim' ? '🏁' :
-            evento.tipo === 'pause' ? '⏸️' :
-            evento.tipo === 'resume' ? '▶️' :
-            evento.tipo === 'reset' ? '🔄' : '📝';
-        
-        let texto = '';
-        let classe = 'event-center';
-        
-        switch(evento.tipo) {
-            case 'gol':
-                texto = evento.jogador ? `${evento.jogador}` : `Time ${evento.time}`;
-                classe = evento.time === 'A' ? 'event-left' : 'event-right';
-                break;
-            case 'falta':
-                texto = evento.jogador ? `${evento.jogador}` : `Time ${evento.time}`;
-                classe = evento.time === 'A' ? 'event-left' : 'event-right';
-                break;
-            case 'inicio':
-                texto = 'Jogo Iniciado';
-                classe = 'event-center';
-                break;
-            case 'fim':
-                texto = 'Jogo Finalizado';
-                classe = 'event-center';
-                break;
-            case 'pause':
-                texto = 'Jogo Pausado';
-                classe = 'event-center';
-                break;
-            case 'resume':
-                texto = 'Jogo Retomado';
-                classe = 'event-center';
-                break;
-            case 'reset':
-                texto = 'Jogo Resetado';
-                classe = 'event-center';
-                break;
-        }
-        
-        return `<li class="timeline-item ${classe}">
-            <span class="event-time">${evento.tempo}'</span>
-            <span class="event-icon">${icone}</span>
-            <span class="event-text">${texto}</span>
-        </li>`;
+      const icone = 
+        evento.tipo === 'gol' ? '⚽' :
+        evento.tipo === 'falta' ? '🟨' :
+        evento.tipo === 'inicio' ? '▶️' :
+        evento.tipo === 'fim' ? '🏁' :
+        evento.tipo === 'pause' ? '⏸️' :
+        evento.tipo === 'resume' ? '▶️' :
+        evento.tipo === 'reset' ? '🔄' : '📝';
+      
+      let texto = '';
+      let classe = 'event-center';
+      
+      switch(evento.tipo) {
+        case 'gol':
+          texto = evento.jogador ? `${evento.jogador}` : `Time ${evento.time}`;
+          classe = evento.time === 'A' ? 'event-left' : 'event-right';
+          break;
+        case 'falta':
+          texto = evento.jogador ? `${evento.jogador}` : `Time ${evento.time}`;
+          classe = evento.time === 'A' ? 'event-left' : 'event-right';
+          break;
+        case 'inicio':
+          texto = 'Jogo Iniciado';
+          classe = 'event-center';
+          break;
+        case 'fim':
+          texto = 'Jogo Finalizado';
+          classe = 'event-center';
+          break;
+        case 'pause':
+          texto = 'Jogo Pausado';
+          classe = 'event-center';
+          break;
+        case 'resume':
+          texto = 'Jogo Retomado';
+          classe = 'event-center';
+          break;
+        case 'reset':
+          texto = 'Jogo Resetado';
+          classe = 'event-center';
+          break;
+      }
+      
+      return `<li class="timeline-item ${classe}">
+          <span class="event-time">${evento.tempo}'</span>
+          <span class="event-icon">${icone}</span>
+          <span class="event-text">${texto}</span>
+      </li>`;
     }).join('');
-}
+  }
 
-function resetarTimeline() {
+  function resetarTimeline() {
     state.eventosTimeline = [];
     atualizarTimeline();
-}
+  }
 
   // ===== NAVEGAÇÃO =====
   function trocarTab(tabId, button) {
-    // Fechar qualquer popup aberto primeiro - CORREÇÃO 3: Evitar sobreposição
     fecharPopup();
     fecharPopupFalta();
     fecharPopupRemover();
@@ -327,7 +202,6 @@ function resetarTimeline() {
         carregarComparacao();
         break;
       case 'backup':
-        // Nada especial para backup
         break;
     }
     
@@ -362,12 +236,11 @@ function resetarTimeline() {
     state.jogadores.push(nome);
     localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
     
-    // CORREÇÃO 4: Remover foco do input após adicionar
     input.value = '';
-    input.blur(); // Remove foco - teclado fecha no celular
+    input.blur();
     
     renderJogadores();
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
     
     if (navigator.vibrate) navigator.vibrate(10);
     showToast(`${nome} adicionado!`, 'success');
@@ -380,7 +253,7 @@ function resetarTimeline() {
       state.jogadores.splice(index, 1);
       localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
       renderJogadores();
-      fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+      fazerBackupAutomatico();
       showToast(`${nome} removido`, 'success');
     }
   }
@@ -408,7 +281,6 @@ function resetarTimeline() {
 
   // ===== NOMES DOS TIMES =====
   function editarNomeTime(time) {
-    // CORREÇÃO 3: Fechar outros popups primeiro
     fecharPopup();
     fecharPopupFalta();
     fecharPopupRemover();
@@ -454,7 +326,7 @@ function resetarTimeline() {
     }
     
     fecharPopupNome();
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
     
     if (navigator.vibrate) navigator.vibrate(10);
     showToast('Nome atualizado!', 'success');
@@ -464,7 +336,6 @@ function resetarTimeline() {
     state.nomeA = localStorage.getItem("nomeTimeA") || "Time A";
     state.nomeB = localStorage.getItem("nomeTimeB") || "Time B";
     
-    // CORREÇÃO: Usar os IDs corretos do HTML
     const nomeTimeAElem = document.getElementById('nomeTimeA');
     const nomeTimeBElem = document.getElementById('nomeTimeB');
     const nomeFaltaAElem = document.getElementById('nomeFaltaA');
@@ -484,14 +355,12 @@ function resetarTimeline() {
       }
     }
     
-    // Animação do botão
     const btn = document.getElementById("btnIniciar");
     if (btn) {
       btn.classList.add("btn-animating-green");
       setTimeout(() => btn.classList.remove("btn-animating-green"), 600);
     }
     
-    // Resetar estado
     state.placar = { A: 0, B: 0 };
     state.faltas = { A: 0, B: 0 };
     state.historicaGols = [];
@@ -500,7 +369,6 @@ function resetarTimeline() {
     state.segundos = 0;
     state.pausado = false;
     
-    // Atualizar interface
     document.getElementById('placarA').textContent = '0';
     document.getElementById('placarB').textContent = '0';
     document.getElementById('faltasA').textContent = '0';
@@ -512,13 +380,11 @@ function resetarTimeline() {
     const tituloGols = document.getElementById('tituloGols');
     if (tituloGols) tituloGols.classList.remove('hidden');
     
-    // Criar nova partida
     state.partida = {
       data: new Date().toLocaleString("pt-BR"),
       nomeTimes: { A: state.nomeA, B: state.nomeB }
     };
     
-    // Iniciar timer - CORREÇÃO 7: Timer otimizado
     clearInterval(state.timer);
     state.timer = setInterval(() => {
       if (!state.pausado) {
@@ -529,17 +395,14 @@ function resetarTimeline() {
       }
     }, 1000);
     
-    // ============ TIMELINE ADICIONADA ============
-    // Registrar evento na timeline
+    // TIMELINE ADICIONADA
     adicionarEventoTimeline('inicio');
-    // =============================================
     
-    // Efeitos
     mostrarOverlay("INÍCIO DE JOGO", "⚽", 1500);
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     showToast('Jogo iniciado!', 'success');
     
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
   }
 
   function togglePause() {
@@ -550,16 +413,13 @@ function resetarTimeline() {
     
     state.pausado = !state.pausado;
     
-    // ============ TIMELINE ADICIONADA ============
-    // Registrar evento na timeline
+    // TIMELINE ADICIONADA
     if (state.pausado) {
       adicionarEventoTimeline('pause');
     } else {
       adicionarEventoTimeline('resume');
     }
-    // =============================================
     
-    // CORREÇÃO 7: Otimizar timer para economia de bateria
     if (state.pausado) {
       document.getElementById('tempo').classList.add('tempo-pausado');
       showToast('Jogo pausado', 'warning');
@@ -572,10 +432,8 @@ function resetarTimeline() {
   }
 
   async function resetar() {
-    // ============ TIMELINE ADICIONADA ============
-    // Limpar timeline ao resetar
+    // TIMELINE ADICIONADA
     resetarTimeline();
-    // =============================================
     
     if (state.partida) {
       if (!await confirmAction("Resetar jogo atual? Todos os dados serão perdidos.")) {
@@ -583,7 +441,6 @@ function resetarTimeline() {
       }
     }
     
-    // CORREÇÃO 7: Parar completamente o timer
     clearInterval(state.timer);
     state.timer = null;
     
@@ -596,7 +453,6 @@ function resetarTimeline() {
     state.segundos = 0;
     state.pausado = false;
     
-    // CORREÇÃO 4: Resetar nomes dos times também
     state.nomeA = "Time A";
     state.nomeB = "Time B";
     document.getElementById('nomeTimeA').textContent = "Time A";
@@ -604,7 +460,6 @@ function resetarTimeline() {
     document.getElementById('nomeFaltaA').textContent = "Time A";
     document.getElementById('nomeFaltaB').textContent = "Time B";
     
-    // Opcional: limpar do localStorage também
     localStorage.removeItem("nomeTimeA");
     localStorage.removeItem("nomeTimeB");
     
@@ -624,7 +479,7 @@ function resetarTimeline() {
     if (navigator.vibrate) navigator.vibrate(20);
     showToast('Jogo resetado', 'success');
     
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
   }
 
   async function fim() {
@@ -633,23 +488,18 @@ function resetarTimeline() {
       return;
     }
     
-    // Animação do botão
     const btn = document.getElementById("btnFim");
     if (btn) {
       btn.classList.add("btn-animating-red");
       setTimeout(() => btn.classList.remove("btn-animating-red"), 600);
     }
     
-    // CORREÇÃO 7: Parar completamente o timer
     clearInterval(state.timer);
     state.timer = null;
     
-    // ============ TIMELINE ADICIONADA ============
-    // Registrar evento na timeline
+    // TIMELINE ADICIONADA
     adicionarEventoTimeline('fim');
-    // =============================================
     
-    // Calcular estatísticas da partida
     const golsPorJogador = {};
     state.historicaGols.forEach(gol => {
       if (!golsPorJogador[gol.jogador]) {
@@ -666,7 +516,6 @@ function resetarTimeline() {
       faltasPorJogador[falta.jogador]++;
     });
     
-    // Salvar partida
     state.partida.placar = [state.placar.A, state.placar.B];
     state.partida.gols = golsPorJogador;
     state.partida.faltas = {
@@ -681,7 +530,6 @@ function resetarTimeline() {
     historico.push(state.partida);
     localStorage.setItem("historico", JSON.stringify(historico));
     
-    // Mostrar overlay e finalizar
     mostrarOverlay("FIM DE JOGO", "🏆", 2000, () => {
       const mensagem = `Jogo finalizado!\n\n${state.nomeA} ${state.placar.A} × ${state.placar.B} ${state.nomeB}\n\n🏆 Craque: ${state.partida.craque}\n\n⏱️ Duração: ${Math.floor(state.segundos / 60)}:${String(state.segundos % 60).padStart(2, '0')}`;
       
@@ -690,7 +538,7 @@ function resetarTimeline() {
     });
     
     if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
   }
 
   function calcularCraque(gols) {
@@ -707,7 +555,7 @@ function resetarTimeline() {
     return craque ? `${craque} (${maxGols})` : "—";
   }
 
-  // ===== ANIMAÇÕES E EFEITOS =====
+  // ===== ANIMAÇÕES =====
   function mostrarOverlay(texto, icone, duracao, callback) {
     const overlay = document.getElementById("gameOverlay");
     const overlayText = document.getElementById("overlayText");
@@ -743,22 +591,19 @@ function resetarTimeline() {
       placarDiv.classList.remove("gol-animation");
     }, 800);
   }
-
-  // ===== CONTROLE DE GOLS =====
+    // ===== CONTROLE DE GOLS =====
   function aumentarGol(time) {
     if (!state.partida) {
       showToast('Inicie o jogo primeiro!', 'error');
       return;
     }
     
-    // CORREÇÃO 3: Fechar outros popups primeiro
     fecharPopupFalta();
     fecharPopupRemover();
     fecharPopupNome();
     
     state.timeAtual = time;
     
-    // Configurar popup
     const popupTitulo = document.getElementById('popupTitulo');
     if (popupTitulo) {
       popupTitulo.textContent = `⚽ Gol do ${time === 'A' ? state.nomeA : state.nomeB}! Quem fez?`;
@@ -769,14 +614,12 @@ function resetarTimeline() {
     
     popup.innerHTML = '';
     
-    // Se não houver jogadores, criar um padrão
     if (state.jogadores.length === 0) {
       const button = document.createElement('button');
       button.textContent = 'Jogador Desconhecido';
       button.onclick = () => registrarGol('Jogador Desconhecido');
       popup.appendChild(button);
     } else {
-      // Ordenar jogadores pelo ranking
       const ranking = obterRankingGeral();
       
       state.jogadores.forEach(jogador => {
@@ -793,7 +636,6 @@ function resetarTimeline() {
   function registrarGol(jogador) {
     if (!state.timeAtual) return;
     
-    // Salvar ação para desfazer
     state.ultimaAcao = {
       tipo: "gol",
       time: state.timeAtual,
@@ -803,7 +645,6 @@ function resetarTimeline() {
     
     mostrarUndo();
     
-    // Atualizar placar
     if (state.timeAtual === 'A') {
       state.placar.A++;
       document.getElementById('placarA').textContent = state.placar.A;
@@ -812,7 +653,6 @@ function resetarTimeline() {
       document.getElementById('placarB').textContent = state.placar.B;
     }
     
-    // Registrar gol
     state.historicaGols.push({
       time: state.timeAtual,
       jogador: jogador,
@@ -820,17 +660,14 @@ function resetarTimeline() {
       timestamp: Date.now()
     });
     
-    // ============ TIMELINE ADICIONADA ============
-    // Registrar evento na timeline
+    // TIMELINE ADICIONADA
     adicionarEventoTimeline('gol', state.timeAtual, jogador);
-    // =============================================
     
-    // Atualizar interface
     renderGols();
     animarGol();
     fecharPopup();
     
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
     showToast(`Gol de ${jogador}!`, 'success');
   }
 
@@ -856,7 +693,6 @@ function resetarTimeline() {
       lista.appendChild(li);
     });
     
-    // Mostrar/ocultar título
     const tituloGols = document.getElementById('tituloGols');
     if (tituloGols) {
       if (state.historicaGols.length > 0) {
@@ -866,7 +702,8 @@ function resetarTimeline() {
       }
     }
   }
-    function diminuirGol(time) {
+
+  function diminuirGol(time) {
     if (!state.partida) {
       showToast('Inicie o jogo primeiro!', 'error');
       return;
@@ -883,17 +720,14 @@ function resetarTimeline() {
       .slice(-3)
       .reverse();
     
-    // CORREÇÃO 9: Bug popup vazio - verificar se há gols
     if (ultimosGols.length === 0) {
       showToast('Não há gols específicos para remover', 'warning');
       return;
     }
     
-    // Mostrar popup para escolher qual gol remover
     const popup = document.getElementById('popupGols');
     if (!popup) return;
     
-    // CORREÇÃO 3: Fechar outros popups primeiro
     fecharPopup();
     fecharPopupFalta();
     fecharPopupNome();
@@ -925,7 +759,7 @@ function resetarTimeline() {
     renderGols();
     
     fecharPopupRemover();
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
     
     if (navigator.vibrate) navigator.vibrate(15);
     showToast('Gol removido', 'warning');
@@ -938,7 +772,6 @@ function resetarTimeline() {
       return;
     }
     
-    // CORREÇÃO 3: Fechar outros popups primeiro
     fecharPopup();
     fecharPopupRemover();
     fecharPopupNome();
@@ -955,7 +788,6 @@ function resetarTimeline() {
     
     popup.innerHTML = '';
     
-    // Se não houver jogadores, criar um padrão
     if (state.jogadores.length === 0) {
       const button = document.createElement('button');
       button.textContent = 'Jogador Desconhecido';
@@ -976,7 +808,6 @@ function resetarTimeline() {
   function confirmarFalta(jogador) {
     if (!state.timeAtualFalta) return;
     
-    // Salvar ação para desfazer
     state.ultimaAcao = {
       tipo: "falta",
       time: state.timeAtualFalta,
@@ -986,7 +817,6 @@ function resetarTimeline() {
     
     mostrarUndo();
     
-    // Atualizar faltas
     if (state.timeAtualFalta === 'A') {
       state.faltas.A++;
       document.getElementById('faltasA').textContent = state.faltas.A;
@@ -995,7 +825,6 @@ function resetarTimeline() {
       document.getElementById('faltasB').textContent = state.faltas.B;
     }
     
-    // Registrar falta
     state.historicaFaltas.push({
       time: state.timeAtualFalta,
       jogador: jogador,
@@ -1003,13 +832,11 @@ function resetarTimeline() {
       timestamp: Date.now()
     });
     
-    // ============ TIMELINE ADICIONADA ============
-    // Registrar evento na timeline
+    // TIMELINE ADICIONADA
     adicionarEventoTimeline('falta', state.timeAtualFalta, jogador);
-    // =============================================
     
     fecharPopupFalta();
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
     
     if (navigator.vibrate) navigator.vibrate(10);
     showToast(`Falta de ${jogador}`, 'warning');
@@ -1024,10 +851,9 @@ function resetarTimeline() {
     
     clearTimeout(state.undoTimer);
     
-    // CORREÇÃO 3: Desfazer em 5 segundos (era 10)
     state.undoTimer = setTimeout(() => {
       esconderUndo();
-    }, 5000); // 5 segundos
+    }, 5000);
   }
 
   function esconderUndo() {
@@ -1066,7 +892,7 @@ function resetarTimeline() {
     }
     
     esconderUndo();
-    fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+    fazerBackupAutomatico();
     
     if (navigator.vibrate) navigator.vibrate(15);
     showToast('Ação desfeita', 'success');
@@ -1117,7 +943,6 @@ function resetarTimeline() {
   function ranking() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     
-    // Ranking Geral de Gols
     const rankingGeral = obterRankingGeral();
     const listaGeral = document.getElementById('listaRankingGeral');
     
@@ -1149,7 +974,6 @@ function resetarTimeline() {
       }
     }
     
-    // Ranking Mensal
     const hoje = new Date();
     const mesAtual = hoje.getMonth();
     const anoAtual = hoje.getFullYear();
@@ -1206,7 +1030,6 @@ function resetarTimeline() {
       }
     }
     
-    // Ranking de Faltas
     const rankingFaltas = {};
     historico.forEach(partida => {
       if (partida.faltas && partida.faltas.jogadores) {
@@ -1263,7 +1086,6 @@ function resetarTimeline() {
       const item = document.createElement('div');
       item.className = 'historico-item';
       
-      // Gols da partida
       let golsHTML = '';
       if (partida.gols) {
         golsHTML = Object.entries(partida.gols)
@@ -1273,7 +1095,6 @@ function resetarTimeline() {
           .join('');
       }
       
-      // Faltas da partida
       let faltasHTML = '';
       if (partida.faltas && partida.faltas.jogadores) {
         faltasHTML = Object.entries(partida.faltas.jogadores)
@@ -1325,7 +1146,7 @@ function resetarTimeline() {
     if (await confirmAction("Apagar TODO o histórico? Esta ação não pode ser desfeita.")) {
       localStorage.removeItem("historico");
       historico();
-      fazerBackupAutomatico(); // CORREÇÃO 8: Backup automático
+      fazerBackupAutomatico();
       showToast('Histórico apagado!', 'success');
     }
   }
@@ -1334,7 +1155,6 @@ function resetarTimeline() {
   function estatisticas() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     
-    // Estatísticas Gerais
     const totalJogos = historico.length;
     let totalGols = 0;
     let totalFaltas = 0;
@@ -1352,7 +1172,6 @@ function resetarTimeline() {
         totalFaltas += (partida.faltas.A || 0) + (partida.faltas.B || 0);
       }
       
-      // Contar vitórias/empates
       const placar = partida.placar || [0, 0];
       if (placar[0] > placar[1]) vitoriasPorTime.A++;
       else if (placar[1] > placar[0]) vitoriasPorTime.B++;
@@ -1395,7 +1214,6 @@ function resetarTimeline() {
       `;
     }
     
-    // Estatísticas Recentes
     const statsRecentes = document.getElementById('statsRecentes');
     if (statsRecentes) {
       const ultimas5 = historico.slice(-5).reverse();
@@ -1421,7 +1239,6 @@ function resetarTimeline() {
       statsRecentes.innerHTML = html;
     }
     
-    // Estatísticas por Jogador
     const statsPorJogador = document.getElementById('statsPorJogador');
     if (statsPorJogador) {
       const rankingGeral = obterRankingGeral();
@@ -1451,7 +1268,8 @@ function resetarTimeline() {
       statsPorJogador.innerHTML = html;
     }
   }
-    // ===== COMPARAÇÃO DE JOGADORES =====
+
+  // ===== COMPARAÇÃO DE JOGADORES =====
   function carregarComparacao() {
     const select1 = document.getElementById('jogador1');
     const select2 = document.getElementById('jogador2');
@@ -1474,7 +1292,6 @@ function resetarTimeline() {
     let statsJ2 = { gols: 0, faltas: 0, partidas: 0, craque: 0 };
     
     historico.forEach(partida => {
-      // Gols
       if (partida.gols && partida.gols[jogador1]) {
         statsJ1.gols += partida.gols[jogador1].q;
         statsJ1.partidas++;
@@ -1484,7 +1301,6 @@ function resetarTimeline() {
         statsJ2.partidas++;
       }
       
-      // Faltas
       if (partida.faltas && partida.faltas.jogadores) {
         if (partida.faltas.jogadores[jogador1]) {
           statsJ1.faltas += partida.faltas.jogadores[jogador1];
@@ -1494,7 +1310,6 @@ function resetarTimeline() {
         }
       }
       
-      // Craque da partida
       if (partida.craque && partida.craque.includes(jogador1)) {
         statsJ1.craque++;
       }
@@ -1611,15 +1426,12 @@ function resetarTimeline() {
     showToast('Comparação realizada!', 'success');
   }
 
-  // ===== BACKUP E RESTAURAÇÃO =====
-  // CORREÇÃO 8: Backup automático periódico
+  // ===== BACKUP =====
   function fazerBackupAutomatico() {
-    // Limpar timer anterior
     if (state.backupTimer) {
       clearTimeout(state.backupTimer);
     }
     
-    // Agendar novo backup em 30 segundos (evita muitos saves seguidos)
     state.backupTimer = setTimeout(() => {
       const backupKey = 'placar_backup_auto';
       const currentData = {
@@ -1638,7 +1450,7 @@ function resetarTimeline() {
       } catch (error) {
         console.error('Erro no backup automático:', error);
       }
-    }, 30000); // 30 segundos
+    }, 30000);
   }
 
   function exportarBackup() {
@@ -1683,7 +1495,6 @@ function resetarTimeline() {
           return;
         }
         
-        // Restaurar dados
         state.jogadores = dados.jogadores || [];
         localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
         
@@ -1708,7 +1519,6 @@ function resetarTimeline() {
         renderJogadores();
         showToast("Backup importado com sucesso!", "success");
         
-        // Fazer novo backup dos dados restaurados
         fazerBackupAutomatico();
         
       } catch (error) {
@@ -1722,18 +1532,15 @@ function resetarTimeline() {
 
   // ===== PWA =====
   function configurarPWA() {
-    // CORREÇÃO 4: Melhor configuração do PWA
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       state.deferredPrompt = e;
       
       const installBtn = document.getElementById('installBtn');
       if (installBtn) {
-        // Mostrar após 5 segundos para não atrapalhar
         setTimeout(() => {
           installBtn.style.display = 'block';
           
-          // Esconder após 30 segundos
           setTimeout(() => {
             if (installBtn.style.display === 'block') {
               installBtn.style.display = 'none';
@@ -1751,7 +1558,6 @@ function resetarTimeline() {
       showToast('App instalado com sucesso!', 'success');
     });
     
-    // Verificar se já está instalado
     if (window.matchMedia('(display-mode: standalone)').matches) {
       const installBtn = document.getElementById('installBtn');
       if (installBtn) installBtn.style.display = 'none';
@@ -1781,16 +1587,35 @@ function resetarTimeline() {
     }
   }
 
-  // ===== BACKUP DE DADOS INICIAL =====
+  // ===== INICIALIZAÇÃO =====
+  function init() {
+    console.log('Inicializando PlacarApp...');
+    
+    carregarNomesTimes();
+    renderJogadores();
+    
+    esconderUndo();
+    
+    verificarBackupDados();
+    configurarPWA();
+    fazerBackupAutomatico();
+    
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(() => console.log('Service Worker registrado!'))
+        .catch(err => console.error('Erro no Service Worker:', err));
+    }
+    
+    console.log('PlacarApp inicializado com sucesso!');
+  }
+
   function verificarBackupDados() {
     const backupKey = 'placar_backup_v1';
     
     try {
-      // Verificar se dados principais existem
       const jogadores = localStorage.getItem("jogadores");
       const historico = localStorage.getItem("historico");
       
-      // Se não houver dados ou estiverem vazios, tentar restaurar do backup
       if (!jogadores || jogadores === '[]' || jogadores === 'null' || 
           !historico || historico === '[]' || historico === 'null') {
         
@@ -1822,7 +1647,6 @@ function resetarTimeline() {
         }
       }
       
-      // Sempre fazer backup inicial
       const currentData = {
         jogadores: localStorage.getItem("jogadores"),
         historico: localStorage.getItem("historico"),
@@ -1841,56 +1665,20 @@ function resetarTimeline() {
     }
   }
 
-  // ===== INICIALIZAÇÃO =====
-  function init() {
-    console.log('Inicializando PlacarApp...');
-    
-    // Carregar configurações
-    carregarNomesTimes();
-    renderJogadores();
-    
-    // CORREÇÃO 3: Esconder botão desfazer no início
-    esconderUndo();
-    
-    // CORREÇÃO 2: Botão de backup flutuante foi REMOVIDO
-    // (só mantemos a aba "Backup")
-    
-    // Verificar e restaurar backup
-    verificarBackupDados();
-    
-    // Configurar PWA
-    configurarPWA();
-    
-    // CORREÇÃO 8: Iniciar sistema de backup automático
-    fazerBackupAutomatico();
-    
-    // Registrar Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('Service Worker registrado!'))
-        .catch(err => console.error('Erro no Service Worker:', err));
-    }
-    
-    console.log('PlacarApp inicializado com sucesso!');
-  }
-
-    // ===== INTERFACE PÚBLICA =====
+  // ===== INTERFACE PÚBLICA =====
   return {
     init: function() {
-      // Inicializações existentes
       if (typeof init === 'function') {
-        init(); // Chama a função init original se existir
+        init();
       }
       
-      // Inicializações adicionais
       renderJogadores();
       
-      // Service Worker e atualizações
-      initServiceWorker();
-      checkForUpdates();
-      
-      // Outras inicializações que você já tenha
-      // (carregarPartidaSalva, setupPWA, etc.)
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log('Service Worker registrado!'))
+          .catch(err => console.error('Erro no Service Worker:', err));
+      }
     },
     trocarTab: trocarTab,
     addJogador: addJogador,
@@ -1930,3 +1718,4 @@ if (document.readyState === 'loading') {
 } else {
   PlacarApp.init();
 }
+  
