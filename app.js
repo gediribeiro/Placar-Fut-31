@@ -1957,3 +1957,15 @@ if (document.readyState === 'loading') {
 } else {
     iniciarAppComSplash();
 }
+
+
+window.addEventListener('load', () => {
+    // Verificar se está em modo PWA
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches;
+    console.log('📱 Modo PWA:', isPWA ? 'Tela Cheia ✅' : 'Navegador ❌');
+    
+    // Forçar SW registration se não estiver em PWA
+    if (!isPWA && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js');
+    }
+});
