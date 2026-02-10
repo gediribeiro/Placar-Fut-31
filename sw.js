@@ -1,68 +1,80 @@
-// ===== SERVICE WORKER COM AUTO-UPDATE =====
-// Versão dinâmica baseada na data (sempre diferente)
+// ===== SERVICE WORKER ATUALIZÁVEL - "NETWORK FIRST" =====
+// NÃO precisa mudar a versão manualmente para atualizações de código!
 
-const APP_VERSION = 'v2026.02.10'; // MUDE SEMPRE QUE ATUALIZAR O APP
+const APP_VERSION = 'v2026.02.10.01'; // Apenas para controle interno
 const CACHE_NAME = `placar-fut-cache-${APP_VERSION}`;
+const DYNAMIC_CACHE_NAME = `placar-fut-dynamic-${APP_VERSION}`;
 
-// URLs para cache (tudo que precisa funcionar offline)
-const urlsToCache = [
+// Arquivos ESSENCIAIS para funcionamento offline (cacheados na instalação)
+const CORE_ASSETS = [
   './',
   './index.html',
   './style.css',
   './app.js',
   './manifest.json',
+  './sw.js' // Importante: cachear a si mesmo!
+];
+
+// URLs de terceiros que podem ser cacheadas
+const EXTERNAL_ASSETS = [
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
 // ===== INSTALAÇÃO =====
 self.addEventListener('install', event => {
-  console.log(`[Service Worker] Instalando versão ${APP_VERSION}`);
+  console.log(`[SW ${APP_VERSION}] Instalando...`);
   
-  // FORÇA ATIVAÇÃO IMEDIATA
+  // Força ativação imediata, mesmo se houver SW antigo rodando
   self.skipWaiting();
   
-  // CACHE DOS ARQUIVOS ESSENCIAIS
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('[Service Worker] Cacheando arquivos...');
-        return cache.addAll(urlsToCache);
+        console.log('[SW] Cacheando arquivos essenciais...');
+        // Cacheia apenas os CORE_ASSETS (são pequenos e essenciais)
+        return cache.addAll(CORE_ASSETS);
       })
       .then(() => {
-        console.log('[Service Worker] Instalação completa!');
+        console.log('[SW] Todos os arquivos essenciais foram cacheados.');
+      })
+      .catch(err => {
+        console.warn('[SW] Algum arquivo essencial falhou no cache:', err);
       })
   );
 });
 
 // ===== ATIVAÇÃO =====
 self.addEventListener('activate', event => {
-  console.log(`[Service Worker] Ativando versão ${APP_VERSION}`);
+  console.log(`[SW ${APP_VERSION}] Ativando e limpando caches antigos...`);
   
   event.waitUntil(
-    // LIMPA CACHES ANTIGOS
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          // Remove caches que NÃO são o atual
-          if (cacheName !== CACHE_NAME && cacheName.startsWith('placar-fut-cache-')) {
-            console.log(`[Service Worker] Removendo cache antigo: ${cacheName}`);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
+    Promise.all([
+      // Limpa caches antigos
+      caches.keys().then(cacheNames => {
+        return Promise.all(
+          cacheNames.map(cacheName => {
+            // Remove TODOS os caches que não são os atuais
+            if (cacheName !== CACHE_NAME && 
+                cacheName !== DYNAMIC_CACHE_NAME && 
+                cacheName.startsWith('placar-fut-')) {
+              console.log(`[SW] Removendo cache antigo: ${cacheName}`);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      }),
+      
+      // Assume controle imediato de todas as abas/páginas
+      self.clients.claim()
+    ])
     .then(() => {
-      // ASSUME CONTROLE IMEDIATO DE TODAS AS ABAS
-      return self.clients.claim();
-    })
-    .then(() => {
-      // NOTIFICA TODOS OS CLIENTES PARA RECARREGAR
+      console.log(`[SW ${APP_VERSION}] Pronto para interceptar requisições!`);
+      // Opcional: Notifica todas as abas sobre a nova versão
       self.clients.matchAll().then(clients => {
         clients.forEach(client => {
           client.postMessage({
-            type: 'NEW_VERSION',
-            version: APP_VERSION,
-            action: 'reload'
+            type: 'SW_UPDATED',
+            version: APP_VERSION
           });
         });
       });
@@ -70,38 +82,93 @@ self.addEventListener('activate', event => {
   );
 });
 
-// ===== INTERCEPTA REQUISIÇÕES =====
+// ===== ESTRATÉGIA "NETWORK FIRST" PARA ARQUIVOS DA APLICAÇÃO =====
 self.addEventListener('fetch', event => {
-  // Ignora requisições do chrome-extension
-  if (event.request.url.startsWith('chrome-extension://')) return;
+  const url = new URL(event.request.url);
   
+  // Ignora requisições não-GET e de extensões
+  if (event.request.method !== 'GET') return;
+  if (url.protocol === 'chrome-extension:') return;
+  
+  // 1. PARA ARQUIVOS DA NOSSA APLICAÇÃO (html, css, js, json)
+  if (url.origin === self.location.origin) {
+    // Estratégia: NETWORK FIRST (Rede Primeiro)
+    event.respondWith(
+      fetch(event.request)
+        .then(networkResponse => {
+          // Se conseguiu da rede: ATUALIZA o cache e retorna
+          const responseClone = networkResponse.clone();
+          caches.open(DYNAMIC_CACHE_NAME)
+            .then(cache => cache.put(event.request, responseClone))
+            .catch(err => console.log('[SW] Erro ao atualizar cache:', err));
+          
+          return networkResponse;
+        })
+        .catch(() => {
+          // Se a rede FALHOU (offline): tenta do cache
+          console.log('[SW] Offline, buscando do cache:', event.request.url);
+          return caches.match(event.request)
+            .then(cachedResponse => {
+              // Se encontrou no cache, retorna
+              if (cachedResponse) return cachedResponse;
+              
+              // Se não tem no cache dinâmico, tenta no cache de assets essenciais
+              return caches.open(CACHE_NAME)
+                .then(cache => cache.match(event.request));
+            });
+        })
+    );
+    return; // Interrompe aqui para esta requisição
+  }
+  
+  // 2. PARA RECURSOS EXTERNOS (Font Awesome, APIs, etc.)
+  if (EXTERNAL_ASSETS.some(assetUrl => event.request.url.startsWith(assetUrl))) {
+    // Estratégia: CACHE FIRST com atualização em background
+    event.respondWith(
+      caches.match(event.request)
+        .then(cachedResponse => {
+          // Sempre faz a requisição de rede PARA ATUALIZAR o cache
+          const fetchPromise = fetch(event.request)
+            .then(networkResponse => {
+              // Atualiza o cache com a nova versão
+              const responseClone = networkResponse.clone();
+              caches.open(DYNAMIC_CACHE_NAME)
+                .then(cache => cache.put(event.request, responseClone));
+              return networkResponse;
+            })
+            .catch(err => {
+              console.log('[SW] Falha ao buscar recurso externo:', err);
+            });
+          
+          // Retorna do cache imediatamente (se tiver), mas atualiza em background
+          return cachedResponse || fetchPromise;
+        })
+    );
+    return;
+  }
+  
+  // 3. PARA OUTRAS REQUISIÇÕES (imagens, dados, etc.) - Estratégia padrão
   event.respondWith(
     caches.match(event.request)
-      .then(response => {
-        // Se tem no cache, retorna
-        if (response) {
-          return response;
-        }
-        
-        // Se não tem, busca na rede
+      .then(cachedResponse => {
+        // Tenta da rede primeiro para conteúdo dinâmico
         return fetch(event.request)
-          .then(response => {
-            // Não cacheamos tudo, só o essencial
-            return response;
-          })
-          .catch(() => {
-            // Se offline e não tem no cache, mostra fallback
-            if (event.request.mode === 'navigate') {
-              return caches.match('./index.html');
-            }
-          });
+          .then(networkResponse => networkResponse)
+          .catch(() => cachedResponse || fetch(event.request));
       })
   );
 });
 
-// ===== RECEBE MENSAGENS =====
+// ===== RECEBE MENSAGENS (para controle manual) =====
 self.addEventListener('message', event => {
   if (event.data === 'skipWaiting') {
     self.skipWaiting();
+  }
+  if (event.data === 'clearCache') {
+    caches.keys().then(cacheNames => {
+      cacheNames.forEach(cacheName => {
+        caches.delete(cacheName);
+      });
+    });
   }
 });
