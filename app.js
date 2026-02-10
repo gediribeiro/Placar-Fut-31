@@ -188,13 +188,18 @@ function trocarTab(tabId, button) {
     if (tabElement) tabElement.classList.add("active");
     button.classList.add("active");
     
-    // 4. Funções específicas
+    // 4. Funções específicas - VERSÃO CORRIGIDA
     const actions = {
-        'ranking': ranking,
-        'historico': historico,
+        'ranking': () => {
+            // FORÇA recarregamento dos dados antes de mostrar ranking
+            state.jogadores = JSON.parse(localStorage.getItem("jogadores") || "[]");
+            ranking();
+        },
+        'historico': historico, // Já recarrega do localStorage
         'stats': estatisticas,
         'comparar': carregarComparacao
     };
+    
     if (actions[tabId]) actions[tabId]();
     
     // Feedback
