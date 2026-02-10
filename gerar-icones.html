@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gerar Ícones PWA</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { padding: 10px 20px; margin: 10px; background: #0fb858; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Gerar Ícones PWA</h1>
+    
+    <div>
+        <canvas id="canvas512" width="512" height="512"></canvas>
+        <canvas id="canvas192" width="192" height="192"></canvas>
+    </div>
+    
+    <div>
+        <button onclick="baixarIcone(512)">⬇️ Baixar Ícone 512x512</button>
+        <button onclick="baixarIcone(192)">⬇️ Baixar Ícone 192x192</button>
+        <button onclick="baixarAmbos()">⬇️ Baixar Ambos</button>
+    </div>
+    
+    <script>
+        function criarIcone(tamanho, canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Fundo verde
+            ctx.fillStyle = '#0fb858';
+            ctx.fillRect(0, 0, tamanho, tamanho);
+            
+            // Bola branca
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(tamanho/2, tamanho/2, tamanho*0.4, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Número 31
+            ctx.fillStyle = '#0fb858';
+            ctx.font = `bold ${tamanho*0.3}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('31', tamanho/2, tamanho/2);
+            
+            console.log(`Ícone ${tamanho}x${tamanho} criado`);
+        }
+        
+        function baixarIcone(tamanho) {
+            const canvas = document.getElementById(`canvas${tamanho}`);
+            canvas.toBlob(blob => {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `icon-${tamanho}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                alert(`Ícone ${tamanho}x${tamanho} baixado!`);
+            });
+        }
+        
+        function baixarAmbos() {
+            baixarIcone(512);
+            setTimeout(() => baixarIcone(192), 500);
+        }
+        
+        // Criar ícones quando carregar
+        window.onload = function() {
+            criarIcone(512, 'canvas512');
+            criarIcone(192, 'canvas192');
+        };
+    </script>
+</body>
+</html>
