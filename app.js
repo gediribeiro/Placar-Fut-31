@@ -1713,19 +1713,23 @@ const PlacarApp = (function() {
 })();
 
 // ===== EXIBIR VERSÃO NO RODAPÉ ===== 
-// ADICIONE ESTAS LINHAS AQUI
-document.addEventListener('DOMContentLoaded', function() {
+// Código CORRIGIDO - executa dentro do init para evitar conflitos
+function exibirVersao() {
     const versaoEl = document.getElementById('versaoApp');
     if (versaoEl) {
         versaoEl.textContent = APP_VERSION; // 'v2026.02.10.1'
         console.log('Versão exibida:', APP_VERSION);
     }
-});
+}
 
-// Inicializar quando a página carregar
+// Inicializar quando a página carregar (VERSÃO CORRIGIDA)
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', PlacarApp.init);
+  document.addEventListener('DOMContentLoaded', function() {
+    PlacarApp.init();
+    exibirVersao(); // 👈 Executa APÓS o init
+  });
 } else {
   PlacarApp.init();
+  exibirVersao(); // 👈 Executa se DOM já carregado
 }
   
