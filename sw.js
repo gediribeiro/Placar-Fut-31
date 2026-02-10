@@ -4,6 +4,7 @@
 const APP_VERSION = 'v2026.02.10.01'; // Apenas para controle interno
 const CACHE_NAME = `placar-fut-cache-${APP_VERSION}`;
 const DYNAMIC_CACHE_NAME = `placar-fut-dynamic-${APP_VERSION}`;
+const SW_VERSION = '2026.02.10.1'; // MUDAR SEMPRE QUE ATUALIZAR O SW
 
 // Arquivos ESSENCIAIS para funcionamento offline (cacheados na instalação)
 const CORE_ASSETS = [
@@ -63,6 +64,23 @@ self.addEventListener('activate', event => {
           })
         );
       }),
+
+      // No evento 'activate', adicionar:
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          // Remove TODOS os caches antigos (inclusive de SWs diferentes)
+          if (cacheName.includes('placar-fut')) {
+            console.log('Removendo cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
       
       // Assume controle imediato de todas as abas/páginas
       self.clients.claim()
