@@ -251,34 +251,82 @@ function trocarTab(tabId, button) {
     }
   }
 
-  // ===== EDIÇÃO DE JOGADORES =====
-  async function editarNomeJogador(index) {
+ // ===== JOGADORES =====
+function addJogador() {
+    const input = document.getElementById('novoJogador');
+    const nome = input.value.trim();
+    
+    if (!nome) {
+        showToast('Digite um nome para o jogador', 'error');
+        return;
+    }
+    
+    if (nome.length > 20) {
+        showToast('Nome muito longo (máx: 20 caracteres)', 'error');
+        return;
+    }
+    
+    if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(nome)) {
+        showToast('Use apenas letras, números e espaços', 'error');
+        return;
+    }
+    
+    if (state.jogadores.includes(nome)) {
+        showToast('Jogador já existe!', 'warning');
+        return;
+    }
+    
+    state.jogadores.push(nome);
+    localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
+    
+    input.value = '';
+    input.blur();
+    
+    renderJogadores();
+    fazerBackupAutomatico();
+    
+    if (navigator.vibrate) navigator.vibrate(10);
+    showToast(`${nome} adicionado!`, 'success');
+}
+
+async function removerJogador(index) {
+    const nome = state.jogadores[index];
+    
+    if (await confirmAction(`Remover ${nome}?`)) {
+        state.jogadores.splice(index, 1);
+        localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
+        renderJogadores();
+        fazerBackupAutomatico();
+        showToast(`${nome} removido`, 'success');
+    }
+}
+
+// ===== EDIÇÃO DE JOGADORES ===== (FUNÇÃO NOVA)
+async function editarNomeJogador(index) {
     const nomeAtual = state.jogadores[index];
     
-    // Usa o mesmo input padrão do sistema (prompt simples)
     const novoNome = prompt(`Editar jogador:\n\nNome atual: ${nomeAtual}\n\nDigite o novo nome:`, nomeAtual);
     
     if (!novoNome || novoNome.trim() === '') {
-      return; // Usuário cancelou ou digitou vazio
+        return;
     }
     
     const nomeFormatado = novoNome.trim();
     
     // Validações (iguais ao addJogador)
     if (nomeFormatado.length > 20) {
-      showToast('Nome muito longo (máx: 20 caracteres)', 'error');
-      return;
+        showToast('Nome muito longo (máx: 20 caracteres)', 'error');
+        return;
     }
     
     if (!/^[a-zA-ZÀ-ÿ0-9\s]+$/.test(nomeFormatado)) {
-      showToast('Use apenas letras, números e espaços', 'error');
-      return;
+        showToast('Use apenas letras, números e espaços', 'error');
+        return;
     }
     
-    // Verifica se o novo nome já existe (e não é o próprio nome atual)
     if (nomeFormatado !== nomeAtual && state.jogadores.includes(nomeFormatado)) {
-      showToast('Já existe um jogador com este nome!', 'warning');
-      return;
+        showToast('Já existe um jogador com este nome!', 'warning');
+        return;
     }
     
     // ATUALIZA EM TODOS OS LUGARES
@@ -287,90 +335,90 @@ function trocarTab(tabId, button) {
     
     // 1. Atualiza histórico de GOLS
     state.historicaGols.forEach(evento => {
-      if (evento.jogador === nomeAntigo) {
-        evento.jogador = nomeFormatado;
-      }
+        if (evento.jogador === nomeAntigo) {
+            evento.jogador = nomeFormatado;
+        }
     });
     
     // 2. Atualiza histórico de FALTAS
     state.historicaFaltas.forEach(evento => {
-      if (evento.jogador === nomeAntigo) {
-        evento.jogador = nomeFormatado;
-      }
+        if (evento.jogador === nomeAntigo) {
+            evento.jogador = nomeFormatado;
+        }
     });
     
     // 3. Salva no localStorage
     localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
+    localStorage.setItem("historicaGols", JSON.stringify(state.historicaGols));
+    localStorage.setItem("historicaFaltas", JSON.stringify(state.historicaFaltas));
     
-    // 4. Atualiza a interface
+    // 4. FORÇAR ATUALIZAÇÃO COMPLETA DO APP
     renderJogadores();
+    if (typeof ranking === 'function') ranking();
+    if (typeof historico === 'function') historico();
+    if (typeof atualizarSelectsJogadores === 'function') atualizarSelectsJogadores();
     
-    // 5. Atualiza rankings se estiverem visíveis
-    if (document.getElementById('ranking').classList.contains('active')) {
-      ranking();
+    // 5. Se tiver partida ativa, forçar recálculo
+    if (state.partidaAtiva) {
+        // Forçar re-render se necessário
+        const placarA = document.getElementById('scoreA');
+        const placarB = document.getElementById('scoreB');
+        if (placarA) placarA.textContent = state.placar[0];
+        if (placarB) placarB.textContent = state.placar[1];
     }
     
-    // 6. Atualiza histórico se estiver visível
-    if (document.getElementById('historico').classList.contains('active')) {
-      historico();
-    }
-    
-    // 7. Backup automático
+    // 6. Backup automático
     fazerBackupAutomatico();
     
     // Feedback
     if (navigator.vibrate) navigator.vibrate(10);
     showToast(`Editado: ${nomeAntigo} → ${nomeFormatado}`, 'success');
-    
-    console.log(`Jogador editado: "${nomeAntigo}" → "${nomeFormatado}"`);
-  }
+}
 
-  function renderJogadores() {
+function renderJogadores() {
     const lista = document.getElementById('listaJogadores');
     if (!lista) return;
     
     lista.innerHTML = '';
     
     state.jogadores.forEach((jogador, index) => {
-      const li = document.createElement('li');
-      
-      // NOME DO JOGADOR
-      const span = document.createElement('span');
-      span.textContent = jogador;
-      span.className = 'player-name';
-      
-      // CONTAINER DE BOTÕES
-      const divBotoes = document.createElement('div');
-      divBotoes.className = 'player-actions';
-      
-      // BOTÃO EDITAR (✏️) - NOVO!
-      const btnEditar = document.createElement('button');
-      btnEditar.textContent = '✏️';
-      btnEditar.title = 'Editar nome';
-      btnEditar.onclick = (e) => {
-        e.stopPropagation(); // Evita propagação
-        editarNomeJogador(index);
-      };
-      
-      // BOTÃO REMOVER (❌) - JÁ EXISTIA
-      const btnRemover = document.createElement('button');
-      btnRemover.textContent = '❌';
-      btnRemover.title = 'Remover jogador';
-      btnRemover.onclick = (e) => {
-        e.stopPropagation();
-        removerJogador(index);
-      };
-      
-      // MONTA A ESTRUTURA
-      divBotoes.appendChild(btnEditar);
-      divBotoes.appendChild(btnRemover);
-      
-      li.appendChild(span);
-      li.appendChild(divBotoes);
-      lista.appendChild(li);
+        const li = document.createElement('li');
+        
+        // NOME DO JOGADOR
+        const span = document.createElement('span');
+        span.textContent = jogador;
+        span.className = 'player-name';
+        
+        // CONTAINER DE BOTÕES
+        const divBotoes = document.createElement('div');
+        divBotoes.className = 'player-actions';
+        
+        // BOTÃO EDITAR (✏️) - NOVO!
+        const btnEditar = document.createElement('button');
+        btnEditar.textContent = '✏️';
+        btnEditar.title = 'Editar nome';
+        btnEditar.onclick = (e) => {
+            e.stopPropagation();
+            editarNomeJogador(index);
+        };
+        
+        // BOTÃO REMOVER (❌)
+        const btnRemover = document.createElement('button');
+        btnRemover.textContent = '❌';
+        btnRemover.title = 'Remover jogador';
+        btnRemover.onclick = (e) => {
+            e.stopPropagation();
+            removerJogador(index);
+        };
+        
+        divBotoes.appendChild(btnEditar);
+        divBotoes.appendChild(btnRemover);
+        
+        li.appendChild(span);
+        li.appendChild(divBotoes);
+        lista.appendChild(li);
     });
-  }
-
+}
   // ===== NOMES DOS TIMES =====
   function editarNomeTime(time) {
     fecharPopup();
