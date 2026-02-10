@@ -1,4 +1,4 @@
-const APP_VERSION = 'v1.0.4';
+const APP_VERSION = 'v1.0.4'; // Atualizado para correção da edição de jogadores
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
