@@ -1,42 +1,52 @@
 {
-  "version": "v1.0.3", // 👈 Se quiser padronizar
   "name": "Placar Fut 31",
-  "short_name": "Placar",
-  "description": "Sistema de placar profissional para futebol - Controle de gols, faltas, ranking e estatísticas",
-  "start_url": "./index.html",
+  "short_name": "PlacarFut",
+  "description": "Sistema de placar profissional para futebol",
+  
+  // ✅ CORRIGIDO: Caminhos relativos sem "./" para compatibilidade universal
+  "start_url": ".",
+  "scope": ".",
+  
   "display": "standalone",
-  "theme_color": "#0fb858",
-  "background_color": "#ffffff",
   "orientation": "portrait",
+  
+  // ✅ CORRIGIDO: Cores otimizadas para status bar de ambos os sistemas
+  "theme_color": "#1a5f23",      // Status bar (mais escuro para contraste)
+  "background_color": "#0fb858",  // Tela de carregamento PWA (verde do app)
+  
+  // ✅ Ícones otimizados (sem "./" e com propósito correto)
   "icons": [
     {
-      "src": "./icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any maskable"  // Permite corte arredondado no Android
     },
     {
-      "src": "./icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "categories": ["sports", "utilities"],
+  
+  // ✅ Shortcuts otimizados (funcionam no Android/Chrome)
   "shortcuts": [
     {
       "name": "Novo Jogo",
-      "short_name": "Jogo",
-      "description": "Iniciar um novo jogo",
-      "url": "./index.html#jogo",
-      "icons": [{ "src": "./icon-96.png", "sizes": "96x96" }]
+      "url": "#jogo",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Ranking",
-      "short_name": "Ranking",
-      "description": "Ver ranking de jogadores",
-      "url": "./index.html#ranking",
-      "icons": [{ "src": "./icon-96.png", "sizes": "96x96" }]
+      "url": "#ranking",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
     }
-  ]
+  ],
+  
+  // ✅ Categorias padronizadas
+  "categories": ["sports", "productivity"],
+  
+  // ❌ REMOVIDO: "version" (não é padrão Web App Manifest)
+  // A versão fica no app.js, index.html e splash screen
 }
