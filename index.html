@@ -34,6 +34,7 @@
             <button class="tab-button" onclick="PlacarApp.trocarTab('stats', this)">Stats</button>
             <button class="tab-button" onclick="PlacarApp.trocarTab('comparar', this)">Comparar</button>
             <button class="tab-button" onclick="PlacarApp.trocarTab('backup', this)">Backup</button>
+            <button class="control-btn share-btn" onclick="mostrarCardCompartilhamento()"><span class="btn-icon">📤</span> Compartilhar</button>
         </div>
     </nav>
 
@@ -307,5 +308,64 @@
             document.getElementById('appVersion').textContent = 'v2024.01.15';
         });
     </script>
+    
+<!-- Modal de Compartilhamento -->
+<div id="shareModal" class="modal-overlay" onclick="fecharShareModal(event)">
+  <div class="modal-content share-modal" onclick="event.stopPropagation()">
+    <button class="close-share-btn" onclick="fecharShareModal()">✖</button>
+    
+    <div class="share-card">
+      <div class="card-bg"></div>
+      
+      <div class="card-header">
+        <span class="card-icon">⚽</span>
+        <h3 class="card-title">PLACAR FUT 31</h3>
+      </div>
+      
+      <div class="card-score">
+        <div class="team" id="shareTimeA">Time A</div>
+        <div class="score" id="sharePlacar">0 × 0</div>
+        <div class="team" id="shareTimeB">Time B</div>
+      </div>
+      
+      <div class="card-divider"></div>
+      
+      <div class="card-stats">
+        <!-- ARTILHEIRO COM DESTAQUE -->
+        <div class="stat-item destaque destaque-artilheiro">
+          <span class="stat-icon">🏆</span>
+          <span class="nome-destaque" id="shareArtilheiroNome">—</span>
+          <span class="numero-destaque" id="shareArtilheiroNumero">0</span>
+          <span class="tipo-destaque">Gols</span>
+        </div>
+        
+        <!-- REI DAS FALTAS COM DESTAQUE -->
+        <div class="stat-item destaque destaque-faltas">
+          <span class="stat-icon">⚠️</span>
+          <span class="nome-destaque" id="shareFaltasNome">—</span>
+          <span class="numero-destaque" id="shareFaltasNumero">0</span>
+          <span class="tipo-destaque">Faltas</span>
+        </div>
+      </div>
+      
+      <div class="card-divider"></div>
+      
+      <div class="card-footer">
+        <span class="footer-item">
+          <span class="footer-icon">📅</span>
+          <span id="shareData">—</span>
+        </span>
+        <span class="footer-item">
+          <span class="footer-icon">⏱️</span>
+          <span id="shareDuracao">—</span>
+        </span>
+      </div>
+      
+      <div class="card-tip">
+        📸 Tire um print para compartilhar!
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
