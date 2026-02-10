@@ -1,4 +1,4 @@
-const APP_VERSION = 'v2026.02.09-3';
+const APP_VERSION = 'v2026.02.09-4';
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
@@ -1241,7 +1241,7 @@ function resetarTimeline() {
     }
   }
 
-  // ===== HISTÓRICO =====
+    // ===== HISTÓRICO =====
   function historico() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     const lista = document.getElementById('listaHistorico');
@@ -1320,7 +1320,7 @@ function resetarTimeline() {
         <div class="historico-info">
           <span class="historico-craque">🏆 <strong>${escapeHTML(artilheiroTexto)}</strong></span>
           <!-- BOTÃO DE COMPARTILHAR ADICIONADO -->
-          <button class="historico-share-btn" onclick="compartilharPartidaHistorico(${indexOriginal})" title="Compartilhar">
+          <button class="historico-share-btn" onclick="PlacarApp.compartilharPartidaHistorico(${indexOriginal})" title="Compartilhar">
               📤
           </button>
         </div>
@@ -2034,7 +2034,7 @@ function fecharShareModal(event) {
     console.log('PlacarApp inicializado com sucesso!');
   }
 
-    // ===== INTERFACE PÚBLICA =====
+      // ===== INTERFACE PÚBLICA =====
   return {
     init: function() {
       // Inicializações existentes
@@ -2080,6 +2080,14 @@ function fecharShareModal(event) {
     exportarBackup: exportarBackup,
     importarBackup: importarBackup,
     instalarApp: instalarApp,
+    
+    // ===== NOVAS FUNÇÕES ADICIONADAS =====
+    mostrarCardCompartilhamento: mostrarCardCompartilhamento,
+    compartilharPartidaHistorico: compartilharPartidaHistorico,
+    mostrarCardPartida: mostrarCardPartida,
+    fecharShareModal: fecharShareModal,
+    // ======================================
+    
     getState: () => ({ ...state })
   };
 })();
