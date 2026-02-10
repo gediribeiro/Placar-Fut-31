@@ -1463,3 +1463,14 @@ body.clean-bg {
         font-size: 1.1em;
     }
 }
+
+/* GARANTE que apenas botões ativos são verdes */
+.abamento button {
+    background-color: #f0f0f0 !important; /* Cinza padrão */
+    transition: background-color 0.3s;
+}
+
+.abamento button.active {
+    background-color: #4CAF50 !important; /* Verde APENAS ativo */
+    color: white !important;
+}
