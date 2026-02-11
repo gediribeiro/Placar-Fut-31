@@ -1994,3 +1994,42 @@ if (document.readyState === 'loading') {
 } else {
     iniciarAppComSplash();
 }
+
+// ===== FORÇAR PWA iOS =====
+(function() {
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    
+    if (isIOS && isSafari) {
+        console.log('📱 iOS Safari detectado');
+        
+        // Força registro do Service Worker IMEDIATAMENTE
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js', { scope: './' })
+                .then(reg => {
+                    console.log('✅ SW registrado no iOS:', reg.scope);
+                    
+                    // Verifica se está em modo standalone
+                    setTimeout(() => {
+                        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+                        console.log('📱 Modo atual:', isStandalone ? 'Tela Cheia' : 'Com Barra');
+                        
+                        if (!isStandalone) {
+                            console.log('⚠️ iOS não está reconhecendo como PWA');
+                            console.log('💡 Solução: 1. Limpe cache Safari 2. Reinstale');
+                        }
+                    }, 1000);
+                })
+                .catch(err => {
+                    console.error('❌ SW falhou no iOS:', err);
+                    // iOS pode bloquear SW em certas condições
+                });
+        }
+        
+        // Remove qualquer query string que possa atrapalhar
+        if (window.location.search) {
+            console.log('⚠️ Removendo query string para PWA...');
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    }
+})();
