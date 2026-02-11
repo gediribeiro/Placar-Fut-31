@@ -2,25 +2,18 @@
   "name": "Placar Fut 31",
   "short_name": "PlacarFut",
   "description": "Sistema de placar profissional para futebol",
-  
-  // ✅ CORRIGIDO: Caminhos relativos sem "./" para compatibilidade universal
   "start_url": ".",
   "scope": ".",
-  
   "display": "standalone",
   "orientation": "portrait",
-  
-  // ✅ CORRIGIDO: Cores otimizadas para status bar de ambos os sistemas
-  "theme_color": "#1a5f23",      // Status bar (mais escuro para contraste)
-  "background_color": "#0fb858",  // Tela de carregamento PWA (verde do app)
-  
-  // ✅ Ícones otimizados (sem "./" e com propósito correto)
+  "theme_color": "#1a5f23",
+  "background_color": "#0fb858",
   "icons": [
     {
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"  // Permite corte arredondado no Android
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
@@ -28,25 +21,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  
-  // ✅ Shortcuts otimizados (funcionam no Android/Chrome)
-  "shortcuts": [
-    {
-      "name": "Novo Jogo",
-      "url": "#jogo",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Ranking",
-      "url": "#ranking",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    }
-  ],
-  
-  // ✅ Categorias padronizadas
-  "categories": ["sports", "productivity"],
-  
-  // ❌ REMOVIDO: "version" (não é padrão Web App Manifest)
-  // A versão fica no app.js, index.html e splash screen
+  ]
 }
