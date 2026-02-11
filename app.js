@@ -780,13 +780,32 @@ function renderJogadores() {
     } else {
       const ranking = obterRankingGeral();
       
-      state.jogadores.forEach(jogador => {
-        const button = document.createElement('button');
-        button.textContent = jogador;
-        button.onclick = () => registrarGol(jogador);
-        popup.appendChild(button);
-      });
+      } else {
+  // Obtém ranking de gols
+  const rankingGols = obterRankingGeral();
+  
+  // Ordena jogadores: quem tem mais gols primeiro, depois ordem alfabética
+  const jogadoresOrdenados = [...state.jogadores].sort((a, b) => {
+    const golsA = rankingGols[a] || 0;
+    const golsB = rankingGols[b] || 0;
+    
+    if (golsA !== golsB) {
+      return golsB - golsA; // Maior gols primeiro
     }
+    return a.localeCompare(b); // Alfabético se empate
+  });
+  
+  jogadoresOrdenados.forEach(jogador => {
+    const button = document.createElement('button');
+    
+    // Mostra estatística ao lado (opcional, mas recomendado)
+    const gols = rankingGols[jogador] || 0;
+    button.textContent = gols > 0 ? `${jogador} (${gols})` : jogador;
+    
+    button.onclick = () => registrarGol(jogador);
+    popup.appendChild(button);
+  });
+}
     
     document.getElementById('popupJogador').classList.add('show');
   }
@@ -924,10 +943,10 @@ function renderJogadores() {
   }
 
   // ===== CONTROLE DE FALTAS =====
-  function registrarFalta(time) {
+ function registrarFalta(time) {
     if (!state.partida) {
-      showToast('Inicie o jogo primeiro!', 'error');
-      return;
+        showToast('Inicie o jogo primeiro!', 'error');
+        return;
     }
     
     fecharPopup();
@@ -938,7 +957,7 @@ function renderJogadores() {
     
     const popupTituloFalta = document.getElementById('popupTituloFalta');
     if (popupTituloFalta) {
-      popupTituloFalta.textContent = `⚠️ Falta do ${time === 'A' ? state.nomeA : state.nomeB}. Quem fez?`;
+        popupTituloFalta.textContent = `⚠️ Falta do ${time === 'A' ? state.nomeA : state.nomeB}. Quem fez?`;
     }
     
     const popup = document.getElementById('popupJogadoresFalta');
@@ -947,21 +966,49 @@ function renderJogadores() {
     popup.innerHTML = '';
     
     if (state.jogadores.length === 0) {
-      const button = document.createElement('button');
-      button.textContent = 'Jogador Desconhecido';
-      button.onclick = () => confirmarFalta('Jogador Desconhecido');
-      popup.appendChild(button);
-    } else {
-      state.jogadores.forEach(jogador => {
         const button = document.createElement('button');
-        button.textContent = jogador;
-        button.onclick = () => confirmarFalta(jogador);
+        button.textContent = 'Jogador Desconhecido';
+        button.onclick = () => confirmarFalta('Jogador Desconhecido');
         popup.appendChild(button);
-      });
+    } else {
+        // 🔥 PEGA O RANKING DE FALTAS DO HISTÓRICO
+        const historico = JSON.parse(localStorage.getItem("historico")) || [];
+        const rankingFaltas = {};
+        
+        historico.forEach(partida => {
+            if (partida.faltas && partida.faltas.jogadores) {
+                Object.entries(partida.faltas.jogadores).forEach(([jogador, qtd]) => {
+                    rankingFaltas[jogador] = (rankingFaltas[jogador] || 0) + qtd;
+                });
+            }
+        });
+        
+        // 🔥 ORDENA: MAIS FALTOSO PRIMEIRO
+        const jogadoresOrdenados = [...state.jogadores].sort((a, b) => {
+            const faltasA = rankingFaltas[a] || 0;
+            const faltasB = rankingFaltas[b] || 0;
+            
+            if (faltasA !== faltasB) {
+                return faltasB - faltasA; // Maior número de faltas primeiro
+            }
+            return a.localeCompare(b); // Alfabético se empatar
+        });
+        
+        // 🔥 CRIA OS BOTÕES NA ORDEM CORRETA
+        jogadoresOrdenados.forEach(jogador => {
+            const button = document.createElement('button');
+            const faltas = rankingFaltas[jogador] || 0;
+            
+            // Mostra a quantidade de faltas ao lado do nome
+            button.textContent = faltas > 0 ? `${jogador} (${faltas})` : jogador;
+            
+            button.onclick = () => confirmarFalta(jogador);
+            popup.appendChild(button);
+        });
     }
     
     document.getElementById('popupFalta').classList.add('show');
-  }
+}
 
   function confirmarFalta(jogador) {
     if (!state.timeAtualFalta) return;
