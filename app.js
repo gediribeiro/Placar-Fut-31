@@ -1,4 +1,4 @@
-const APP_VERSION = 'v1.0.4'; // Atualizado para correção da edição de jogadores
+const APP_VERSION = 'v1.0.4';
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
@@ -171,44 +171,36 @@ const PlacarApp = (function() {
   }
 
   // ===== NAVEGAÇÃO =====
-function trocarTab(tabId, button) {
-    // Fecha popups
+  function trocarTab(tabId, button) {
     fecharPopup(); fecharPopupFalta(); fecharPopupRemover(); fecharPopupNome();
     
-    // 1. Remove 'active' de TODAS as seções
     document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
-    
-    // 2. CORREÇÃO CRÍTICA: Remove 'active' de TODOS os botões
     document.querySelectorAll(".abamento button, nav button, .tabs button").forEach(btn => {
         btn.classList.remove("active");
     });
     
-    // 3. Adiciona 'active' nos elementos corretos
     const tabElement = document.getElementById(tabId);
     if (tabElement) tabElement.classList.add("active");
     button.classList.add("active");
     
-    // 4. Funções específicas - VERSÃO CORRIGIDA
     const actions = {
         'ranking': () => {
-            // FORÇA recarregamento dos dados antes de mostrar ranking
             state.jogadores = JSON.parse(localStorage.getItem("jogadores") || "[]");
             ranking();
         },
-        'historico': historico, // Já recarrega do localStorage
+        'historico': historico,
         'stats': estatisticas,
         'comparar': carregarComparacao
     };
     
     if (actions[tabId]) actions[tabId]();
     
-    // Feedback
     if (navigator.vibrate) navigator.vibrate(5);
     console.log(`✅ Aba ativa: ${tabId}`);
-}
+  }
 
-// ===== JOGADORES =====
-function addJogador() {
+  // ===== JOGADORES =====
+  function addJogador() {
     const input = document.getElementById('novoJogador');
     const nome = input.value.trim();
     
@@ -243,9 +235,9 @@ function addJogador() {
     
     if (navigator.vibrate) navigator.vibrate(10);
     showToast(`${nome} adicionado!`, 'success');
-}
+  }
 
-async function removerJogador(index) {
+  async function removerJogador(index) {
     const nome = state.jogadores[index];
     
     if (await confirmAction(`Remover ${nome}?`)) {
@@ -255,10 +247,10 @@ async function removerJogador(index) {
         fazerBackupAutomatico();
         showToast(`${nome} removido`, 'success');
     }
-}
+  }
 
-// ===== EDIÇÃO DE JOGADORES ===== (FUNÇÃO NOVA CORRIGIDA)
-async function editarNomeJogador(index) {
+  // ===== EDIÇÃO DE JOGADORES =====
+  async function editarNomeJogador(index) {
     const nomeAtual = state.jogadores[index];
     
     const novoNome = prompt(`Editar jogador:\n\nNome atual: ${nomeAtual}\n\nDigite o novo nome:`, nomeAtual);
@@ -269,7 +261,6 @@ async function editarNomeJogador(index) {
     
     const nomeFormatado = novoNome.trim();
     
-    // Validações (iguais ao addJogador)
     if (nomeFormatado.length > 20) {
         showToast('Nome muito longo (máx: 20 caracteres)', 'error');
         return;
@@ -285,11 +276,9 @@ async function editarNomeJogador(index) {
         return;
     }
     
-    // ATUALIZA EM TODOS OS LUGARES
     const nomeAntigo = state.jogadores[index];
     state.jogadores[index] = nomeFormatado;
     
-    // 1. Atualiza histórico de GOLS (timeline atual)
     if (state.historicaGols) {
         state.historicaGols.forEach(evento => {
             if (evento.jogador === nomeAntigo) {
@@ -299,7 +288,6 @@ async function editarNomeJogador(index) {
         localStorage.setItem("historicaGols", JSON.stringify(state.historicaGols));
     }
     
-    // 2. Atualiza histórico de FALTAS (timeline atual)
     if (state.historicaFaltas) {
         state.historicaFaltas.forEach(evento => {
             if (evento.jogador === nomeAntigo) {
@@ -309,22 +297,17 @@ async function editarNomeJogador(index) {
         localStorage.setItem("historicaFaltas", JSON.stringify(state.historicaFaltas));
     }
     
-    // 3. ATUALIZA SISTEMA "historico" (PARTIDAS SALVAS) - CORREÇÃO CRÍTICA
     const historicoCompleto = JSON.parse(localStorage.getItem("historico")) || [];
     let algoFoiAtualizado = false;
     
     if (historicoCompleto.length > 0) {
         historicoCompleto.forEach(partida => {
-            // 🔄 ATUALIZA GOLS: Procura pelo nome em qualquer formato
             if (partida.gols && typeof partida.gols === 'object') {
                 Object.keys(partida.gols).forEach(jogadorNoHistorico => {
-                    // Verifica se o nome (ou parte dele) corresponde ao nomeAntigo
-                    // Ex: "ged" em "ged (2)" → true
                     if (jogadorNoHistorico.includes(nomeAntigo)) {
                         const dadosGol = partida.gols[jogadorNoHistorico];
                         delete partida.gols[jogadorNoHistorico];
                         
-                        // Se tinha "(2)", mantém no novo nome
                         const parentesesMatch = jogadorNoHistorico.match(/\(\d+\)/);
                         const novoNomeFinal = parentesesMatch 
                             ? nomeFormatado + ' ' + parentesesMatch[0]
@@ -336,7 +319,6 @@ async function editarNomeJogador(index) {
                 });
             }
             
-            // 🔄 ATUALIZA FALTAS
             if (partida.faltas && partida.faltas.jogadores && typeof partida.faltas.jogadores === 'object') {
                 Object.keys(partida.faltas.jogadores).forEach(jogadorNoHistorico => {
                     if (jogadorNoHistorico.includes(nomeAntigo)) {
@@ -354,10 +336,8 @@ async function editarNomeJogador(index) {
                 });
             }
             
-            // 🔄 ATUALIZA CRAQUE
             if (partida.craque && typeof partida.craque === 'string') {
                 if (partida.craque.includes(nomeAntigo)) {
-                    // Mantém estrutura similar (com número se tinha)
                     const parentesesMatch = partida.craque.match(/\(\d+\)/);
                     const novoCraque = parentesesMatch 
                         ? nomeFormatado + ' ' + parentesesMatch[0]
@@ -375,23 +355,17 @@ async function editarNomeJogador(index) {
         }
     }
     
-    // 💾 SALVA JOGADORES
     localStorage.setItem("jogadores", JSON.stringify(state.jogadores));
-    
-    // 🎨 ATUALIZA INTERFACE
     renderJogadores();
-    
-    // 📊 Backup automático
     fazerBackupAutomatico();
     
-    // 🎉 Feedback
     if (navigator.vibrate) navigator.vibrate(10);
     showToast(`Editado: ${nomeAntigo} → ${nomeFormatado}`, 'success');
     
     console.log(`Jogador editado: "${nomeAntigo}" → "${nomeFormatado}" | Histórico atualizado: ${algoFoiAtualizado}`);
-}
+  }
 
-function renderJogadores() {
+  function renderJogadores() {
     const lista = document.getElementById('listaJogadores');
     if (!lista) return;
     
@@ -400,16 +374,13 @@ function renderJogadores() {
     state.jogadores.forEach((jogador, index) => {
         const li = document.createElement('li');
         
-        // NOME DO JOGADOR
         const span = document.createElement('span');
         span.textContent = jogador;
         span.className = 'player-name';
         
-        // CONTAINER DE BOTÕES
         const divBotoes = document.createElement('div');
         divBotoes.className = 'player-actions';
         
-        // BOTÃO EDITAR (✏️) - NOVO!
         const btnEditar = document.createElement('button');
         btnEditar.textContent = '✏️';
         btnEditar.title = 'Editar nome';
@@ -418,7 +389,6 @@ function renderJogadores() {
             editarNomeJogador(index);
         };
         
-        // BOTÃO REMOVER (❌)
         const btnRemover = document.createElement('button');
         btnRemover.textContent = '❌';
         btnRemover.title = 'Remover jogador';
@@ -434,9 +404,8 @@ function renderJogadores() {
         li.appendChild(divBotoes);
         lista.appendChild(li);
     });
-}  
-  
-  
+  }
+
   // ===== NOMES DOS TIMES =====
   function editarNomeTime(time) {
     fecharPopup();
@@ -553,7 +522,6 @@ function renderJogadores() {
       }
     }, 1000);
     
-    // TIMELINE ADICIONADA
     adicionarEventoTimeline('inicio');
     
     mostrarOverlay("INÍCIO DE JOGO", "⚽", 1500);
@@ -571,7 +539,6 @@ function renderJogadores() {
     
     state.pausado = !state.pausado;
     
-    // TIMELINE ADICIONADA
     if (state.pausado) {
       adicionarEventoTimeline('pause');
     } else {
@@ -590,7 +557,6 @@ function renderJogadores() {
   }
 
   async function resetar() {
-    // TIMELINE ADICIONADA
     resetarTimeline();
     
     if (state.partida) {
@@ -655,7 +621,6 @@ function renderJogadores() {
     clearInterval(state.timer);
     state.timer = null;
     
-    // TIMELINE ADICIONADA
     adicionarEventoTimeline('fim');
     
     const golsPorJogador = {};
@@ -749,8 +714,9 @@ function renderJogadores() {
       placarDiv.classList.remove("gol-animation");
     }, 800);
   }
-    // ===== CONTROLE DE GOLS =====
-function aumentarGol(time) {
+
+  // ===== CONTROLE DE GOLS (com ordenação por ranking) =====
+  function aumentarGol(time) {
     if (!state.partida) {
         showToast('Inicie o jogo primeiro!', 'error');
         return;
@@ -778,32 +744,29 @@ function aumentarGol(time) {
         button.onclick = () => registrarGol('Jogador Desconhecido');
         popup.appendChild(button);
     } else {
-        // 🔥 PEGA O RANKING DE GOLS
         const rankingGols = obterRankingGeral();
         
-        // 🔥 ORDENA: MAIS GOLS PRIMEIRO, DEPOIS ALFABÉTICO
         const jogadoresOrdenados = [...state.jogadores].sort((a, b) => {
             const golsA = rankingGols[a] || 0;
             const golsB = rankingGols[b] || 0;
             
             if (golsA !== golsB) {
-                return golsB - golsA; // Maior gols primeiro
+                return golsB - golsA;
             }
-            return a.localeCompare(b); // Alfabético se empatar
+            return a.localeCompare(b);
         });
         
-        // 🔥 CRIA OS BOTÕES SOMENTE COM O NOME (SEM CONTADOR)
         jogadoresOrdenados.forEach(jogador => {
             const button = document.createElement('button');
-            button.textContent = jogador; // ✅ APENAS O NOME
+            button.textContent = jogador;
             button.onclick = () => registrarGol(jogador);
             popup.appendChild(button);
         });
     }
     
     document.getElementById('popupJogador').classList.add('show');
-}
-  
+  }
+
   function registrarGol(jogador) {
     if (!state.timeAtual) return;
     
@@ -831,7 +794,6 @@ function aumentarGol(time) {
       timestamp: Date.now()
     });
     
-    // TIMELINE ADICIONADA
     adicionarEventoTimeline('gol', state.timeAtual, jogador);
     
     renderGols();
@@ -936,8 +898,8 @@ function aumentarGol(time) {
     showToast('Gol removido', 'warning');
   }
 
-  // ===== CONTROLE DE FALTAS =====
- function registrarFalta(time) {
+  // ===== CONTROLE DE FALTAS (com ordenação por ranking, só nome) =====
+  function registrarFalta(time) {
     if (!state.partida) {
         showToast('Inicie o jogo primeiro!', 'error');
         return;
@@ -965,7 +927,6 @@ function aumentarGol(time) {
         button.onclick = () => confirmarFalta('Jogador Desconhecido');
         popup.appendChild(button);
     } else {
-        // 🔥 PEGA O RANKING DE FALTAS DO HISTÓRICO
         const historico = JSON.parse(localStorage.getItem("historico")) || [];
         const rankingFaltas = {};
         
@@ -977,28 +938,26 @@ function aumentarGol(time) {
             }
         });
         
-        // 🔥 ORDENA: MAIS FALTOSO PRIMEIRO
         const jogadoresOrdenados = [...state.jogadores].sort((a, b) => {
             const faltasA = rankingFaltas[a] || 0;
             const faltasB = rankingFaltas[b] || 0;
             
             if (faltasA !== faltasB) {
-                return faltasB - faltasA; // Maior número de faltas primeiro
+                return faltasB - faltasA;
             }
-            return a.localeCompare(b); // Alfabético se empatar
+            return a.localeCompare(b);
         });
         
-        // 🔥 CRIA OS BOTÕES SOMENTE COM O NOME (SEM CONTADOR)
         jogadoresOrdenados.forEach(jogador => {
             const button = document.createElement('button');
-            button.textContent = jogador; // ✅ APENAS O NOME
+            button.textContent = jogador;
             button.onclick = () => confirmarFalta(jogador);
             popup.appendChild(button);
         });
     }
     
     document.getElementById('popupFalta').classList.add('show');
-}
+  }
 
   function confirmarFalta(jogador) {
     if (!state.timeAtualFalta) return;
@@ -1027,7 +986,6 @@ function aumentarGol(time) {
       timestamp: Date.now()
     });
     
-    // TIMELINE ADICIONADA
     adicionarEventoTimeline('falta', state.timeAtualFalta, jogador);
     
     fecharPopupFalta();
@@ -1259,7 +1217,7 @@ function aumentarGol(time) {
     }
   }
 
-  // ===== HISTÓRICO =====
+  // ===== HISTÓRICO (COM BOTÃO DE COMPARTILHAR) =====
   function historico() {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     const lista = document.getElementById('listaHistorico');
@@ -1279,7 +1237,8 @@ function aumentarGol(time) {
       const placar = partida.placar || [0, 0];
       
       const item = document.createElement('div');
-        item.className = 'historico-item p-lg';      
+      item.className = 'historico-item p-lg';
+      
       let golsHTML = '';
       if (partida.gols) {
         golsHTML = Object.entries(partida.gols)
@@ -1298,10 +1257,16 @@ function aumentarGol(time) {
           .join('');
       }
       
+      // Gerar ID temporário se não tiver
+      const partidaId = partida.id || `${partida.data}-${Date.now()}-${Math.random()}`;
+      
       item.innerHTML = `
         <div class="historico-header">
           <span class="historico-data">${escapeHTML(partida.data)}</span>
-          <span class="expand-icon">▼</span>
+          <div style="display: flex; align-items: center;">
+            <button class="share-card-btn" onclick="PlacarApp.mostrarCardPartida('${partidaId}')" title="Compartilhar">📤</button>
+            <span class="expand-icon">▼</span>
+          </div>
         </div>
         <div class="historico-placar">
           <span>${escapeHTML(times.A)}</span>
@@ -1327,7 +1292,14 @@ function aumentarGol(time) {
         </div>
       `;
       
-      item.addEventListener('click', () => {
+      // Adiciona ID ao item para referência
+      item.dataset.partidaId = partidaId;
+      
+      item.addEventListener('click', (e) => {
+        // Não expandir se clicou no botão de compartilhar
+        if (e.target.classList.contains('share-card-btn') || e.target.closest('.share-card-btn')) {
+          return;
+        }
         item.classList.toggle('expanded');
         if (navigator.vibrate) navigator.vibrate(5);
       });
@@ -1532,7 +1504,7 @@ function aumentarGol(time) {
     }
     
     resultadoDiv.innerHTML = `
-      <div class="stats-card">
+      <div class="stats-card p-lg">
         <h3 class="card-title">⚖️ Comparação: ${jogador1} vs ${jogador2}</h3>
         
         <div class="comparison-grid">
@@ -1724,22 +1696,114 @@ function aumentarGol(time) {
     reader.readAsText(file);
   }
 
-  // ===== PWA UNIVERSAL (iOS, Android, Desktop) =====
-function configurarPWA() {
-    // Detectar plataforma
+  // ===== NOVAS FUNÇÕES DE COMPARTILHAMENTO (v1.1.0) =====
+  function mostrarCardPartida(partidaId) {
+    const historico = JSON.parse(localStorage.getItem("historico")) || [];
+    
+    // Procurar partida pelo ID (se não existir, usar o último)
+    let partida = historico.find(p => p.id === partidaId);
+    
+    // Se não encontrou, usar a última (fallback)
+    if (!partida) {
+      partida = historico[historico.length - 1];
+      if (!partida) {
+        showToast('Nenhuma partida encontrada', 'error');
+        return;
+      }
+    }
+    
+    const conteudo = document.getElementById('cardPartidaConteudo');
+    const times = partida.nomeTimes || { A: 'Time A', B: 'Time B' };
+    const placar = partida.placar || [0, 0];
+    const craque = partida.craque || '—';
+    const faltasJogadores = partida.faltas?.jogadores || {};
+    
+    let maisFaltoso = '—';
+    let maxFaltas = 0;
+    Object.entries(faltasJogadores).forEach(([jogador, qtd]) => {
+        if (qtd > maxFaltas) {
+            maxFaltas = qtd;
+            maisFaltoso = `${jogador} (${qtd})`;
+        }
+    });
+    
+    const duracao = partida.duracao || 0;
+    const minutos = Math.floor(duracao / 60);
+    const segundos = duracao % 60;
+    const tempoFormatado = `${minutos}:${segundos.toString().padStart(2, '0')}`;
+    
+    const data = partida.data ? partida.data.split(',')[0] : new Date().toLocaleDateString('pt-BR');
+    
+    conteudo.innerHTML = `
+        <h2>⚽ PLACAR FUT 31</h2>
+        <div class="card-placar">
+            <span>${times.A}</span>
+            <span>${placar[0]} x ${placar[1]}</span>
+            <span>${times.B}</span>
+        </div>
+        <div class="card-info">
+            <span>🏆 CRAQUE:</span>
+            <span>${craque}</span>
+        </div>
+        <div class="card-info">
+            <span>🟨 MAIS FALTOSO:</span>
+            <span>${maisFaltoso}</span>
+        </div>
+        <div class="card-info">
+            <span>⏱️ DURAÇÃO:</span>
+            <span>${tempoFormatado}</span>
+        </div>
+        <div class="card-info">
+            <span>📅 DATA:</span>
+            <span>${data}</span>
+        </div>
+    `;
+    
+    document.getElementById('modalCardPartida').classList.add('show');
+  }
+
+  function compartilharCard() {
+    const conteudo = document.getElementById('cardPartidaConteudo');
+    
+    // Pega o texto puro (sem HTML) do card
+    const texto = conteudo.innerText;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'Placar Fut 31',
+            text: texto,
+            url: window.location.href
+        }).catch(() => {
+            // Usuário cancelou, ignorar
+        });
+    } else {
+        navigator.clipboard.writeText(texto);
+        showToast('📋 Resultado copiado! Agora é só colar.', 'success');
+    }
+  }
+
+  function fecharModalCard(event) {
+    if (event && event.target.classList.contains('modal-overlay')) {
+        document.getElementById('modalCardPartida').classList.remove('show');
+    } else {
+        document.getElementById('modalCardPartida').classList.remove('show');
+    }
+  }
+
+  // ===== PWA UNIVERSAL =====
+  function configurarPWA() {
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     const isAndroid = /Android/.test(navigator.userAgent);
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     
     console.log(`📱 Plataforma: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'} | PWA: ${isStandalone ? 'Sim ✅' : 'Não'}`);
     
-    // Evento de instalação (Android/Chrome)
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         state.deferredPrompt = e;
         
         const installBtn = document.getElementById('installBtn');
-        if (installBtn && !isIOS) { // iOS não tem beforeinstallprompt
+        if (installBtn && !isIOS) {
             setTimeout(() => {
                 installBtn.style.display = 'block';
                 
@@ -1752,7 +1816,6 @@ function configurarPWA() {
         }
     });
     
-    // App instalado
     window.addEventListener('appinstalled', () => {
         console.log('📱 PWA instalado!');
         const installBtn = document.getElementById('installBtn');
@@ -1761,27 +1824,22 @@ function configurarPWA() {
         showToast('App instalado com sucesso! ✅', 'success');
     });
     
-    // Se já está rodando como PWA
     if (isStandalone) {
         const installBtn = document.getElementById('installBtn');
         if (installBtn) installBtn.style.display = 'none';
         console.log('📱 Rodando como PWA instalado');
-        
-        // Ajustes específicos para PWA instalado
         document.body.classList.add('pwa-installed');
     }
     
-    // iOS: Dica para instalar
     if (isIOS && !isStandalone) {
         setTimeout(() => {
             console.log('💡 iOS: Use "Compartilhar" → "Adicionar à Tela de Início" para tela cheia');
         }, 3000);
     }
-}
+  }
 
-function instalarApp() {
+  function instalarApp() {
     if (state.deferredPrompt) {
-        // Android/Chrome: Mostra prompt nativo
         state.deferredPrompt.prompt();
         
         state.deferredPrompt.userChoice.then((choiceResult) => {
@@ -1798,7 +1856,6 @@ function instalarApp() {
             if (installBtn) installBtn.style.display = 'none';
         });
     } else {
-        // iOS ou já instalado
         const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
         
@@ -1810,10 +1867,10 @@ function instalarApp() {
             showToast('📱 Seu navegador suporta instalação automática', 'info');
         }
     }
-}
+  }
 
-// ===== INICIALIZAÇÃO UNIVERSAL =====
-function init() {
+  // ===== INICIALIZAÇÃO =====
+  function init() {
     console.log('🚀 Inicializando PlacarApp v' + APP_VERSION + '...');
     
     carregarNomesTimes();
@@ -1823,22 +1880,16 @@ function init() {
     configurarPWA();
     fazerBackupAutomatico();
     
-    // ✅ REGISTRO ÚNICO E INTELIGENTE DO SERVICE WORKER
     if ('serviceWorker' in navigator) {
-        // Verifica se já temos um SW controlando
         if (navigator.serviceWorker.controller) {
             console.log('✅ Service Worker já está controlando a página');
-            
-            // Verifica modo atual
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
             console.log('📱 Display Mode:', isStandalone ? 'standalone (PWA)' : 'browser');
         } else {
-            // Registra novo SW
             navigator.serviceWorker.register('sw.js')
                 .then(reg => {
                     console.log('✅ Service Worker registrado:', reg.scope);
                     
-                    // Monitora atualizações
                     reg.addEventListener('updatefound', () => {
                         const newWorker = reg.installing;
                         console.log('🔄 Novo Service Worker encontrado:', newWorker.state);
@@ -1853,15 +1904,14 @@ function init() {
                 })
                 .catch(err => {
                     console.error('❌ Erro no Service Worker:', err);
-                    // Continua funcionando mesmo sem SW
                 });
         }
     }
     
     console.log('🎉 PlacarApp v' + APP_VERSION + ' inicializado com sucesso!');
-}
+  }
 
-function verificarBackupDados() {
+  function verificarBackupDados() {
     const backupKey = 'placar_backup_v1';
     
     try {
@@ -1899,7 +1949,6 @@ function verificarBackupDados() {
             }
         }
         
-        // Cria/atualiza backup
         const currentData = {
             jogadores: localStorage.getItem("jogadores"),
             historico: localStorage.getItem("historico"),
@@ -1917,10 +1966,10 @@ function verificarBackupDados() {
     } catch (error) {
         console.error('❌ Erro no backup:', error);
     }
-}
+  }
 
-// ===== INTERFACE PÚBLICA =====
-return {
+  // ===== INTERFACE PÚBLICA =====
+  return {
     init: function() {
         if (typeof init === 'function') {
             init();
@@ -1955,11 +2004,15 @@ return {
     exportarBackup: exportarBackup,
     importarBackup: importarBackup,
     instalarApp: instalarApp,
+    // NOVAS FUNÇÕES v1.1.0
+    mostrarCardPartida: mostrarCardPartida,
+    compartilharCard: compartilharCard,
+    fecharModalCard: fecharModalCard,
     getState: () => ({ ...state })
-};
+  };
 })();
 
-// ===== EXIBIR VERSÃO NO RODAPÉ ===== 
+// ===== EXIBIR VERSÃO ===== 
 function exibirVersao() {
     const versaoEl = document.getElementById('appVersion');
     if (versaoEl) {
@@ -1970,7 +2023,6 @@ function exibirVersao() {
 
 // ===== SPLASH SCREEN & INICIALIZAÇÃO =====
 function iniciarAppComSplash() {
-    // Atualiza versão na splash screen
     function atualizarVersaoNaSplash() {
         const elementoVersao = document.querySelector('.splash-content .version');
         if (elementoVersao) {
@@ -1978,14 +2030,12 @@ function iniciarAppComSplash() {
         }
     }
     
-    // Executa a atualização
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', atualizarVersaoNaSplash);
     } else {
         atualizarVersaoNaSplash();
     }
     
-    // Função para esconder a splash screen
     function esconderSplash() {
         const splash = document.getElementById('splashScreen');
         if (splash) {
@@ -1996,18 +2046,15 @@ function iniciarAppComSplash() {
         }
     }
     
-    // Função para inicializar o app principal
     function inicializarAppPrincipal() {
         PlacarApp.init();
         exibirVersao();
     }
     
-    // Controla tempo mínimo da splash (2 segundos)
     const tempoMinimoSplash = new Promise(resolve => {
         setTimeout(resolve, 2000);
     });
     
-    // Inicialização baseada no estado do DOM
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             tempoMinimoSplash.then(() => {
@@ -2024,7 +2071,6 @@ function iniciarAppComSplash() {
 }
 
 // ===== INICIALIZAÇÃO FINAL =====
-// Inicia tudo quando o DOM estiver pronto
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', iniciarAppComSplash);
 } else {
@@ -2039,13 +2085,11 @@ if (document.readyState === 'loading') {
     if (isIOS && isSafari) {
         console.log('📱 iOS Safari detectado');
         
-        // Força registro do Service Worker IMEDIATAMENTE
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js', { scope: './' })
                 .then(reg => {
                     console.log('✅ SW registrado no iOS:', reg.scope);
                     
-                    // Verifica se está em modo standalone
                     setTimeout(() => {
                         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
                         console.log('📱 Modo atual:', isStandalone ? 'Tela Cheia' : 'Com Barra');
@@ -2058,11 +2102,9 @@ if (document.readyState === 'loading') {
                 })
                 .catch(err => {
                     console.error('❌ SW falhou no iOS:', err);
-                    // iOS pode bloquear SW em certas condições
                 });
         }
         
-        // Remove qualquer query string que possa atrapalhar
         if (window.location.search) {
             console.log('⚠️ Removendo query string para PWA...');
             window.history.replaceState({}, '', window.location.pathname);
@@ -2070,7 +2112,6 @@ if (document.readyState === 'loading') {
     }
 })();
 
-// ===== FORÇAR PWA iOS APÓS CARREGAMENTO =====
 setTimeout(() => {
   const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
   const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
