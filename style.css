@@ -1762,3 +1762,30 @@ body.clean-bg {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     min-height: 100vh;
 }
+
+/* ===== AJUSTES PÓS-REFATORAÇÃO – CARDS E ESPAÇAMENTOS ===== */
+
+/* 1. RANKING – CARD PRINCIPAL */
+.stats-card.p-lg {
+    padding: 20px; /* Antes 24px – mais equilibrado */
+}
+
+/* 2. RANKING – LISTA DENTRO DO CARD */
+.stats-card .ranking-list {
+    margin-top: 12px; /* Antes 24px – reduz espaçamento */
+}
+
+/* 3. RANKING – ITENS DA LISTA */
+.ranking-list li {
+    padding: 12px 16px; /* Antes 16px 16px – mais compacto */
+}
+
+/* 4. HISTÓRICO – ITENS (quando tiverem a classe p-lg) */
+.historico-item.p-lg {
+    padding: 20px; /* Para quando adicionarmos a classe no JS */
+}
+
+/* 5. COMPARAÇÃO – BOXES INTERNOS */
+.comparison-player.p-lg {
+    padding: 20px; /* Para quando adicionarmos a classe no JS/HTML */
+}
