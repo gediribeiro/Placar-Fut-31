@@ -1986,402 +1986,87 @@ body.clean-bg {
 }
 
 /* =========================================== */
-/* TEMA ESCURO AUTOMÁTICO (v1.1.0)             */
+/* TEMA ESCURO AUTOMÁTICO (v1.2.0) - REFATORADO */
 /* =========================================== */
 @media (prefers-color-scheme: dark) {
-    :root {
-        --bg-body: #0a0c10 !important;
-        --bg-card: #1e242a !important;
-        --bg-header: #0f1217 !important;
-        --bg-modal: #1e242a !important;
-        --text-primary: #e9ecef !important;
-        --text-secondary: #a0b3c2 !important;
-        --text-light: #8696a3 !important;
-        --text-white: #f8f9fa !important;
-        --border-color: #2c3e50 !important;
-        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
-        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.8) !important;
-        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.85) !important;
-        --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.9) !important;
-    }
+  /* 1. SOBRESCREVE APENAS AS VARIÁVEIS – SEM !IMPORTANT */
+  :root {
+    --bg-body: #0a0c10;
+    --bg-card: #1e242a;
+    --bg-header: #0f1217;
+    --bg-modal: #1e242a;
+    --text-primary: #e9ecef;
+    --text-secondary: #a0b3c2;
+    --text-light: #8696a3;
+    --text-white: #f8f9fa;
+    --border-color: #2c3e50;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.7);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.8);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.85);
+    --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.9);
+  }
 
-    body, .app-main, .content-section, .container, [class*="wrapper"] {
-        background-color: #0a0c10 !important;
-        color: #e9ecef !important;
-    }
+  /* 2. REGRAS QUE NÃO SÃO COBERTAS POR VARIÁVEIS (APENAS O ESTRITAMENTE NECESSÁRIO) */
 
-    .app-header {
-        background: linear-gradient(135deg, #0f1217, #0a0c10) !important;
-        border-bottom-color: #0fb858 !important;
-    }
+  /* Header – gradiente próprio (não usa variável) */
+  .app-header {
+    background: linear-gradient(135deg, #0f1217, #0a0c10);
+    border-bottom-color: var(--primary-green);
+  }
 
-    .app-footer, footer {
-        background-color: #0a0c10 !important;
-        color: #a0b3c2 !important;
-        border-top-color: #2c3e50 !important;
-    }
+  /* Botões flutuantes – cores já otimizadas no passo 3 */
+  .install-btn {
+    background: linear-gradient(135deg, #2ea84c, #1e7e34);
+    color: white;
+    box-shadow: 0 4px 14px rgba(46, 168, 76, 0.4);
+  }
+  .undo-btn {
+    background: linear-gradient(135deg, #e68a2e, #c9701e);
+    color: white;
+    box-shadow: 0 4px 14px rgba(230, 138, 46, 0.4);
+  }
 
-    .tabs-navigation {
-        background-color: #1a1e24 !important;
-        border-bottom: 1px solid #2c3e50 !important;
-        box-shadow: none !important;
-    }
+  /* Splash screen – gradiente personalizado */
+  #splashScreen {
+    background: linear-gradient(135deg, #0a3a1a 0%, #1a4a1a 40%, #2a5a2a 100%),
+                repeating-linear-gradient(90deg,
+                  transparent,
+                  transparent 49%,
+                  rgba(255,255,255,0.08) 49%,
+                  rgba(255,255,255,0.08) 51%,
+                  transparent 51%),
+                repeating-linear-gradient(0deg,
+                  transparent,
+                  transparent 49%,
+                  rgba(255,255,255,0.08) 49%,
+                  rgba(255,255,255,0.08) 51%,
+                  transparent 51%);
+  }
 
-    .tab-button {
-        color: #a0b3c2 !important;
-        background: transparent !important;
-        border: none !important;
-    }
+  /* Pequenos ajustes de opacidade (já são herdados, mas mantido por segurança) */
+  .control-btn,
+  .primary-btn,
+  .secondary-btn,
+  .danger-btn {
+    opacity: 0.95;
+  }
 
-    .tab-button.active {
-        color: #0fb858 !important;
-        font-weight: 700 !important;
-    }
-
-    .tab-button.active::after {
-        background: #0fb858 !important;
-    }
-
-    .tab-button:hover:not(.active) {
-        color: #c0e0c0 !important;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-        .tab-button:hover:not(.active)::after {
-            background: #0fb858 !important;
-            opacity: 0.6 !important;
-        }
-    }
-
-    .card,
-    .scoreboard-container,
-    .stats-card,
-    .input-card,
-    .historico-item,
-    .modal-content,
-    .dropdown-menu,
-    [class*="card"]:not(.card-gramado) {
-        background-color: #1e242a !important;
-        border-color: #2c3e50 !important;
-        color: #e9ecef !important;
-        box-shadow: var(--shadow-md) !important;
-    }
-
-        /* ===== CARD DE COMPARTILHAMENTO – TEMA ESCURO ===== */
-    .card-gramado {
-        background: linear-gradient(145deg, #1e2a1e, #1a2a1a) !important;
-        border-color: #2c5e3a !important;
-        color: #e6f0e6 !important;
-        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6) !important;
-    }
-
-    .card-gramado h2 {
-        color: #b0e0b0 !important;
-        border-bottom-color: rgba(15, 184, 88, 0.4) !important;
-    }
-
-    .card-placar {
-        background: rgba(15, 184, 88, 0.12) !important;
-        border-color: rgba(15, 184, 88, 0.3) !important;
-        gap: 8px !important;
-        flex-wrap: wrap !important;
-        padding: 16px 12px !important;
-        border-radius: 60px !important;
-    }
-
-    .card-placar span {
-        background: rgba(30, 50, 30, 0.9) !important;
-        color: #f0fff0 !important;
-        padding: 6px 14px !important;
-        border-radius: 40px !important;
-        font-size: 18px !important;
-        font-weight: 600 !important;
-        white-space: nowrap !important;
-        flex: 0 1 auto !important;
-        max-width: 140px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-    }
-
-        .card-placar span:nth-child(2) {
-        background: linear-gradient(145deg, #0d8a3d, #0a6b2f) !important;
-        color: white !important;
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.5) !important;
-        font-size: 32px !important;
-        padding: 8px 20px !important;
-        border-radius: 50px !important;
-        min-width: 100px !important;
-        max-width: 200px !important;
-        text-align: center !important;
-        flex-shrink: 0 !important;
-        letter-spacing: 2px !important;
-        white-space: nowrap !important;
-        overflow: visible !important;
-        text-overflow: clip !important;
-    }
-
-        /* Ajuste para telas pequenas no tema escuro */
-    @media (max-width: 480px) {
-        .card-placar span:nth-child(2) {
-            font-size: 26px !important;
-            padding: 6px 16px !important;
-            min-width: 85px !important;
-            max-width: 160px !important;
-        }
-    }
-
-        /* ===== CARD INFO – TEMA ESCURO ===== */
-    .card-info {
-        border-bottom-color: rgba(15, 184, 88, 0.25) !important;
-        color: #d0e0d0 !important;
-    }
-
-    .card-info span:first-child {
-        color: #b0e6b0 !important;
-    }
-
-    .card-info span:last-child {
-        background: rgba(15, 184, 88, 0.2) !important;
-        color: #e0f0e0 !important;
-        padding: 6px 16px !important;
-        border-radius: 40px !important;
-    }
-
-    /* Responsividade para telas pequenas no tema escuro */
-    @media (max-width: 480px) {
-        .card-placar {
-            gap: 6px !important;
-            padding: 12px 8px !important;
-        }
-        .card-placar span {
-            font-size: 16px !important;
-            padding: 4px 10px !important;
-            max-width: 100px !important;
-        }
-        .card-placar span:nth-child(2) {
-            font-size: 26px !important;
-            padding: 6px 12px !important;
-            min-width: 70px !important;
-            max-width: 110px !important;
-        }
-    }
-
-    /* (O restante do tema escuro permanece igual ao seu código original) */
-    .score-number {
-        background: linear-gradient(135deg, #2a2f3a, #1e232a) !important;
-        border-color: #3a4a5a !important;
-        color: #ffffff !important;
-        box-shadow: var(--shadow-md) !important;
-    }
-
-    .team-name-display {
-        background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.08)) !important;
-        border-color: rgba(15, 184, 88, 0.4) !important;
-        color: #f0fff0 !important;
-    }
-
-    .game-timer {
-        background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.1)) !important;
-        border-color: rgba(15, 184, 88, 0.4) !important;
-        color: #e9ecef !important;
-    }
-
-    .score-divider {
-        color: #a0b3c2 !important;
-        opacity: 0.9 !important;
-    }
-
-    .foul-item {
-        background: rgba(255, 165, 2, 0.12) !important;
-        border-color: rgba(255, 165, 2, 0.25) !important;
-    }
-    .foul-count {
-        color: #ffb347 !important;
-    }
-
-    .edit-team-btn {
-        background: rgba(15, 184, 88, 0.2) !important;
-        border-color: rgba(15, 184, 88, 0.5) !important;
-        color: #a5d6a5 !important;
-    }
-    .edit-team-btn:active {
-        background: #0fb858 !important;
-        color: white !important;
-    }
-
-    .control-btn,
-    .primary-btn,
-    .secondary-btn,
-    .danger-btn {
-        opacity: 0.95 !important;
-    }
-
-    .goal-btn {
-        background: linear-gradient(135deg, #0d8a3d, #0a6b2f) !important;
-    }
-    .remove-btn {
-        background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
-    }
-    .foul-btn {
-        background: linear-gradient(135deg, #b45309, #92400e) !important;
-    }
-
-    input,
-    select,
-    textarea,
-    .player-input,
-    .team-name-input,
-    .player-select,
-    .form-control {
-        background-color: #2c3e50 !important;
-        color: #f8f9fa !important;
-        border-color: #4a5c6c !important;
-    }
-    input:focus,
-    select:focus,
-    textarea:focus {
-        border-color: #0fb858 !important;
-        box-shadow: 0 0 0 3px rgba(15, 184, 88, 0.3) !important;
-    }
-    input::placeholder,
-    textarea::placeholder {
-        color: #a0b3c2 !important;
-    }
-
-    h1, h2, h3, h4, h5, h6,
-    .section-title,
-    .section-subtitle,
-    .card-title,
-    .modal-title {
-        color: #f1f3f5 !important;
-    }
-
-    .text-muted,
-    small,
-    .small,
-    [class*="text-secondary"],
-    .historico-data,
-    .timeline-empty {
-        color: #a0b3c2 !important;
-    }
-
-    a, .link {
-        color: #6ea8fe !important;
-    }
-
-    .ranking-table {
-        background-color: #1e242a !important;
-    }
-    .ranking-table th {
-        background-color: #0d3a1a !important;
-        color: white !important;
-    }
-    .ranking-table td {
-        border-bottom-color: #2c3e50 !important;
-    }
-    .ranking-table tr:hover {
-        background-color: rgba(15, 184, 88, 0.15) !important;
-    }
-
-    .players-list li {
-        background-color: #1e242a !important;
-        border-color: #2c3e50 !important;
-    }
-    .players-list li:hover {
-        background-color: rgba(15, 184, 88, 0.15) !important;
-    }
-    .player-name {
-        color: #f0f0f0 !important;
-    }
-    .player-actions button {
-        background: rgba(255, 255, 255, 0.1) !important;
-    }
-    .player-actions button:first-child {
-        color: #a5d6a5 !important;
-    }
-    .player-actions button:last-child {
-        color: #f0a0a0 !important;
-    }
-
-    .modal-overlay {
-        background: rgba(0, 0, 0, 0.85) !important;
-        backdrop-filter: blur(6px) !important;
-    }
-
-    .timeline-container {
-        background: rgba(255, 255, 255, 0.02) !important;
-        border-color: #2c3e50 !important;
-    }
-    .timeline-item {
-        background: rgba(255, 255, 255, 0.04) !important;
-    }
-    .timeline-item:hover {
-        background: rgba(255, 255, 255, 0.08) !important;
-    }
-    .event-time {
-        color: #a5d6a5 !important;
-    }
-
-    ::-webkit-scrollbar-track {
-        background: #0a0c10 !important;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #2c3e50 !important;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #4a5c6c !important;
-    }
-
-    .text-white,
-    [class*="text-light"] {
-        color: #f8f9fa !important;
-    }
-    .text-dark,
-    [class*="text-black"] {
-        color: #e0e0e0 !important;
-    }
-
-   .install-btn {
-    background: linear-gradient(135deg, #2ea84c, #1e7e34) !important;
-    color: white !important;
-    box-shadow: 0 4px 14px rgba(46, 168, 76, 0.4) !important;
-}
-.undo-btn {
-    background: linear-gradient(135deg, #e68a2e, #c9701e) !important;
-    color: white !important;
-    box-shadow: 0 4px 14px rgba(230, 138, 46, 0.4) !important;
-}
-
-    .toast {
-        background: #1e293b !important;
-        color: white !important;
-        border-left-color: #4a5c6c !important;
-    }
-    .toast-success {
-        background: linear-gradient(135deg, #0d8a3d, #0a6b2f) !important;
-    }
-    .toast-error {
-        background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
-    }
-    .toast-warning {
-        background: linear-gradient(135deg, #b45309, #92400e) !important;
-    }
-    .toast-info {
-        background: linear-gradient(135deg, #1e5f8e, #1a4d73) !important;
-    }
-
-    .version-display {
-        background: rgba(15, 184, 88, 0.12) !important;
-        border-color: rgba(15, 184, 88, 0.3) !important;
-    }
-    .version-display .app-version {
-        background: rgba(0,0,0,0.3) !important;
-        color: #a0b3c2 !important;
-    }
-
-    #splashScreen {
-        background: 
-            linear-gradient(135deg, #0a3a1a 0%, #1a4a1a 40%, #2a5a2a 100%),
-            repeating-linear-gradient(...) !important;
-    }
+  /* Toasts – mantemos as cores escuras personalizadas */
+  .toast {
+    background: #1e293b;
+    color: white;
+    border-left-color: #4a5c6c;
+  }
+  .toast-success {
+    background: linear-gradient(135deg, #0d8a3d, #0a6b2f);
+  }
+  .toast-error {
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+  }
+  .toast-warning {
+    background: linear-gradient(135deg, #b45309, #92400e);
+  }
+  .toast-info {
+    background: linear-gradient(135deg, #1e5f8e, #1a4d73);
+  }
 }
