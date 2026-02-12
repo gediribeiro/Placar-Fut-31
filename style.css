@@ -1931,38 +1931,6 @@ body.clean-bg {
     font-size: 15px;
 }
 
-/* ===== v1.2.0: BOTÃO SALVAR IMAGEM (DESTAQUE) ===== */
-.btn-salvar-imagem {
-    background: linear-gradient(145deg, #0a4b1a, #0d6b2a);
-    color: white;
-    border: none;
-    border-radius: 60px;
-    padding: 14px 28px;
-    font-size: 16px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-    margin-top: 16px;
-    box-shadow: 0 8px 18px rgba(10, 75, 26, 0.25);
-    transition: all 0.25s ease;
-    cursor: pointer;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.btn-salvar-imagem:hover {
-    background: linear-gradient(145deg, #0d6b2a, #0a4b1a);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 24px rgba(10, 75, 26, 0.35);
-}
-
-.btn-salvar-imagem:active {
-    transform: translateY(1px);
-    box-shadow: 0 4px 12px rgba(10, 75, 26, 0.4);
-}
-
 .card-gramado .secondary-btn {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(4px);
@@ -2115,16 +2083,6 @@ body.clean-bg {
         border-color: #0fb858 !important;
     }
 
-    .btn-salvar-imagem {
-        background: linear-gradient(145deg, #0d6b2a, #0a4b1a) !important;
-        color: white !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    }
-
-    .btn-salvar-imagem:hover {
-        background: linear-gradient(145deg, #0a4b1a, #0d6b2a) !important;
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5) !important;
-    }
 
     /* (O restante do tema escuro permanece igual ao seu código original) */
     .score-number {
