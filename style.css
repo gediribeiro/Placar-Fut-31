@@ -1510,6 +1510,7 @@ button:active {
     font-weight: 600;
     color: var(--text-primary);
     flex-grow: 1;
+    padding-left: var(--space-sm); /* ← ADICIONADO: espaçamento interno à esquerda */
 }
 
 .player-actions {
