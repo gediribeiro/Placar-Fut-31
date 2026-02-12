@@ -1707,7 +1707,7 @@ const PlacarApp = (function() {
     return nomeComParenteses.replace(/\s*\([^)]*\)/g, '').trim();
   }
 
-  function mostrarCardPartida(partidaId) {
+    function mostrarCardPartida(partidaId) {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     
     // Procurar partida pelo ID (se não existir, usar o último)
@@ -1728,7 +1728,7 @@ const PlacarApp = (function() {
     const craqueCompleto = partida.craque || '—';
     const faltasJogadores = partida.faltas?.jogadores || {};
     
-    // [v1.1.0] Extrai apenas o nome do craque (remove parênteses)
+    // Extrai apenas o nome do craque (remove parênteses)
     const craqueNome = extrairNome(craqueCompleto);
     
     let maisFaltoso = '—';
@@ -1736,7 +1736,7 @@ const PlacarApp = (function() {
     Object.entries(faltasJogadores).forEach(([jogador, qtd]) => {
       if (qtd > maxFaltas) {
         maxFaltas = qtd;
-        // [v1.1.0] Guarda apenas o nome do jogador (sem quantidade)
+        // Guarda apenas o nome do jogador (sem quantidade)
         maisFaltoso = extrairNome(jogador);
       }
     });
@@ -1770,6 +1770,14 @@ const PlacarApp = (function() {
         <div class="card-info">
             <span>📅 DATA:</span>
             <span>${data}</span>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: center;">
+            <button class="secondary-btn" onclick="PlacarApp.exportarCardComoImagem()">
+                📸 Salvar como imagem
+            </button>
+            <button class="secondary-btn" onclick="PlacarApp.fecharModalCard()">
+                ✖ Fechar
+            </button>
         </div>
     `;
     
