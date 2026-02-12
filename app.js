@@ -1,4 +1,6 @@
-const APP_VERSION = 'v1.0.4';
+// ===== v1.1.0: Versão atualizada =====
+const APP_VERSION = 'v1.1.0';
+
 const PlacarApp = (function() {
   const state = {
     jogadores: JSON.parse(localStorage.getItem("jogadores")) || ['Jogador 1', 'Jogador 2', 'Jogador 3'],
@@ -1607,7 +1609,8 @@ const PlacarApp = (function() {
           timeA: localStorage.getItem("nomeTimeA"),
           timeB: localStorage.getItem("nomeTimeB")
         },
-        lastBackup: new Date().toISOString()
+        lastBackup: new Date().toISOString(),
+        appVersion: APP_VERSION
       };
       
       try {
@@ -1697,6 +1700,13 @@ const PlacarApp = (function() {
   }
 
   // ===== NOVAS FUNÇÕES DE COMPARTILHAMENTO (v1.1.0) =====
+  // [v1.1.0] Função auxiliar para extrair apenas o nome (remove parênteses)
+  function extrairNome(nomeComParenteses) {
+    if (!nomeComParenteses || nomeComParenteses === '—') return '—';
+    // Remove tudo que está entre parênteses, incluindo os parênteses
+    return nomeComParenteses.replace(/\s*\([^)]*\)/g, '').trim();
+  }
+
   function mostrarCardPartida(partidaId) {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     
@@ -1715,16 +1725,20 @@ const PlacarApp = (function() {
     const conteudo = document.getElementById('cardPartidaConteudo');
     const times = partida.nomeTimes || { A: 'Time A', B: 'Time B' };
     const placar = partida.placar || [0, 0];
-    const craque = partida.craque || '—';
+    const craqueCompleto = partida.craque || '—';
     const faltasJogadores = partida.faltas?.jogadores || {};
+    
+    // [v1.1.0] Extrai apenas o nome do craque (remove parênteses)
+    const craqueNome = extrairNome(craqueCompleto);
     
     let maisFaltoso = '—';
     let maxFaltas = 0;
     Object.entries(faltasJogadores).forEach(([jogador, qtd]) => {
-        if (qtd > maxFaltas) {
-            maxFaltas = qtd;
-            maisFaltoso = `${jogador} (${qtd})`;
-        }
+      if (qtd > maxFaltas) {
+        maxFaltas = qtd;
+        // [v1.1.0] Guarda apenas o nome do jogador (sem quantidade)
+        maisFaltoso = extrairNome(jogador);
+      }
     });
     
     const duracao = partida.duracao || 0;
@@ -1743,7 +1757,7 @@ const PlacarApp = (function() {
         </div>
         <div class="card-info">
             <span>🏆 CRAQUE:</span>
-            <span>${craque}</span>
+            <span>${craqueNome}</span>
         </div>
         <div class="card-info">
             <span>🟨 MAIS FALTOSO:</span>
@@ -1761,7 +1775,6 @@ const PlacarApp = (function() {
     
     document.getElementById('modalCardPartida').classList.add('show');
   }
-
 
   function fecharModalCard(event) {
     if (event && event.target.classList.contains('modal-overlay')) {
