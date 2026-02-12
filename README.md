@@ -1,4 +1,4 @@
-# ⚽ Placar Fut 31
+# ⚽ Placar Fut 31 – v1.2.0
 
 **© 2026 Gediribeiro. Todos os direitos reservados.**
 
