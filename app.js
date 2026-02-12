@@ -2244,14 +2244,14 @@ function iniciarAppComSplash() {
             tempoMinimoSplash.then(() => {
                 esconderSplash();
                 inicializarAppPrincipal();
-                initTutorial();
+                setTimeout(() => PlacarApp.mostrarTutorialLeque(), 1200); // ✅ CORRIGIDO
             });
         });
     } else {
         tempoMinimoSplash.then(() => {
             esconderSplash();
             inicializarAppPrincipal();
-            initTutorial();
+            setTimeout(() => PlacarApp.mostrarTutorialLeque(), 1200); // ✅ CORRIGIDO
         });
     }
 }
