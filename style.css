@@ -1900,61 +1900,387 @@ body.clean-bg {
     color: #2c3e50;
 }
 
-/* ===== TEMA ESCURO AUTOMÁTICO (v1.1.0) ===== */
+/* =========================================== */
+/* TEMA ESCURO AUTOMÁTICO (v1.1.0)             */
+/* =========================================== */
 @media (prefers-color-scheme: dark) {
+    /* ------------------------------------------------------------------
+       SOBRESCRITA DAS VARIÁVEIS GLOBAIS
+       Garante que todos os componentes que usam var() já fiquem escuros
+    ------------------------------------------------------------------ */
     :root {
-        /* FUNDOS */
-        --bg-body: #121212;
-        --bg-card: #1e1e1e;
-        --bg-header: #0a0a0a;
-        --bg-modal: #1e1e1e;
-        
-        /* TEXTOS */
-        --text-primary: #f0f0f0;
-        --text-secondary: #b0b0b0;
-        --text-light: #808080;
-        
-        /* BORDAS */
-        --border-color: #333333;
-        
-        /* SOMBRAS */
-        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
-        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
-        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.7);
+        --bg-body: #0a0c10 !important;
+        --bg-card: #1e242a !important;
+        --bg-header: #0f1217 !important;
+        --bg-modal: #1e242a !important;
+
+        --text-primary: #e9ecef !important;
+        --text-secondary: #a0b3c2 !important;
+        --text-light: #8696a3 !important;
+        --text-white: #f8f9fa !important;
+
+        --border-color: #2c3e50 !important;
+
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.7) !important;
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.8) !important;
+        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.85) !important;
+        --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.9) !important;
     }
 
+    /* ------------------------------------------------------------------
+       FUNDO GERAL – FORÇA BODY E PRINCIPAIS CONTÊINERES
+    ------------------------------------------------------------------ */
+    body,
+    .app-main,
+    .content-section,
+    .container,
+    [class*="wrapper"] {
+        background-color: #0a0c10 !important;
+        color: #e9ecef !important;
+    }
+
+    /* ------------------------------------------------------------------
+       HEADER E RODAPÉ
+    ------------------------------------------------------------------ */
+    .app-header {
+        background: linear-gradient(135deg, #0f1217, #0a0c10) !important;
+        border-bottom-color: #0fb858 !important;
+    }
+
+    .app-footer,
+    footer {
+        background-color: #0a0c10 !important;
+        color: #a0b3c2 !important;
+        border-top-color: #2c3e50 !important;
+    }
+
+    /* ------------------------------------------------------------------
+       BARRA DE ABAS – CORREÇÃO COMPLETA
+    ------------------------------------------------------------------ */
+    .tabs-navigation {
+        background-color: #1a1e24 !important;
+        border-bottom: 1px solid #2c3e50 !important;
+        box-shadow: none !important;
+    }
+
+    .tab-button {
+        color: #a0b3c2 !important;
+        background: transparent !important;
+        border: none !important;
+    }
+
+    .tab-button.active {
+        color: #0fb858 !important;
+        font-weight: 700 !important;
+    }
+
+    .tab-button.active::after {
+        background: #0fb858 !important;
+    }
+
+    .tab-button:hover:not(.active) {
+        color: #c0e0c0 !important;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .tab-button:hover:not(.active)::after {
+            background: #0fb858 !important;
+            opacity: 0.6 !important;
+        }
+    }
+
+    /* ------------------------------------------------------------------
+       CARDS, TABELAS, LISTAS E COMPONENTES SIMILARES
+    ------------------------------------------------------------------ */
+    .card,
+    .scoreboard-container,
+    .stats-card,
+    .input-card,
+    .historico-item,
+    .modal-content,
+    .dropdown-menu,
+    [class*="card"]:not(.card-gramado) {
+        background-color: #1e242a !important;
+        border-color: #2c3e50 !important;
+        color: #e9ecef !important;
+        box-shadow: var(--shadow-md) !important;
+    }
+
+    /* Card de compartilhamento – manter tom suave, mas adaptado */
+    .card-gramado {
+        background: linear-gradient(135deg, #1e2a1e, #1a2a1a) !important;
+        border-color: #2c5e3a !important;
+        color: #f0f7f0 !important;
+    }
+    .card-gramado h2 {
+        color: #a5d6a5 !important;
+        border-bottom-color: #2c5e3a !important;
+    }
+    .card-gramado .card-placar span {
+        background: rgba(30, 50, 30, 0.8) !important;
+        color: #f0fff0 !important;
+    }
+    .card-gramado .card-placar span:nth-child(2) {
+        background: rgba(15, 184, 88, 0.3) !important;
+        color: #c8e6c9 !important;
+    }
+
+    /* ------------------------------------------------------------------
+       ELEMENTOS DO PLACAR
+    ------------------------------------------------------------------ */
     .score-number {
-        background: linear-gradient(135deg, #2a2a2a, #1e1e1e);
-        border-color: #444;
-        color: #fff;
+        background: linear-gradient(135deg, #2a2f3a, #1e232a) !important;
+        border-color: #3a4a5a !important;
+        color: #ffffff !important;
+        box-shadow: var(--shadow-md) !important;
     }
 
     .team-name-display {
-        background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.1));
-        border-color: rgba(15, 184, 88, 0.3);
+        background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.08)) !important;
+        border-color: rgba(15, 184, 88, 0.4) !important;
+        color: #f0fff0 !important;
     }
 
-    .historico-item,
-    .stats-card,
-    .input-card {
-        background: #1e1e1e;
-        border-color: #333;
+    .game-timer {
+        background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.1)) !important;
+        border-color: rgba(15, 184, 88, 0.4) !important;
+        color: #e9ecef !important;
     }
 
-    .card-gramado {
-        border-color: rgba(255,255,255,0.2);
+    .score-divider {
+        color: #a0b3c2 !important;
+        opacity: 0.9 !important;
     }
-}
 
-@media (max-width: 480px) {
-    .card-placar {
-        font-size: 24px;
-        gap: 4px;
+    .foul-item {
+        background: rgba(255, 165, 2, 0.12) !important;
+        border-color: rgba(255, 165, 2, 0.25) !important;
     }
-    .card-placar span {
-        font-size: 16px;
+    .foul-count {
+        color: #ffb347 !important;
     }
-    .card-placar span:nth-child(2) {
-        font-size: 24px;
+
+    /* ------------------------------------------------------------------
+       BOTÕES – CONTROLES, EDIÇÃO, AÇÃO
+    ------------------------------------------------------------------ */
+    .edit-team-btn {
+        background: rgba(15, 184, 88, 0.2) !important;
+        border-color: rgba(15, 184, 88, 0.5) !important;
+        color: #a5d6a5 !important;
+    }
+    .edit-team-btn:active {
+        background: #0fb858 !important;
+        color: white !important;
+    }
+
+    .control-btn,
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+        opacity: 0.95 !important;
+    }
+
+    .goal-btn {
+        background: linear-gradient(135deg, #0d8a3d, #0a6b2f) !important;
+    }
+    .remove-btn {
+        background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
+    }
+    .foul-btn {
+        background: linear-gradient(135deg, #b45309, #92400e) !important;
+    }
+
+    /* ------------------------------------------------------------------
+       INPUTS, SELECTS, FORMULÁRIOS
+    ------------------------------------------------------------------ */
+    input,
+    select,
+    textarea,
+    .player-input,
+    .team-name-input,
+    .player-select,
+    .form-control {
+        background-color: #2c3e50 !important;
+        color: #f8f9fa !important;
+        border-color: #4a5c6c !important;
+    }
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #0fb858 !important;
+        box-shadow: 0 0 0 3px rgba(15, 184, 88, 0.3) !important;
+    }
+    input::placeholder,
+    textarea::placeholder {
+        color: #a0b3c2 !important;
+    }
+
+    /* ------------------------------------------------------------------
+       TÍTULOS, TEXTOS E LINKS
+    ------------------------------------------------------------------ */
+    h1, h2, h3, h4, h5, h6,
+    .section-title,
+    .section-subtitle,
+    .card-title,
+    .modal-title {
+        color: #f1f3f5 !important;
+    }
+
+    .text-muted,
+    small,
+    .small,
+    [class*="text-secondary"],
+    .historico-data,
+    .timeline-empty {
+        color: #a0b3c2 !important;
+    }
+
+    a, .link {
+        color: #6ea8fe !important;
+    }
+
+    /* ------------------------------------------------------------------
+       TABELAS E RANKING
+    ------------------------------------------------------------------ */
+    .ranking-table {
+        background-color: #1e242a !important;
+    }
+    .ranking-table th {
+        background-color: #0d3a1a !important;
+        color: white !important;
+    }
+    .ranking-table td {
+        border-bottom-color: #2c3e50 !important;
+    }
+    .ranking-table tr:hover {
+        background-color: rgba(15, 184, 88, 0.15) !important;
+    }
+
+    /* ------------------------------------------------------------------
+       LISTA DE JOGADORES
+    ------------------------------------------------------------------ */
+    .players-list li {
+        background-color: #1e242a !important;
+        border-color: #2c3e50 !important;
+    }
+    .players-list li:hover {
+        background-color: rgba(15, 184, 88, 0.15) !important;
+    }
+    .player-name {
+        color: #f0f0f0 !important;
+    }
+    .player-actions button {
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+    .player-actions button:first-child {
+        color: #a5d6a5 !important;
+    }
+    .player-actions button:last-child {
+        color: #f0a0a0 !important;
+    }
+
+    /* ------------------------------------------------------------------
+       MODAIS E OVERLAYS
+    ------------------------------------------------------------------ */
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.85) !important;
+        backdrop-filter: blur(6px) !important;
+    }
+
+    /* ------------------------------------------------------------------
+       TIMELINE
+    ------------------------------------------------------------------ */
+    .timeline-container {
+        background: rgba(255, 255, 255, 0.02) !important;
+        border-color: #2c3e50 !important;
+    }
+    .timeline-item {
+        background: rgba(255, 255, 255, 0.04) !important;
+    }
+    .timeline-item:hover {
+        background: rgba(255, 255, 255, 0.08) !important;
+    }
+    .event-time {
+        color: #a5d6a5 !important;
+    }
+
+    /* ------------------------------------------------------------------
+       SCROLLBAR (OPCIONAL)
+    ------------------------------------------------------------------ */
+    ::-webkit-scrollbar-track {
+        background: #0a0c10 !important;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #2c3e50 !important;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #4a5c6c !important;
+    }
+
+    /* ------------------------------------------------------------------
+       AJUSTES DE CONTRASTE PARA TEXTOS QUE "SOMEM"
+    ------------------------------------------------------------------ */
+    .text-white,
+    [class*="text-light"] {
+        color: #f8f9fa !important;
+    }
+
+    .text-dark,
+    [class*="text-black"] {
+        color: #e0e0e0 !important;
+    }
+
+    /* ------------------------------------------------------------------
+       BOTÃO INSTALAR (PWA) E DESFAZER
+    ------------------------------------------------------------------ */
+    .install-btn {
+        background: linear-gradient(135deg, #0d8a3d, #0a6b2f) !important;
+        color: white !important;
+    }
+    .undo-btn {
+        background: #b45309 !important;
+        color: white !important;
+    }
+
+    /* ------------------------------------------------------------------
+       TOAST NOTIFICATIONS
+    ------------------------------------------------------------------ */
+    .toast {
+        background: #1e293b !important;
+        color: white !important;
+        border-left-color: #4a5c6c !important;
+    }
+    .toast-success {
+        background: linear-gradient(135deg, #0d8a3d, #0a6b2f) !important;
+    }
+    .toast-error {
+        background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
+    }
+    .toast-warning {
+        background: linear-gradient(135deg, #b45309, #92400e) !important;
+    }
+    .toast-info {
+        background: linear-gradient(135deg, #1e5f8e, #1a4d73) !important;
+    }
+
+    /* ------------------------------------------------------------------
+       VERSÃO DISPLAY
+    ------------------------------------------------------------------ */
+    .version-display {
+        background: rgba(15, 184, 88, 0.12) !important;
+        border-color: rgba(15, 184, 88, 0.3) !important;
+    }
+    .version-display .app-version {
+        background: rgba(0,0,0,0.3) !important;
+        color: #a0b3c2 !important;
+    }
+
+    /* ------------------------------------------------------------------
+       SPLASH SCREEN (mantém contraste, mas escurece levemente)
+    ------------------------------------------------------------------ */
+    #splashScreen {
+        background: 
+            linear-gradient(135deg, #0a3a1a 0%, #1a4a1a 40%, #2a5a2a 100%),
+            repeating-linear-gradient(...) !important; /* mantém padrão, mas escurecido */
     }
 }
