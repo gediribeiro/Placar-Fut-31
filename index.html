@@ -6,10 +6,11 @@
     
     <!-- Metadados básicos -->
     <meta name="description" content="Sistema de placar profissional Placar Fut 31">
-    <meta name="version" content="v1.0.4">
+    <!-- ===== v1.1.0: versão atualizada ===== -->
+    <meta name="version" content="v1.1.0">
     
-    <!-- theme-color única para iOS -->
-    <meta name="theme-color" content="#1a5f23">
+    <!-- ===== v1.1.0: theme-color será controlado via JavaScript (dinâmico) ===== -->
+    <meta name="theme-color" id="metaThemeColor" content="#1a5f23">
     
     <!-- Configurações iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -32,6 +33,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <title>Placar Fut 31</title>
+
+    <!-- ===== v1.1.0: SCRIPT PARA THEME-COLOR DINÂMICO ===== -->
+    <script>
+        function updateThemeColor() {
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const metaTheme = document.getElementById('metaThemeColor');
+            if (metaTheme) {
+                metaTheme.setAttribute('content', isDark ? '#0a0c10' : '#1a5f23');
+            }
+        }
+        // Executa imediatamente
+        updateThemeColor();
+        // Escuta mudanças no tema do sistema
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColor);
+    </script>
 </head>
 <body class="clean-bg">
     <!-- SPLASH SCREEN -->
@@ -39,7 +55,8 @@
         <div class="splash-content">
             <div class="logo">⚽</div>
             <h1>Placar Fut 31</h1>
-            <p class="version">v1.0.4</p>
+            <!-- ===== v1.1.0: versão atualizada ===== -->
+            <p class="version">v1.1.0</p>
             <div class="loading">
                 <div class="spinner"></div>
             </div>
@@ -238,7 +255,8 @@
         <section id="backup" class="content-section">
             <div class="version-display p-lg">
                 <div class="app-title">⚽ Placar Fut 31</div>
-                <div class="app-version">Versão: <span id="appVersion">v1.0.4</span></div>
+                <!-- ===== v1.1.0: versão atualizada ===== -->
+                <div class="app-version">Versão: <span id="appVersion">v1.1.0</span></div>
             </div>
             <div class="stats-card p-lg">
                 <h3 class="card-title">💾 Backup & Restauração</h3>
@@ -302,17 +320,17 @@
         </div>
     </div>
 
-    <!-- ===== NOVO: MODAL DO CARD DE COMPARTILHAMENTO (v1.1.0) ===== -->
-   <div id="modalCardPartida" class="modal-overlay" onclick="PlacarApp.fecharModalCard(event)">
-    <div class="modal-content card-gramado" onclick="event.stopPropagation()">
-        <div id="cardPartidaConteudo"></div>
-        <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: center;">
-            <button class="secondary-btn" onclick="PlacarApp.fecharModalCard()">
-                ✖ Fechar
-            </button>
+    <!-- MODAL DO CARD DE COMPARTILHAMENTO -->
+    <div id="modalCardPartida" class="modal-overlay" onclick="PlacarApp.fecharModalCard(event)">
+        <div class="modal-content card-gramado" onclick="event.stopPropagation()">
+            <div id="cardPartidaConteudo"></div>
+            <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: center;">
+                <button class="secondary-btn" onclick="PlacarApp.fecharModalCard()">
+                    ✖ Fechar
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
     <!-- OVERLAY DE ANIMAÇÃO -->
     <div id="gameOverlay" class="game-overlay">
@@ -338,7 +356,9 @@
             if (window.matchMedia('(display-mode: standalone)').matches) {
                 console.log('Rodando como PWA instalado');
             }
-            document.getElementById('appVersion').textContent = 'v1.0.4';
+            // ===== v1.1.0: versão atualizada (já está no HTML, mas garante consistência) =====
+            const versionSpan = document.getElementById('appVersion');
+            if (versionSpan) versionSpan.textContent = 'v1.1.0';
         });
     </script>
 </body>
