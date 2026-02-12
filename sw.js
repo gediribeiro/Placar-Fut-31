@@ -1,5 +1,5 @@
-// ===== SERVICE WORKER ATUALIZÁVEL =====
-const APP_VERSION = 'v1.0.4';
+// ===== SERVICE WORKER ATUALIZÁVEL – v1.1.0 =====
+const APP_VERSION = 'v1.1.0';
 const CACHE_NAME = `placar-fut-cache-${APP_VERSION}`;
 const DYNAMIC_CACHE_NAME = `placar-fut-dynamic-${APP_VERSION}`;
 
