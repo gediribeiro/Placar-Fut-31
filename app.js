@@ -1754,7 +1754,7 @@ function extrairNome(nomeComParenteses) {
     const data = partida.data ? partida.data.split(',')[0] : new Date().toLocaleDateString('pt-BR');
     
     conteudo.innerHTML = `
-        <h2>⚽ PLACAR FUT 31</h2>
+        <h2>⚽ PLACAR PRO</h2>
         <div class="card-placar">
             <span>${times.A}</span>
             <span>${placar[0]} x ${placar[1]}</span>
