@@ -10,7 +10,9 @@ const CORE_ASSETS = [
   './style.css',
   './app.js',
   './manifest.json',
-  './sw.js'
+  './sw.js',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // URLs de terceiros
@@ -40,31 +42,31 @@ self.addEventListener('install', event => {
   );
 });
 
-// ===== ATIVAÇÃO (VERSÃO CORRIGIDA) =====
+// ===== ATIVAÇÃO (VERSÃO CORRIGIDA - CACHE PROTEGIDO) =====
 self.addEventListener('activate', event => {
   console.log(`[SW ${APP_VERSION}] Ativando...`);
-  
+
   event.waitUntil(
     Promise.all([
-      // Limpa TODOS os caches antigos do placar-fut
+      // Remove apenas caches ANTIGOS, preserva o cache da versão atual
       caches.keys().then(cacheNames => {
         return Promise.all(
           cacheNames.map(cacheName => {
-            // Remove qualquer cache que comece com 'placar-fut'
-            if (cacheName.includes('placar-fut')) {
+            // Remove qualquer cache que comece com 'placar-fut' E NÃO seja o cache atual
+            if (cacheName.includes('placar-fut') && cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE_NAME) {
               console.log(`[SW] Removendo cache antigo: ${cacheName}`);
               return caches.delete(cacheName);
             }
           })
         );
       }),
-      
+
       // Assume controle imediato de todas as abas
       self.clients.claim()
     ])
     .then(() => {
       console.log(`[SW ${APP_VERSION}] Pronto!`);
-      
+
       // Notifica todas as abas sobre a nova versão
       self.clients.matchAll().then(clients => {
         clients.forEach(client => {
