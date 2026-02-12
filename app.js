@@ -1,5 +1,5 @@
-// ===== v1.1.0: Versão atualizada =====
-const APP_VERSION = 'v1.1.0';
+// ===== v1.2.0: Versão atualizada =====
+const APP_VERSION = 'v1.2.0';
 
 const PlacarApp = (function() {
   const state = {
@@ -1793,6 +1793,7 @@ const PlacarApp = (function() {
   }
 
     // ===== v1.2.0: Exportar card do jogo como imagem =====
+    // ===== v1.2.0: Exportar card do jogo como imagem (ALTA QUALIDADE) =====
   function exportarCardComoImagem() {
     const modalContent = document.querySelector('#modalCardPartida .modal-content');
     if (!modalContent) {
@@ -1801,30 +1802,42 @@ const PlacarApp = (function() {
     }
 
     // Mostra toast de processamento
-    showToast('Gerando imagem...', 'info', 2000);
+    showToast('🖼️ Gerando imagem em alta resolução...', 'info', 2500);
 
+    // Força um reflow para garantir que todos os estilos estejam aplicados
+    modalContent.style.transform = 'scale(1)';
+    
+    // Configuração profissional para máxima qualidade
     html2canvas(modalContent, {
-      scale: 1.8,              // Alta resolução
-      backgroundColor: null,   // Respeita o fundo do card
-      allowTaint: false,
+      scale: 3,                    // Resolução altíssima (3x)
+      backgroundColor: null,       // Mantém fundo com gradiente/transparência
+      allowTaint: true,
       useCORS: true,
       logging: false,
       windowWidth: modalContent.scrollWidth,
-      windowHeight: modalContent.scrollHeight
+      windowHeight: modalContent.scrollHeight,
+      onclone: function(clonedDoc) {
+        // Garante que o card clonado mantenha todos os estilos
+        const clonedCard = clonedDoc.querySelector('.card-gramado');
+        if (clonedCard) {
+          clonedCard.style.transform = 'none';
+          clonedCard.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+        }
+      }
     }).then(canvas => {
-      // Converte canvas para PNG e faz download
+      // Converte canvas para PNG com máxima qualidade
       const link = document.createElement('a');
       link.download = `placar-fut-card-${new Date().getTime()}.png`;
-      link.href = canvas.toDataURL('image/png');
+      link.href = canvas.toDataURL('image/png', 1.0); // 1.0 = qualidade máxima
       link.click();
       
-      showToast('✅ Imagem salva!', 'success');
+      showToast('✅ Imagem salva com alta resolução!', 'success');
     }).catch(error => {
       console.error('Erro ao gerar imagem:', error);
-      showToast('Erro ao gerar imagem', 'error');
+      showToast('❌ Erro ao gerar imagem. Tente novamente.', 'error');
     });
   }
-
+  
   // ===== PWA UNIVERSAL =====
   function configurarPWA() {
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
