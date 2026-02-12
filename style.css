@@ -183,12 +183,13 @@ button:active {
 .tabs-navigation {
     background: var(--bg-card);
     position: sticky;
-    top: var(--header-height); /* ← AGORA É AUTOMÁTICO */
+    top: 0; /* ← GRUDA EXATAMENTE ABAIXO DO HEADER */
     z-index: 999;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border-bottom: 1px solid var(--border-color);
 }
 
+/* TODO O RESTO PERMANECE IGUAL */
 .tabs-container {
     display: flex;
     overflow-x: auto;
