@@ -54,6 +54,8 @@
     --font-size-2xl: 24px;
     --font-size-3xl: 32px;
     --font-size-4xl: 40px;
+
+    --header-height: 86px; /* ← ALTURA REAL DO SEU HEADER (meça no DevTools) */
 }
 
 /* ===== 2. RESET E BASE ===== */
@@ -181,7 +183,7 @@ button:active {
 .tabs-navigation {
     background: var(--bg-card);
     position: sticky;
-    top: 83px;
+    top: var(--header-height); /* ← AGORA É AUTOMÁTICO */
     z-index: 999;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     border-bottom: 1px solid var(--border-color);
