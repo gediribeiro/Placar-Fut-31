@@ -1701,12 +1701,21 @@ const PlacarApp = (function() {
   }
 
   // ===== NOVAS FUNÇÕES DE COMPARTILHAMENTO (v1.1.0) =====
-  // [v1.1.0] Função auxiliar para extrair apenas o nome (remove parênteses)
-  function extrairNome(nomeComParenteses) {
-    if (!nomeComParenteses || nomeComParenteses === '—') return '—';
-    // Remove tudo que está entre parênteses, incluindo os parênteses
-    return nomeComParenteses.replace(/\s*\([^)]*\)/g, '').trim();
+  
+// ===== v1.2.0: Função otimizada para extrair nome (remove parênteses) =====
+const REGEX_PARENTESES = /\s*\([^)]*\)/g; // Compilada para melhor performance
+function extrairNome(nomeComParenteses) {
+  // Validação completa: não é string, vazio, ou placeholder
+  if (typeof nomeComParenteses !== 'string' || !nomeComParenteses.trim() || nomeComParenteses === '—') {
+    return '—';
   }
+
+  // Remove tudo que está entre parênteses (incluindo espaços antes)
+  const nomeLimpo = nomeComParenteses.replace(REGEX_PARENTESES, '').trim();
+
+  // Se após a limpeza ficar vazio, retorna placeholder
+  return nomeLimpo || '—';
+}
 
       function mostrarCardPartida(partidaId) {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
