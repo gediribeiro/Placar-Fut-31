@@ -362,51 +362,56 @@
             if (versionSpan) versionSpan.textContent = 'v1.2.0';
         });
     </script>
-<!-- ===== TUTORIAL LEQUE – PRIMEIRO ACESSO ===== -->
+    
+<!-- ===== TUTORIAL LEQUE INTERATIVO – SETAS + SWIPE + TECLADO ===== -->
 <div id="tutorialLeque" class="tutorial-overlay" style="display: none;">
     <div class="leque-container">
-        <!-- CARTAS SOBREPOSTAS EM LEQUE DIAGONAL -->
+        <!-- CONTAINER DAS CARTAS (COM SUPORTE A SWIPE) -->
         <div class="leque-deck" id="lequeDeck">
-            <div class="leque-card card-1">
+            <div class="leque-card" data-index="0">
                 <span class="card-icon">⚽</span>
                 <h4>Gols</h4>
                 <p>Use + e – para marcar ou remover gols de cada time.</p>
             </div>
-            <div class="leque-card card-2">
+            <div class="leque-card" data-index="1">
                 <span class="card-icon">🟨</span>
                 <h4>Faltas</h4>
                 <p>Registre faltas por jogador e controle o ritmo do jogo.</p>
             </div>
-            <div class="leque-card card-3 active">
+            <div class="leque-card" data-index="2">
                 <span class="card-icon">👥</span>
                 <h4>Jogadores</h4>
                 <p>Adicione, edite nomes e acompanhe rankings.</p>
                 <button class="leque-btn" id="entendiTutorialBtn">✅ Entendi</button>
             </div>
-            <div class="leque-card card-4">
+            <div class="leque-card" data-index="3">
                 <span class="card-icon">📤</span>
                 <h4>Compartilhar</h4>
                 <p>No histórico, gere cards profissionais com placar e craque.</p>
             </div>
-            <div class="leque-card card-5">
+            <div class="leque-card" data-index="4">
                 <span class="card-icon">📱</span>
                 <h4>Instalar</h4>
                 <p>Adicione à tela de início e use como app offline.</p>
             </div>
         </div>
 
-        <!-- INDICADORES (DOTS) -->
-        <div class="leque-dots">
-            <span class="dot"></span>
-            <span class="dot"></span>
-            <span class="dot active"></span>
-            <span class="dot"></span>
-            <span class="dot"></span>
+        <!-- BOTÕES DE NAVEGAÇÃO (SETAS) -->
+        <div class="leque-navegacao">
+            <button class="leque-nav-btn" id="lequeAnteriorBtn" title="Anterior (←)">←</button>
+            <div class="leque-dots" id="lequeDots">
+                <span class="dot" data-dot="0"></span>
+                <span class="dot" data-dot="1"></span>
+                <span class="dot active" data-dot="2"></span>
+                <span class="dot" data-dot="3"></span>
+                <span class="dot" data-dot="4"></span>
+            </div>
+            <button class="leque-nav-btn" id="lequeProximoBtn" title="Próximo (→)">→</button>
         </div>
 
         <!-- BOTÃO PULAR -->
         <button class="leque-skip" id="pularTutorialBtn">⏹ Pular tutorial</button>
     </div>
-</div>  
+</div> 
 </body>
 </html>
