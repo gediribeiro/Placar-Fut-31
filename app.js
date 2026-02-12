@@ -2164,25 +2164,33 @@ function initTutorial() {
     instalarApp: instalarApp,
     mostrarCardPartida: mostrarCardPartida,
     fecharModalCard: fecharModalCard,
-        // ===== TUTORIAL LEQUE =====
+            // ===== TUTORIAL LEQUE – ABERTURA AUTOMÁTICA (COM TRAVA) =====
     mostrarTutorialLeque: function() {
-      const tutorialVisto = localStorage.getItem('placar_tutorial_visto');
-      if (tutorialVisto === 'sim') return;
-      const modal = document.getElementById('tutorialLeque');
-      if (modal) modal.style.display = 'flex';
+        const tutorialVisto = localStorage.getItem('placar_tutorial_visto');
+        if (tutorialVisto === 'sim') return;
+        const modal = document.getElementById('tutorialLeque');
+        if (modal) {
+            modal.style.display = 'flex';
+            initTutorialInterativo();
+        }
     },
 
+    // ===== FECHAR TUTORIAL =====
     fecharTutorialLeque: function(permanentemente = true) {
-      const modal = document.getElementById('tutorialLeque');
-      if (modal) modal.style.display = 'none';
-      if (permanentemente) localStorage.setItem('placar_tutorial_visto', 'sim');
+        const modal = document.getElementById('tutorialLeque');
+        if (modal) modal.style.display = 'none';
+        if (permanentemente) localStorage.setItem('placar_tutorial_visto', 'sim');
+        // Remove listener de teclado para não ficar ativo sem necessidade
+        document.removeEventListener('keydown', handleTeclado);
     },
-        // ===== TUTORIAL LEQUE – ABERTURA MANUAL (SEM TRAVA) =====
+
+    // ===== ABERTURA MANUAL (BOTÃO) – SEMPRE ABRE =====
     abrirTutorialManual: function() {
-      const modal = document.getElementById('tutorialLeque');
-      if (modal) {
-        modal.style.display = 'flex';
-      }
+        const modal = document.getElementById('tutorialLeque');
+        if (modal) {
+            modal.style.display = 'flex';
+            initTutorialInterativo();
+        }
     },
     getState: () => ({ ...state })
   };
@@ -2308,37 +2316,37 @@ setTimeout(() => {
   }
 }, 3000);
 
-// ===== EVENTOS DO TUTORIAL LEQUE =====
+// ===== EVENTOS DO TUTORIAL LEQUE (BOTÕES ENTENDI / PULAR) =====
 document.addEventListener('DOMContentLoaded', function() {
-  // Botão "Entendi"
-  const entendiBtn = document.getElementById('entendiTutorialBtn');
-  if (entendiBtn) {
-    entendiBtn.addEventListener('click', function() {
-      if (typeof PlacarApp.fecharTutorialLeque === 'function') {
-        PlacarApp.fecharTutorialLeque(true);
-      }
-    });
-  }
+    // Botão "Entendi" (dentro da carta)
+    const entendiBtn = document.getElementById('entendiTutorialBtn');
+    if (entendiBtn) {
+        entendiBtn.addEventListener('click', function() {
+            if (typeof PlacarApp.fecharTutorialLeque === 'function') {
+                PlacarApp.fecharTutorialLeque(true);
+            }
+        });
+    }
 
-  // Botão "Pular"
-  const pularBtn = document.getElementById('pularTutorialBtn');
-  if (pularBtn) {
-    pularBtn.addEventListener('click', function() {
-      if (typeof PlacarApp.fecharTutorialLeque === 'function') {
-        PlacarApp.fecharTutorialLeque(true);
-      }
-    });
-  }
+    // Botão "Pular"
+    const pularBtn = document.getElementById('pularTutorialBtn');
+    if (pularBtn) {
+        pularBtn.addEventListener('click', function() {
+            if (typeof PlacarApp.fecharTutorialLeque === 'function') {
+                PlacarApp.fecharTutorialLeque(true);
+            }
+        });
+    }
 
-  // Clique fora do modal (fecha sem marcar como visto)
-  const tutorialOverlay = document.getElementById('tutorialLeque');
-  if (tutorialOverlay) {
-    tutorialOverlay.addEventListener('click', function(e) {
-      if (e.target === tutorialOverlay) {
-        if (typeof PlacarApp.fecharTutorialLeque === 'function') {
-          PlacarApp.fecharTutorialLeque(false);
-        }
-      }
-    });
-  }
+    // Clique fora do modal (fecha sem marcar como visto)
+    const tutorialOverlay = document.getElementById('tutorialLeque');
+    if (tutorialOverlay) {
+        tutorialOverlay.addEventListener('click', function(e) {
+            if (e.target === tutorialOverlay) {
+                if (typeof PlacarApp.fecharTutorialLeque === 'function') {
+                    PlacarApp.fecharTutorialLeque(false);
+                }
+            }
+        });
+    }
 });
