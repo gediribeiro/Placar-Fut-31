@@ -1707,13 +1707,10 @@ const PlacarApp = (function() {
     return nomeComParenteses.replace(/\s*\([^)]*\)/g, '').trim();
   }
 
-    function mostrarCardPartida(partidaId) {
+      function mostrarCardPartida(partidaId) {
     const historico = JSON.parse(localStorage.getItem("historico")) || [];
     
-    // Procurar partida pelo ID (se não existir, usar o último)
     let partida = historico.find(p => p.id === partidaId);
-    
-    // Se não encontrou, usar a última (fallback)
     if (!partida) {
       partida = historico[historico.length - 1];
       if (!partida) {
@@ -1728,7 +1725,6 @@ const PlacarApp = (function() {
     const craqueCompleto = partida.craque || '—';
     const faltasJogadores = partida.faltas?.jogadores || {};
     
-    // Extrai apenas o nome do craque (remove parênteses)
     const craqueNome = extrairNome(craqueCompleto);
     
     let maisFaltoso = '—';
@@ -1736,7 +1732,6 @@ const PlacarApp = (function() {
     Object.entries(faltasJogadores).forEach(([jogador, qtd]) => {
       if (qtd > maxFaltas) {
         maxFaltas = qtd;
-        // Guarda apenas o nome do jogador (sem quantidade)
         maisFaltoso = extrairNome(jogador);
       }
     });
@@ -1772,9 +1767,6 @@ const PlacarApp = (function() {
             <span>${data}</span>
         </div>
         <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: center;">
-            <button class="secondary-btn" onclick="PlacarApp.exportarCardComoImagem()">
-                📸 Salvar como imagem
-            </button>
             <button class="secondary-btn" onclick="PlacarApp.fecharModalCard()">
                 ✖ Fechar
             </button>
@@ -1792,52 +1784,7 @@ const PlacarApp = (function() {
     }
   }
 
-    // ===== v1.2.0: Exportar card do jogo como imagem =====
-    // ===== v1.2.0: Exportar card do jogo como imagem (ALTA QUALIDADE) =====
-  function exportarCardComoImagem() {
-    const modalContent = document.querySelector('#modalCardPartida .modal-content');
-    if (!modalContent) {
-      showToast('Card não encontrado', 'error');
-      return;
-    }
-
-    // Mostra toast de processamento
-    showToast('🖼️ Gerando imagem em alta resolução...', 'info', 2500);
-
-    // Força um reflow para garantir que todos os estilos estejam aplicados
-    modalContent.style.transform = 'scale(1)';
     
-    // Configuração profissional para máxima qualidade
-    html2canvas(modalContent, {
-      scale: 3,                    // Resolução altíssima (3x)
-      backgroundColor: null,       // Mantém fundo com gradiente/transparência
-      allowTaint: true,
-      useCORS: true,
-      logging: false,
-      windowWidth: modalContent.scrollWidth,
-      windowHeight: modalContent.scrollHeight,
-      onclone: function(clonedDoc) {
-        // Garante que o card clonado mantenha todos os estilos
-        const clonedCard = clonedDoc.querySelector('.card-gramado');
-        if (clonedCard) {
-          clonedCard.style.transform = 'none';
-          clonedCard.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
-        }
-      }
-    }).then(canvas => {
-      // Converte canvas para PNG com máxima qualidade
-      const link = document.createElement('a');
-      link.download = `placar-fut-card-${new Date().getTime()}.png`;
-      link.href = canvas.toDataURL('image/png', 1.0); // 1.0 = qualidade máxima
-      link.click();
-      
-      showToast('✅ Imagem salva com alta resolução!', 'success');
-    }).catch(error => {
-      console.error('Erro ao gerar imagem:', error);
-      showToast('❌ Erro ao gerar imagem. Tente novamente.', 'error');
-    });
-  }
-  
   // ===== PWA UNIVERSAL =====
   function configurarPWA() {
     const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -2055,7 +2002,6 @@ const PlacarApp = (function() {
     // NOVAS FUNÇÕES v1.1.0
     mostrarCardPartida: mostrarCardPartida,
     fecharModalCard: fecharModalCard,
-    exportarCardComoImagem: exportarCardComoImagem,
     getState: () => ({ ...state })
   };
 })();
