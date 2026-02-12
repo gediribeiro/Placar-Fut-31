@@ -2117,6 +2117,23 @@ body.clean-bg {
         letter-spacing: 1px !important;
     }
 
+        /* ===== CARD INFO – TEMA ESCURO ===== */
+    .card-info {
+        border-bottom-color: rgba(15, 184, 88, 0.25) !important;
+        color: #d0e0d0 !important;
+    }
+
+    .card-info span:first-child {
+        color: #b0e6b0 !important;
+    }
+
+    .card-info span:last-child {
+        background: rgba(15, 184, 88, 0.2) !important;
+        color: #e0f0e0 !important;
+        padding: 6px 16px !important;
+        border-radius: 40px !important;
+    }
+
     /* Responsividade para telas pequenas no tema escuro */
     @media (max-width: 480px) {
         .card-placar {
