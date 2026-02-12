@@ -49,4 +49,4 @@ Para solicitações, entre em contato através do GitHub.
 ---
 
 ## 📁 Estrutura do Projeto
-docs: cria README com licença restritiva
+
