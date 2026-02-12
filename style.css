@@ -2022,6 +2022,37 @@ body.clean-bg {
     color: var(--text-primary) !important;
   }
 
+    /* ===== PLACAR – TEMA ESCURO ===== */
+.score-number {
+  background: linear-gradient(135deg, #2a2f3a, #1e232a) !important;
+  border-color: #3a4a5a !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.score-divider {
+  color: var(--text-secondary) !important;
+  opacity: 1 !important;
+}
+
+.team-name-display {
+  background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.08)) !important;
+  border-color: rgba(15, 184, 88, 0.4) !important;
+  color: #f0fff0 !important;
+}
+
+.game-timer {
+  background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.1)) !important;
+  border-color: rgba(15, 184, 88, 0.4) !important;
+  color: #e9ecef !important;
+}
+
+.game-timer.tempo-pausado {
+  color: var(--primary-red) !important;
+  border-color: rgba(255, 71, 87, 0.4) !important;
+  background: linear-gradient(135deg, rgba(255, 71, 87, 0.15), rgba(255, 71, 87, 0.08)) !important;
+}
+
   /* 3. HEADER – gradiente próprio */
   .app-header {
     background: linear-gradient(135deg, #0f1217, #0a0c10);
