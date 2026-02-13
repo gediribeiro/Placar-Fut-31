@@ -2194,237 +2194,133 @@ const PlacarApp = (function() {
   }
 
   // ==========================================================================
-  // 21. INICIALIZAÇÃO E SPLASH SCREEN
-  // ==========================================================================
-  function verificarBackupDados() {
-      const backupKey = 'placar_backup_v1';
-      
-      try {
-          const jogadores = localStorage.getItem("jogadores");
-          const historico = localStorage.getItem("historico");
-          
-          if (!jogadores || jogadores === '[]' || jogadores === 'null' || 
-              !historico || historico === '[]' || historico === 'null') {
-              
-              const backup = localStorage.getItem(backupKey);
-              if (backup) {
-                  const parsed = JSON.parse(backup);
-                  
-                  if (parsed.jogadores && parsed.jogadores !== 'null' && parsed.jogadores !== '[]') {
-                      localStorage.setItem("jogadores", parsed.jogadores);
-                      state.jogadores = JSON.parse(parsed.jogadores);
-                  }
-                  
-                  if (parsed.historico && parsed.historico !== 'null' && parsed.historico !== '[]') {
-                      localStorage.setItem("historico", parsed.historico);
-                  }
-                  
-                  if (parsed.nomes && parsed.nomes.timeA) {
-                      localStorage.setItem("nomeTimeA", parsed.nomes.timeA);
-                      state.nomeA = parsed.nomes.timeA;
-                  }
-                  
-                  if (parsed.nomes && parsed.nomes.timeB) {
-                      localStorage.setItem("nomeTimeB", parsed.nomes.timeB);
-                      state.nomeB = parsed.nomes.timeB;
-                  }
-                  
-                  console.log('📂 Dados restaurados do backup!');
-                  showToast('📂 Dados restaurados do backup automático', 'success');
-              }
-          }
-          
-          const currentData = {
-              jogadores: localStorage.getItem("jogadores"),
-              historico: localStorage.getItem("historico"),
-              nomes: {
-                  timeA: localStorage.getItem("nomeTimeA"),
-                  timeB: localStorage.getItem("nomeTimeB")
-              },
-              lastBackup: new Date().toISOString(),
-              appVersion: APP_VERSION
-          };
-          
-          localStorage.setItem(backupKey, JSON.stringify(currentData));
-          console.log('💾 Backup realizado:', currentData.lastBackup);
-          
-      } catch (error) {
-          console.error('❌ Erro no backup:', error);
-      }
-  }
+ // ==========================================================================
+// 21. INICIALIZAÇÃO E SPLASH SCREEN
+// ==========================================================================
+function verificarBackupDados() {
+    const backupKey = 'placar_backup_v1';
+    // ... (mantenha igual)
+}
 
-  function init() {
-      console.log('🚀 Inicializando PlacarApp v' + APP_VERSION + '...');
-      
-      carregarNomesTimes();
-      renderJogadores();
-      esconderUndo();
-      verificarBackupDados();
-      configurarPWA();
-      fazerBackupAutomatico();
-      
-      if ('serviceWorker' in navigator) {
-          if (navigator.serviceWorker.controller) {
-              console.log('✅ Service Worker já está controlando a página');
-          } else {
-              navigator.serviceWorker.register('sw.js')
-                  .then(reg => {
-                      console.log('✅ Service Worker registrado:', reg.scope);
-                      
-                      reg.addEventListener('updatefound', () => {
-                          const newWorker = reg.installing;
-                          console.log('🔄 Novo Service Worker encontrado:', newWorker.state);
-                          
-                          newWorker.addEventListener('statechange', () => {
-                              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                  console.log('🔄 Nova versão disponível! Recarregue para atualizar.');
-                                  showToast('🔄 Nova versão disponível!', 'info');
-                              }
-                          });
-                      });
-                  })
-                  .catch(err => {
-                      console.error('❌ Erro no Service Worker:', err);
-                  });
-          }
-      }
-      
-      console.log('🎉 PlacarApp v' + APP_VERSION + ' inicializado com sucesso!');
-  }
+function init() {
+    console.log('🚀 Inicializando PlacarApp v' + APP_VERSION + '...');
+    // ... (mantenha igual)
+}
 
-  function exibirVersao() {
-      const versaoEl = document.getElementById('appVersion');
-      if (versaoEl) {
-          versaoEl.textContent = APP_VERSION;
-          console.log('🏷️ Versão exibida:', APP_VERSION);
-      }
-  }
+function exibirVersao() {
+    const versaoEl = document.getElementById('appVersion');
+    if (versaoEl) {
+        versaoEl.textContent = APP_VERSION;
+        console.log('🏷️ Versão exibida:', APP_VERSION);
+    }
+}
 
-  function iniciarAppComSplash() {
-      function atualizarVersaoNaSplash() {
-          const elementoVersao = document.querySelector('.splash-content .version');
-          if (elementoVersao) {
-              elementoVersao.textContent = APP_VERSION;
-          }
-      }
-      
-      if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', atualizarVersaoNaSplash);
-      } else {
-          atualizarVersaoNaSplash();
-      }
-      
-      function esconderSplash() {
-          const splash = document.getElementById('splashScreen');
-          if (splash) {
-              splash.classList.add('hidden');
-              setTimeout(() => {
-                  splash.style.display = 'none';
-              }, 800);
-          }
-      }
-      
-      function inicializarAppPrincipal() {
-          PlacarApp.init();
-          exibirVersao();
-      }
-      
-      const tempoMinimoSplash = new Promise(resolve => {
-          setTimeout(resolve, 2000);
-      });
-      
-      if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', function() {
-              tempoMinimoSplash.then(() => {
-                  esconderSplash();
-                  inicializarAppPrincipal();
-                  setTimeout(() => PlacarApp.mostrarTutorialLeque(), 1200);
-              });
-          });
-      } else {
-          tempoMinimoSplash.then(() => {
-              esconderSplash();
-              inicializarAppPrincipal();
-              setTimeout(() => PlacarApp.mostrarTutorialLeque(), 1200);
-          });
-      }
-  }
+function iniciarAppComSplash() {
+    function atualizarVersaoNaSplash() {
+        const elementoVersao = document.querySelector('.splash-content .version');
+        if (elementoVersao) {
+            elementoVersao.textContent = APP_VERSION;
+        }
+    }
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', atualizarVersaoNaSplash);
+    } else {
+        atualizarVersaoNaSplash();
+    }
+    
+    function esconderSplash() {
+        const splash = document.getElementById('splashScreen');
+        if (splash) {
+            splash.classList.add('hidden');
+            setTimeout(() => {
+                splash.style.display = 'none';
+            }, 800);
+        }
+    }
+    
+    function inicializarAppPrincipal() {
+        PlacarApp.init();
+        exibirVersao();
+    }
+    
+    const tempoMinimoSplash = new Promise(resolve => {
+        setTimeout(resolve, 2000);
+    });
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            tempoMinimoSplash.then(() => {
+                esconderSplash();
+                inicializarAppPrincipal();
+                setTimeout(() => PlacarApp.mostrarTutorialLeque(), 1200);
+            });
+        });
+    } else {
+        tempoMinimoSplash.then(() => {
+            esconderSplash();
+            inicializarAppPrincipal();
+            setTimeout(() => PlacarApp.mostrarTutorialLeque(), 1200);
+        });
+    }
+}
 
-  // ==========================================================================
-  // 22. INTERFACE PÚBLICA (retorno do módulo)
-  // ==========================================================================
-  return {
-    // Inicialização
+// ===== CHAMADA DA SPLASH (DENTRO DA IIFE) =====
+// Agora que a função está definida, chamamos ela.
+// Usamos setTimeout para garantir que o objeto PlacarApp já esteja disponível globalmente.
+setTimeout(() => {
+    iniciarAppComSplash();
+}, 0);
+
+// ==========================================================================
+// 22. INTERFACE PÚBLICA (retorno do módulo)
+// ==========================================================================
+return {
     init: init,
-    // Navegação
     trocarTab: trocarTab,
-    // Jogadores
     addJogador: addJogador,
     removerJogador: removerJogador,
     editarNomeTime: editarNomeTime,
     salvarNomeTime: salvarNomeTime,
-    // Jogo
     iniciar: iniciar,
     togglePause: togglePause,
     resetar: resetar,
     fim: fim,
-    // Gols
     aumentarGol: aumentarGol,
     diminuirGol: diminuirGol,
     registrarGol: registrarGol,
-    // Faltas
     registrarFalta: registrarFalta,
     confirmarFalta: confirmarFalta,
-    // Undo
     desfazer: desfazer,
-    // Popups
     fecharPopup: fecharPopup,
     fecharPopupFalta: fecharPopupFalta,
     fecharPopupRemover: fecharPopupRemover,
     fecharPopupNome: fecharPopupNome,
-    // Histórico
     limparHistorico: limparHistorico,
-    // Rankings e estatísticas
     ranking: ranking,
     historico: historico,
     estatisticas: estatisticas,
-    // Comparação
     compararJogadores: compararJogadores,
     carregarComparacao: carregarComparacao,
-    // Backup
     exportarBackup: exportarBackup,
     importarBackup: importarBackup,
-    // PWA
     instalarApp: instalarApp,
-    // Perfil
     mostrarPerfilJogador: mostrarPerfilJogador,
     fecharModalPerfil: fecharModalPerfil,
-    // Cards
     mostrarCardPartida: mostrarCardPartida,
     fecharModalCard: fecharModalCard,
-    // Tutorial
     mostrarTutorialLeque: mostrarTutorialLeque,
     abrirTutorialManual: abrirTutorialManual,
     fecharTutorialLeque: fecharTutorialLeque,
-    // Estado (para debug)
     getState: () => ({ ...state })
-  };
-})();
+};
+
+})(); // Fim da IIFE
 
 // ============================================================================
-// INICIALIZAÇÃO AUTOMÁTICA (chamada após carregamento do DOM)
-// ============================================================================
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', iniciarAppComSplash);
-} else {
-    iniciarAppComSplash();
-}
-
-// ============================================================================
-// EVENTOS DO TUTORIAL (registrados após DOM pronto)
+// EVENTOS DO TUTORIAL (agora fora da IIFE, acessando PlacarApp global)
 // ============================================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Botão "Entendi" (dentro da carta)
     const entendiBtn = document.getElementById('entendiTutorialBtn');
     if (entendiBtn) {
         entendiBtn.addEventListener('click', function() {
@@ -2434,7 +2330,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Botão "Pular"
     const pularBtn = document.getElementById('pularTutorialBtn');
     if (pularBtn) {
         pularBtn.addEventListener('click', function() {
@@ -2444,7 +2339,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Clique fora do modal (fecha sem marcar como visto)
     const tutorialOverlay = document.getElementById('tutorialLeque');
     if (tutorialOverlay) {
         tutorialOverlay.addEventListener('click', function(e) {
@@ -2461,19 +2355,19 @@ document.addEventListener('DOMContentLoaded', function() {
 // FORÇAR PWA iOS (verificação extra)
 // ============================================================================
 setTimeout(() => {
-  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-  
-  if (isIOS && isSafari) {
-    console.log('📱 iOS Safari detectado - Verificando PWA...');
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
     
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    const hasSW = !!navigator.serviceWorker?.controller;
-    
-    if (!isStandalone) {
-      console.log('⚠️ iOS não está em tela cheia');
-      console.log('💡 Use: Compartilhar → "Adicionar à Tela de Início"');
-      console.log('🔧 SW ativo:', hasSW ? '✅ Sim' : '❌ Não');
+    if (isIOS && isSafari) {
+        console.log('📱 iOS Safari detectado - Verificando PWA...');
+        
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        const hasSW = !!navigator.serviceWorker?.controller;
+        
+        if (!isStandalone) {
+            console.log('⚠️ iOS não está em tela cheia');
+            console.log('💡 Use: Compartilhar → "Adicionar à Tela de Início"');
+            console.log('🔧 SW ativo:', hasSW ? '✅ Sim' : '❌ Não');
+        }
     }
-  }
 }, 3000);
