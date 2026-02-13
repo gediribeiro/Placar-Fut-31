@@ -1,10 +1,43 @@
-/* =========================================== */
-/* PLACAR FUT 31 - CSS PROFISSIONAL v1.2.0    */
-/* =========================================== */
+/* ============================================================================
+   PLACAR PRO – ESTILOS PRINCIPAIS v1.3.0
+   ============================================================================
+   ÍNDICE:
+   1. VARIÁVEIS E CONFIGURAÇÕES
+   2. RESET E ESTILOS BASE
+   3. UTILITÁRIOS
+   4. FEEDBACK TÁTIL
+   5. HEADER
+   6. BOTTOM NAVIGATION (TABS)
+   7. CONTEÚDO PRINCIPAL
+   8. PLACAR (SCOREBOARD)
+   9. CONTROLES DO JOGO
+   10. COMPONENTES REUTILIZÁVEIS (CARDS, BOTÕES, INPUTS)
+   11. LISTAS (JOGADORES, RANKING, GOLS)
+   12. HISTÓRICO DE PARTIDAS
+   13. ESTATÍSTICAS GLOBAIS
+   14. COMPARAÇÃO DE JOGADORES
+   15. MODAIS GERAIS
+   16. OVERLAY DE JOGO
+   17. BOTÕES FLUTUANTES
+   18. TOAST NOTIFICATIONS
+   19. ANIMAÇÕES E EFEITOS
+   20. TIMELINE
+   21. VERSÃO DISPLAY
+   22. SPLASH SCREEN
+   23. BOTÕES DE JOGADORES (EDIÇÃO/REMOÇÃO)
+   24. TELA DE MENU
+   25. SCROLLBAR GLOBAL
+   26. CARD DE COMPARTILHAMENTO
+   27. TUTORIAL LEQUE
+   28. PERFIL DO JOGADOR (ESTILO FIFA)
+   29. TEMA ESCURO AUTOMÁTICO
+   30. RESPONSIVIDADE E SAFE AREA
+   ============================================================================ */
 
-/* ===== 1. VARIÁVEIS E CONFIGURAÇÕES ===== */
+/* ============================================================================
+   1. VARIÁVEIS E CONFIGURAÇÕES
+   ============================================================================ */
 :root {
-    /* PALETA DE CORES */
     --primary-green: #0fb858;
     --primary-green-dark: #0d9c4d;
     --primary-red: #ff4757;
@@ -12,19 +45,16 @@
     --primary-yellow: #ffa502;
     --primary-yellow-dark: #e59400;
 
-    /* CORES DE FUNDO */
     --bg-body: #f8fafc;
     --bg-card: #ffffff;
     --bg-header: #1a1a2e;
     --bg-modal: #ffffff;
 
-    /* CORES DE TEXTO */
     --text-primary: #1e293b;
     --text-secondary: #64748b;
     --text-light: #94a3b8;
     --text-white: #ffffff;
 
-    /* BORDAS E SOMBRAS */
     --border-color: #e2e8f0;
     --border-radius-sm: 8px;
     --border-radius-md: 12px;
@@ -36,7 +66,6 @@
     --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.12);
     --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.15);
 
-    /* ESPAÇAMENTOS */
     --space-xs: 4px;
     --space-sm: 8px;
     --space-md: 16px;
@@ -44,7 +73,6 @@
     --space-xl: 32px;
     --space-2xl: 40px;
 
-    /* TIPOGRAFIA */
     --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-size-xs: 12px;
     --font-size-sm: 14px;
@@ -54,10 +82,11 @@
     --font-size-2xl: 24px;
     --font-size-3xl: 32px;
     --font-size-4xl: 40px;
-
 }
 
-/* ===== 2. RESET E BASE ===== */
+/* ============================================================================
+   2. RESET E ESTILOS BASE
+   ============================================================================ */
 * {
     margin: 0;
     padding: 0;
@@ -83,7 +112,9 @@ body {
     padding-bottom: 100px;
 }
 
-/* ===== 3. UTILITÁRIOS ===== */
+/* ============================================================================
+   3. UTILITÁRIOS
+   ============================================================================ */
 .p-xs { padding: var(--space-xs); }
 .p-sm { padding: var(--space-sm); }
 .p-md { padding: var(--space-md); }
@@ -114,7 +145,9 @@ body {
 
 .cursor-pointer { cursor: pointer; }
 
-/* ===== 4. FEEDBACK TÁTIL ===== */
+/* ============================================================================
+   4. FEEDBACK TÁTIL (BOTÕES)
+   ============================================================================ */
 button {
     -webkit-tap-highlight-color: transparent;
     user-select: none;
@@ -125,10 +158,12 @@ button:active {
     transform: scale(0.97);
 }
 
-/* ===== 5. HEADER ===== */
+/* ============================================================================
+   5. HEADER
+   ============================================================================ */
 .app-header {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
-    padding-top: env(safe-area-inset-top);  /* ← NOVO */
+    padding-top: env(safe-area-inset-top);
     padding-bottom: var(--space-md);
     position: sticky;
     top: 0;
@@ -140,7 +175,7 @@ button:active {
 .header-container {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* ← MUDA DE 'CENTER' PARA 'SPACE-BETWEEN' */
+    justify-content: space-between;
     padding: 0 var(--space-lg);
     max-width: 1200px;
     margin: 0 auto;
@@ -178,13 +213,13 @@ button:active {
     letter-spacing: -0.5px;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
-  /* ===== ÍCONES DO HEADER – MAIORES E MAIS ESPAÇADOS ===== */
+
 .header-icon-btn {
-    background: transparent;        /* remove qualquer fundo */
-    border: none;                   /* remove borda */
-    color: var(--text-white);       /* cor do ícone (branco) */
-    font-size: 36px;                /* ↑ tamanho das linhas */
-    width: 56px;                     /* área de toque */
+    background: transparent;
+    border: none;
+    color: var(--text-white);
+    font-size: 36px;
+    width: 56px;
     height: 56px;
     display: flex;
     align-items: center;
@@ -194,21 +229,13 @@ button:active {
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Efeito sutil no clique (opcional, mantém feedback) */
 .header-icon-btn:active {
     transform: scale(0.92);
-    /* sem fundo, só o ícone */
 }
 
-/* Tema escuro – herda automaticamente */
-@media (prefers-color-scheme: dark) {
-    .header-icon-btn {
-        color: var(--text-white);   /* já branco */
-    }
-}
-
-    
-/* ===== 6. BARRA DE ABAS – BOTTOM NAVIGATION (MODELO 5 COM ANIMAÇÃO) ===== */
+/* ============================================================================
+   6. BOTTOM NAVIGATION (TABS)
+   ============================================================================ */
 .tabs-navigation {
     position: fixed;
     bottom: 0;
@@ -257,7 +284,6 @@ button:active {
     transition: transform 0.2s ease, color 0.2s ease, text-shadow 0.2s ease;
 }
 
-/* ESTADO ATIVO – ANIMAÇÃO MODELO 5 */
 .tab-button.active {
     color: var(--primary-green);
 }
@@ -268,61 +294,14 @@ button:active {
     text-shadow: 0 4px 8px rgba(15, 184, 88, 0.3);
 }
 
-/* Remove os antigos indicadores de aba */
-.tab-button.active::after,
-.tab-button:not(.active)::after,
-.tab-button:hover:not(.active)::after {
-    display: none !important;
-}
-
-/* Ajuste no conteúdo principal para não ficar escondido atrás da barra fixa */
-.app-main {
-    padding-bottom: 90px; /* altura da barra + folga */
-}
-
-/* TEMA ESCURO – garantia, mas já herdado pelas variáveis */
-@media (prefers-color-scheme: dark) {
-    .tabs-navigation {
-        background: var(--bg-card);
-        border-top-color: var(--border-color);
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
-    }
-    .tab-button i {
-        color: var(--text-secondary);
-    }
-    .tab-button.active i {
-        text-shadow: 0 4px 8px rgba(15, 184, 88, 0.5);
-    }
-}
-
-/* Responsividade para telas muito pequenas */
-@media (max-width: 480px) {
-    .tab-button {
-        font-size: 10px;
-        padding: 6px 2px;
-    }
-    .tab-button i {
-        font-size: 20px;
-    }
-    .app-main {
-        padding-bottom: 80px;
-    }
-}
-
-/* Ajuste para telas com notch (iOS) */
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-    .tabs-navigation {
-        padding-bottom: max(8px, env(safe-area-inset-bottom));
-    }
-    .app-main {
-        padding-bottom: max(90px, calc(env(safe-area-inset-bottom) + 80px));
-    }
-}
-/* ===== 7. CONTEÚDO PRINCIPAL ===== */
+/* ============================================================================
+   7. CONTEÚDO PRINCIPAL
+   ============================================================================ */
 .app-main {
     max-width: 800px;
     margin: 0 auto;
     padding: var(--space-lg);
+    padding-bottom: 90px; /* Espaço para a bottom nav */
 }
 
 .content-section {
@@ -355,7 +334,9 @@ button:active {
     text-align: center;
 }
 
-/* ===== 8. PLACAR ===== */
+/* ============================================================================
+   8. PLACAR (SCOREBOARD)
+   ============================================================================ */
 .scoreboard-container {
     background: var(--bg-card);
     border-radius: var(--border-radius-xl);
@@ -583,7 +564,9 @@ button:active {
     color: var(--primary-yellow);
 }
 
-/* ===== 9. CONTROLES DO JOGO ===== */
+/* ============================================================================
+   9. CONTROLES DO JOGO
+   ============================================================================ */
 .game-controls {
     display: flex;
     gap: var(--space-md);
@@ -631,7 +614,9 @@ button:active {
     font-size: 18px;
 }
 
-/* ===== 10. COMPONENTES REUTILIZÁVEIS ===== */
+/* ============================================================================
+   10. COMPONENTES REUTILIZÁVEIS (CARDS, BOTÕES, INPUTS)
+   ============================================================================ */
 .stats-card,
 .input-card {
     background: var(--bg-card);
@@ -728,6 +713,9 @@ button:active {
     box-shadow: 0 0 0 3px rgba(15, 184, 88, 0.15);
 }
 
+/* ============================================================================
+   11. LISTAS (JOGADORES, RANKING, GOLS)
+   ============================================================================ */
 .goals-list,
 .players-list,
 .ranking-list {
@@ -775,7 +763,9 @@ button:active {
     color: var(--text-white);
 }
 
-/* ===== 11. HISTÓRICO ===== */
+/* ============================================================================
+   12. HISTÓRICO DE PARTIDAS
+   ============================================================================ */
 .history-header {
     display: flex;
     flex-direction: column;
@@ -880,7 +870,9 @@ button:active {
     border-bottom: none;
 }
 
-/* ===== 12. STATS ===== */
+/* ============================================================================
+   13. ESTATÍSTICAS GLOBAIS
+   ============================================================================ */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -914,7 +906,9 @@ button:active {
     color: var(--text-primary);
 }
 
-/* ===== 13. COMPARAÇÃO ===== */
+/* ============================================================================
+   14. COMPARAÇÃO DE JOGADORES
+   ============================================================================ */
 .comparison-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -982,7 +976,9 @@ button:active {
     background: linear-gradient(135deg, #ffa502, #e59400);
 }
 
-/* ===== 14. MODAIS ===== */
+/* ============================================================================
+   15. MODAIS GERAIS
+   ============================================================================ */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -1014,7 +1010,6 @@ button:active {
     animation: modalSlide 0.4s ease;
 }
 
-/* ===== CARD DE COMPARTILHAMENTO – ESTRUTURA (TAMANHO) ===== */
 .modal-content.card-gramado {
     max-width: 550px;
     width: 95%;
@@ -1070,7 +1065,9 @@ button:active {
     transform: scale(0.95);
 }
 
-/* ===== 15. OVERLAY DE JOGO ===== */
+/* ============================================================================
+   16. OVERLAY DE JOGO
+   ============================================================================ */
 .game-overlay {
     display: none;
     position: fixed;
@@ -1111,7 +1108,9 @@ button:active {
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-/* ===== 16. BOTÕES FLUTUANTES ===== */
+/* ============================================================================
+   17. BOTÕES FLUTUANTES
+   ============================================================================ */
 .floating-btn {
     position: fixed;
     border: none;
@@ -1159,7 +1158,9 @@ button:active {
     justify-content: center;
 }
 
-/* ===== 17. TOAST NOTIFICATIONS ===== */
+/* ============================================================================
+   18. TOAST NOTIFICATIONS
+   ============================================================================ */
 .toast {
     position: fixed;
     bottom: 120px;
@@ -1201,18 +1202,14 @@ button:active {
     border-left-color: #d4e6ff;
 }
 
-@keyframes slideUp {
-    from { transform: translateX(-50%) translateY(20px); opacity: 0; }
-    to { transform: translateX(-50%) translateY(0); opacity: 1; }
-}
-
-/* ===== 18. HIGHLIGHT DE EDIÇÃO ===== */
+/* ============================================================================
+   19. ANIMAÇÕES E EFEITOS
+   ============================================================================ */
 .editing {
     background-color: #fff9c4 !important;
     transition: background-color 0.3s ease;
 }
 
-/* ===== 19. ANIMAÇÃO DE GOL ===== */
 .main-scoreboard.gol-animation {
     animation: golCelebration 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -1224,42 +1221,9 @@ button:active {
     75% { transform: scale(1.05); }
 }
 
-/* ===== 20. RANKING ===== */
-.ranking-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: var(--space-md);
-    background: var(--bg-card);
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-sm);
-}
-
-.ranking-table th {
-    background: var(--primary-green);
-    color: white;
-    font-weight: 600;
-    padding: var(--space-md);
-    text-align: left;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.ranking-table td {
-    padding: var(--space-md);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.ranking-table tr:hover {
-    background-color: rgba(15, 184, 88, 0.05);
-}
-
-.ranking-table tr:last-child td {
-    border-bottom: none;
-}
-
-/* ===== 21. TIMELINE ===== */
+/* ============================================================================
+   20. TIMELINE
+   ============================================================================ */
 .timeline-container {
     margin: 20px 10px;
     background: rgba(255, 255, 255, 0.03);
@@ -1345,7 +1309,9 @@ button:active {
     border-radius: 3px;
 }
 
-/* ===== 22. VERSÃO DISPLAY ===== */
+/* ============================================================================
+   21. VERSÃO DISPLAY
+   ============================================================================ */
 .version-display {
     text-align: center;
     margin-bottom: 20px;
@@ -1371,7 +1337,9 @@ button:active {
     display: inline-block;
 }
 
-/* ===== 23. SPLASH SCREEN ===== */
+/* ============================================================================
+   22. SPLASH SCREEN
+   ============================================================================ */
 #splashScreen {
     position: fixed;
     top: 0;
@@ -1530,10 +1498,6 @@ button:active {
     font-weight: 300;
 }
 
-@keyframes bounce {
-    0% { transform: translateY(0) scale(1) rotate(0deg); }
-    100% { transform: translateY(-15px) scale(1.05) rotate(5deg); }
-}
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
@@ -1543,7 +1507,9 @@ button:active {
     50% { filter: drop-shadow(0 0 20px rgba(76, 175, 80, 0.8)); }
 }
 
-/* ===== 24. BOTÕES DE JOGADORES ===== */
+/* ============================================================================
+   23. BOTÕES DE JOGADORES (EDIÇÃO/REMOÇÃO)
+   ============================================================================ */
 .players-list li {
     display: flex;
     justify-content: space-between;
@@ -1564,7 +1530,7 @@ button:active {
     font-weight: 600;
     color: var(--text-primary);
     flex-grow: 1;
-    padding-left: var(--space-sm); /* ← ADICIONADO: espaçamento interno à esquerda */
+    padding-left: var(--space-sm);
 }
 
 .player-actions {
@@ -1606,7 +1572,9 @@ button:active {
     transform: scale(0.9);
 }
 
-/* ===== 25. BOTÕES DA TELA DE MENU ===== */
+/* ============================================================================
+   24. TELA DE MENU
+   ============================================================================ */
 #menu .primary-btn {
     display: flex;
     align-items: center;
@@ -1616,7 +1584,9 @@ button:active {
     padding: 16px;
 }
 
-/* ===== 26. SCROLLBAR GLOBAL ===== */
+/* ============================================================================
+   25. SCROLLBAR GLOBAL
+   ============================================================================ */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -1628,7 +1598,724 @@ button:active {
     border-radius: 3px;
 }
 
-/* ===== 27. RESPONSIVIDADE ===== */
+/* ============================================================================
+   26. CARD DE COMPARTILHAMENTO
+   ============================================================================ */
+.share-card-btn {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 8px;
+    transition: transform 0.2s ease;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.share-card-btn:hover {
+    background: rgba(15, 184, 88, 0.1);
+}
+
+.share-card-btn:active {
+    transform: scale(0.9);
+    background: rgba(15, 184, 88, 0.2);
+}
+
+.card-gramado {
+    background: linear-gradient(145deg, #ffffff, #f8fff8);
+    color: #1a2e1a;
+    border: 1px solid rgba(15, 184, 88, 0.3);
+    border-radius: 24px;
+    padding: 32px 28px;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(15, 184, 88, 0.06);
+    position: relative;
+    overflow: hidden;
+}
+
+.card-gramado::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        repeating-linear-gradient(
+            45deg,
+            rgba(15, 184, 88, 0.02) 0px,
+            rgba(15, 184, 88, 0.02) 2px,
+            transparent 2px,
+            transparent 8px
+        );
+    pointer-events: none;
+}
+
+.card-gramado h2 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    text-align: center;
+    color: #0a4b1a;
+    letter-spacing: 1.5px;
+    border-bottom: 2px solid rgba(15, 184, 88, 0.25);
+    padding-bottom: 16px;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.card-placar {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    margin: 24px 0 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: linear-gradient(145deg, rgba(15, 184, 88, 0.05), rgba(15, 184, 88, 0.02));
+    padding: 16px 12px;
+    border-radius: 60px;
+    border: 1px solid rgba(15, 184, 88, 0.2);
+}
+
+.card-placar span {
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(2px);
+    border-radius: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e3a1e;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+    white-space: nowrap;
+    flex: 0 1 auto;
+}
+
+.card-placar span:first-child,
+.card-placar span:last-child {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-placar span:nth-child(2) {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(145deg, #0fb858, #0d8a3d);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 50px;
+    box-shadow: 0 6px 14px rgba(15, 184, 88, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    min-width: 80px;
+    max-width: 140px;
+    text-align: center;
+    flex-shrink: 0;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 480px) {
+    .card-placar {
+        gap: 6px;
+        padding: 12px 8px;
+    }
+    .card-placar span {
+        font-size: 16px;
+        padding: 4px 10px;
+    }
+    .card-placar span:first-child,
+    .card-placar span:last-child {
+        max-width: 100px;
+    }
+    .card-placar span:nth-child(2) {
+        font-size: 26px;
+        padding: 6px 12px;
+        min-width: 70px;
+        max-width: 110px;
+    }
+}
+
+.card-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(15, 184, 88, 0.15);
+    font-size: 16px;
+    color: #1e2e1e;
+}
+
+.card-info:last-of-type {
+    border-bottom: none;
+}
+
+.card-info span:first-child {
+    font-weight: 700;
+    color: #0a4b1a;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card-info span:last-child {
+    font-weight: 600;
+    color: #2c3e2c;
+    background: rgba(15, 184, 88, 0.08);
+    padding: 6px 16px;
+    border-radius: 40px;
+    font-size: 15px;
+}
+
+.card-gramado .secondary-btn {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(15, 184, 88, 0.3);
+    color: #1e3a1e;
+    border-radius: 60px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.card-gramado .secondary-btn:hover {
+    background: white;
+    border-color: #0fb858;
+}
+
+/* ============================================================================
+   27. TUTORIAL LEQUE
+   ============================================================================ */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeInLeque 0.4s ease-out;
+}
+
+.leque-container {
+    max-width: 560px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px;
+}
+
+.leque-deck {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    touch-action: pan-y;
+}
+
+.leque-card {
+    position: absolute;
+    width: 230px;
+    height: 290px;
+    background: white;
+    border-radius: 24px;
+    padding: 24px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    transform-origin: bottom center;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+}
+
+.leque-card.card-1 {
+    transform: rotate(-14deg) translateX(-75px) translateY(20px);
+    z-index: 1;
+    opacity: 0.7;
+}
+
+.leque-card.card-2 {
+    transform: rotate(-7deg) translateX(-38px) translateY(10px);
+    z-index: 2;
+    opacity: 0.85;
+}
+
+.leque-card.card-3 {
+    transform: rotate(0deg) translateX(0) translateY(0);
+    z-index: 5;
+    opacity: 1;
+    border: 3px solid var(--primary-green, #0fb858);
+    box-shadow: 0 25px 45px rgba(15, 184, 88, 0.4);
+}
+
+.leque-card.card-4 {
+    transform: rotate(7deg) translateX(38px) translateY(10px);
+    z-index: 4;
+    opacity: 0.85;
+}
+
+.leque-card.card-5 {
+    transform: rotate(14deg) translateX(75px) translateY(20px);
+    z-index: 3;
+    opacity: 0.7;
+}
+
+.leque-card .card-icon {
+    font-size: 58px;
+    margin-bottom: 16px;
+}
+
+.leque-card h4 {
+    font-size: 22px;
+    color: #0a4b1a;
+    margin-bottom: 12px;
+    font-weight: 800;
+}
+
+.leque-card p {
+    color: #4a5c4a;
+    font-size: 14px;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.leque-btn {
+    background: var(--primary-green, #0fb858);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 60px;
+    font-weight: 700;
+    font-size: 15px;
+    margin-top: 12px;
+    cursor: pointer;
+    width: 100%;
+    transition: 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.leque-btn:hover {
+    background: var(--primary-green-dark, #0d9c4d);
+    transform: scale(0.97);
+}
+
+.leque-navegacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin: 20px 0 16px;
+    width: 100%;
+}
+
+.leque-nav-btn {
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 26px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.leque-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.08);
+}
+
+.leque-nav-btn:active {
+    transform: scale(0.94);
+}
+
+.leque-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.leque-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.leque-dots .dot.active {
+    background: var(--primary-green, #0fb858);
+    width: 32px;
+    border-radius: 12px;
+}
+
+.leque-skip {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: white;
+    padding: 12px 32px;
+    border-radius: 60px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    backdrop-filter: blur(4px);
+    margin-top: 8px;
+}
+
+.leque-skip:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes fadeInLeque {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* ============================================================================
+   28. PERFIL DO JOGADOR (ESTILO FIFA)
+   ============================================================================ */
+.perfil-card {
+    max-width: 360px;
+    width: 90%;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.fifa-card {
+    width: 100%;
+    background: linear-gradient(145deg, #1e4a1e, #0a3a1a);
+    border-radius: 24px;
+    padding: 20px 16px;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #b8860b;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 -2px 10px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #fff;
+}
+
+.fifa-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 49px,
+        rgba(255,255,255,0.03) 49px,
+        rgba(255,255,255,0.03) 51px
+    );
+    pointer-events: none;
+}
+
+.fifa-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.fifa-card .player-silhouette {
+    width: 100px;
+    height: 100px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0 5px;
+    z-index: 2;
+    border: 2px solid rgba(255,215,0,0.3);
+    box-shadow: 0 0 20px rgba(255,215,0,0.2);
+}
+
+.fifa-card .player-silhouette i {
+    font-size: 60px;
+    color: rgba(255,255,255,0.5);
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
+}
+
+.fifa-card .player-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffd700;
+    text-shadow: 2px 2px 0 #0a3a1a;
+    margin: 8px 0 4px;
+    z-index: 2;
+}
+
+.fifa-card .player-position {
+    font-size: 14px;
+    color: #ccc;
+    background: rgba(0,0,0,0.3);
+    padding: 4px 12px;
+    border-radius: 30px;
+    margin-bottom: 10px;
+    z-index: 2;
+}
+
+.fifa-card .stats-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 12px;
+    margin-top: auto;
+    padding: 8px 0;
+    z-index: 2;
+}
+
+.fifa-card .stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: #fff;
+    background: rgba(0,0,0,0.3);
+    padding: 6px 12px;
+    border-radius: 30px;
+    border-left: 3px solid #ffd700;
+}
+
+.fifa-card .stat-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.fifa-card .stat-value {
+    font-weight: 700;
+    color: #ffd700;
+}
+
+/* ============================================================================
+   29. TEMA ESCURO AUTOMÁTICO
+   ============================================================================ */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-body: #0a0c10;
+        --bg-card: #1e242a;
+        --bg-header: #0f1217;
+        --bg-modal: #1e242a;
+        --text-primary: #e9ecef;
+        --text-secondary: #a0b3c2;
+        --text-light: #8696a3;
+        --text-white: #f8f9fa;
+        --border-color: #2c3e50;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.7);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.8);
+        --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.85);
+        --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    body,
+    .app-main,
+    .content-section,
+    .container,
+    [class*="wrapper"],
+    .scoreboard-container,
+    .timeline-container,
+    .historico-item,
+    .stats-card,
+    .input-card,
+    .modal-content {
+        background-color: var(--bg-body) !important;
+        color: var(--text-primary) !important;
+    }
+
+    .app-header {
+        background: linear-gradient(135deg, #0f1217, #0a0c10) !important;
+        border-bottom-color: var(--primary-green) !important;
+    }
+
+    .score-number {
+        background: linear-gradient(135deg, #2a2f3a, #1e232a) !important;
+        border-color: #3a4a5a !important;
+        color: #ffffff !important;
+        box-shadow: var(--shadow-md) !important;
+    }
+
+    .score-divider {
+        color: var(--text-secondary) !important;
+        opacity: 1 !important;
+    }
+
+    .team-name-display {
+        background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.08)) !important;
+        border-color: rgba(15, 184, 88, 0.4) !important;
+        color: #f0fff0 !important;
+    }
+
+    .game-timer {
+        background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.1)) !important;
+        border-color: rgba(15, 184, 88, 0.4) !important;
+        color: #e9ecef !important;
+    }
+
+    .game-timer.tempo-pausado {
+        color: var(--primary-red) !important;
+        border-color: rgba(255, 71, 87, 0.4) !important;
+        background: linear-gradient(135deg, rgba(255, 71, 87, 0.15), rgba(255, 71, 87, 0.08)) !important;
+    }
+
+    .foul-item {
+        background: rgba(255, 165, 2, 0.12) !important;
+        border-color: rgba(255, 165, 2, 0.25) !important;
+    }
+
+    .foul-count {
+        color: #ffb347 !important;
+    }
+
+    .edit-team-btn {
+        background: rgba(15, 184, 88, 0.2) !important;
+        border-color: rgba(15, 184, 88, 0.5) !important;
+        color: #a5d6a5 !important;
+    }
+
+    .edit-team-btn:active {
+        background: var(--primary-green) !important;
+        color: white !important;
+    }
+
+    .timeline-container {
+        background: rgba(10, 12, 16, 0.95) !important;
+        border-color: var(--border-color) !important;
+    }
+
+    .timeline-item {
+        background: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .timeline-empty {
+        color: var(--text-secondary) !important;
+    }
+
+    .event-time {
+        color: #a5d6a5 !important;
+    }
+
+    .install-btn {
+        background: linear-gradient(135deg, #2ea84c, #1e7e34) !important;
+        color: white !important;
+        box-shadow: 0 4px 14px rgba(46, 168, 76, 0.4) !important;
+    }
+
+    .undo-btn {
+        background: linear-gradient(135deg, #e68a2e, #c9701e) !important;
+        color: white !important;
+        box-shadow: 0 4px 14px rgba(230, 138, 46, 0.4) !important;
+    }
+
+    #splashScreen {
+        background: linear-gradient(135deg, #0a3a1a 0%, #1a4a1a 40%, #2a5a2a 100%),
+                    repeating-linear-gradient(90deg,
+                        transparent,
+                        transparent 49%,
+                        rgba(255,255,255,0.08) 49%,
+                        rgba(255,255,255,0.08) 51%,
+                        transparent 51%),
+                    repeating-linear-gradient(0deg,
+                        transparent,
+                        transparent 49%,
+                        rgba(255,255,255,0.08) 49%,
+                        rgba(255,255,255,0.08) 51%,
+                        transparent 51%) !important;
+    }
+
+    .toast {
+        background: #1e293b !important;
+        color: white !important;
+        border-left-color: #4a5c6c !important;
+    }
+
+    .toast-success {
+        background: linear-gradient(135deg, #0d8a3d, #0a6b2f) !important;
+    }
+
+    .toast-error {
+        background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
+    }
+
+    .toast-warning {
+        background: linear-gradient(135deg, #b45309, #92400e) !important;
+    }
+
+    .toast-info {
+        background: linear-gradient(135deg, #1e5f8e, #1a4d73) !important;
+    }
+
+    .control-btn,
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn {
+        opacity: 0.95 !important;
+    }
+
+    .tab-button.active {
+        color: var(--primary-green) !important;
+    }
+
+    .tab-button.active::after {
+        background: var(--primary-green) !important;
+    }
+
+    .players-list li {
+        background-color: var(--bg-card) !important;
+        border-color: var(--border-color) !important;
+    }
+
+    .player-name {
+        color: var(--text-primary) !important;
+    }
+
+    .modal-overlay {
+        background: rgba(0, 0, 0, 0.85) !important;
+        backdrop-filter: blur(6px) !important;
+    }
+}
+
+/* ============================================================================
+   30. RESPONSIVIDADE E SAFE AREA
+   ============================================================================ */
 @media (max-width: 768px) {
     .app-main {
         padding: var(--space-md);
@@ -1820,7 +2507,9 @@ button:active {
     }
 }
 
-/* ===== AJUSTES PÓS-REFATORAÇÃO – CARDS E ESPAÇAMENTOS ===== */
+/* ============================================================================
+   AJUSTES PÓS-REFATORAÇÃO (mantidos do original)
+   ============================================================================ */
 .stats-card.p-lg {
     padding: 20px;
 }
@@ -1841,7 +2530,6 @@ button:active {
     padding: 20px;
 }
 
-/* GARANTE que apenas botões ativos são verdes */
 .abamento button {
     background-color: #f0f0f0 !important;
     transition: background-color 0.3s;
@@ -1854,795 +2542,4 @@ button:active {
 body.clean-bg {
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
     min-height: 100vh;
-}
-
-/* ===== BOTÃO DE COMPARTILHAR NO HISTÓRICO (v1.1.0) ===== */
-.share-card-btn {
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 8px;
-    margin-left: 8px;
-    transition: transform 0.2s ease;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.share-card-btn:hover {
-    background: rgba(15, 184, 88, 0.1);
-}
-
-.share-card-btn:active {
-    transform: scale(0.9);
-    background: rgba(15, 184, 88, 0.2);
-}
-
-/* ===== v1.2.0: CARD DE COMPARTILHAMENTO – DESIGN PROFISSIONAL ===== */
-.card-gramado {
-    background: linear-gradient(145deg, #ffffff, #f8fff8);
-    color: #1a2e1a;
-    border: 1px solid rgba(15, 184, 88, 0.3);
-    border-radius: 24px;
-    padding: 32px 28px;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(15, 184, 88, 0.06);
-    position: relative;
-    overflow: hidden;
-}
-
-/* Efeito de grama sutil no fundo */
-.card-gramado::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: 
-        repeating-linear-gradient(
-            45deg,
-            rgba(15, 184, 88, 0.02) 0px,
-            rgba(15, 184, 88, 0.02) 2px,
-            transparent 2px,
-            transparent 8px
-        );
-    pointer-events: none;
-}
-
-.card-gramado h2 {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 24px;
-    text-align: center;
-    color: #0a4b1a;
-    letter-spacing: 1.5px;
-    border-bottom: 2px solid rgba(15, 184, 88, 0.25);
-    padding-bottom: 16px;
-    text-transform: uppercase;
-    position: relative;
-}
-
-.card-placar {
-    font-size: 28px;
-    font-weight: 700;
-    text-align: center;
-    margin: 24px 0 28px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    background: linear-gradient(145deg, rgba(15, 184, 88, 0.05), rgba(15, 184, 88, 0.02));
-    padding: 16px 12px;
-    border-radius: 60px;
-    border: 1px solid rgba(15, 184, 88, 0.2);
-}
-
-.card-placar span {
-    padding: 6px 14px;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(2px);
-    border-radius: 40px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #1e3a1e;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-    white-space: nowrap;
-    flex: 0 1 auto; /* Não estica, tamanho conforme conteúdo */
-}
-
-/* Nomes dos times - não quebram e tem tamanho máximo */
-.card-placar span:first-child,
-.card-placar span:last-child {
-    max-width: 140px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* NÚMEROS DO PLACAR - TAMANHO CONTROLADO */
-.card-placar span:nth-child(2) {
-    font-size: 32px;
-    font-weight: 800;
-    background: linear-gradient(145deg, #0fb858, #0d8a3d);
-    color: white;
-    padding: 8px 16px;  /* Reduzi o padding horizontal */
-    border-radius: 50px;
-    box-shadow: 0 6px 14px rgba(15, 184, 88, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    min-width: 80px;     /* Largura mínima para 0x0 */
-    max-width: 140px;    /* Largura máxima para 99x99 */
-    text-align: center;
-    flex-shrink: 0;      /* Não encolhe */
-    letter-spacing: 1px; /* Espaçamento para números */
-}
-
-/* Responsividade para telas pequenas */
-@media (max-width: 480px) {
-    .card-placar {
-        gap: 6px;
-        padding: 12px 8px;
-    }
-    .card-placar span {
-        font-size: 16px;
-        padding: 4px 10px;
-    }
-    .card-placar span:first-child,
-    .card-placar span:last-child {
-        max-width: 100px;
-    }
-    .card-placar span:nth-child(2) {
-        font-size: 26px;
-        padding: 6px 12px;
-        min-width: 70px;
-        max-width: 110px;
-    }
-}
-
-.card-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(15, 184, 88, 0.15);
-    font-size: 16px;
-    color: #1e2e1e;
-}
-
-.card-info:last-of-type {
-    border-bottom: none;
-}
-
-.card-info span:first-child {
-    font-weight: 700;
-    color: #0a4b1a;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.card-info span:last-child {
-    font-weight: 600;
-    color: #2c3e2c;
-    background: rgba(15, 184, 88, 0.08);
-    padding: 6px 16px;
-    border-radius: 40px;
-    font-size: 15px;
-}
-
-.card-gramado .secondary-btn {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(15, 184, 88, 0.3);
-    color: #1e3a1e;
-    border-radius: 60px;
-    padding: 12px 24px;
-    font-weight: 600;
-    transition: all 0.2s ease;
-}
-
-.card-gramado .secondary-btn:hover {
-    background: white;
-    border-color: #0fb858;
-}
-
-/* =========================================== */
-/* TUTORIAL LEQUE – VERSÃO COMPLETA v1.2.0     */
-/* =========================================== */
-.tutorial-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    animation: fadeInLeque 0.4s ease-out;
-}
-
-.leque-container {
-    max-width: 560px;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 10px;
-}
-
-.leque-deck {
-    position: relative;
-    width: 100%;
-    height: 340px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 10px;
-    touch-action: pan-y; /* Habilita swipe horizontal */
-}
-
-.leque-card {
-    position: absolute;
-    width: 230px;
-    height: 290px;
-    background: white;
-    border-radius: 24px;
-    padding: 24px 18px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-    transform-origin: bottom center;
-    will-change: transform, opacity;
-    backface-visibility: hidden;
-}
-
-/* POSIÇÕES DO LEQUE DINÂMICO */
-.leque-card.card-1 {
-    transform: rotate(-14deg) translateX(-75px) translateY(20px);
-    z-index: 1;
-    opacity: 0.7;
-}
-
-.leque-card.card-2 {
-    transform: rotate(-7deg) translateX(-38px) translateY(10px);
-    z-index: 2;
-    opacity: 0.85;
-}
-
-.leque-card.card-3 {
-    transform: rotate(0deg) translateX(0) translateY(0);
-    z-index: 5;
-    opacity: 1;
-    border: 3px solid var(--primary-green, #0fb858);
-    box-shadow: 0 25px 45px rgba(15, 184, 88, 0.4);
-}
-
-.leque-card.card-4 {
-    transform: rotate(7deg) translateX(38px) translateY(10px);
-    z-index: 4;
-    opacity: 0.85;
-}
-
-.leque-card.card-5 {
-    transform: rotate(14deg) translateX(75px) translateY(20px);
-    z-index: 3;
-    opacity: 0.7;
-}
-
-/* CONTEÚDO DAS CARTAS */
-.leque-card .card-icon {
-    font-size: 58px;
-    margin-bottom: 16px;
-}
-
-.leque-card h4 {
-    font-size: 22px;
-    color: #0a4b1a;
-    margin-bottom: 12px;
-    font-weight: 800;
-}
-
-.leque-card p {
-    color: #4a5c4a;
-    font-size: 14px;
-    line-height: 1.5;
-    flex: 1;
-}
-
-/* BOTÃO DENTRO DA CARTA */
-.leque-btn {
-    background: var(--primary-green, #0fb858);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 60px;
-    font-weight: 700;
-    font-size: 15px;
-    margin-top: 12px;
-    cursor: pointer;
-    width: 100%;
-    transition: 0.2s;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.leque-btn:hover {
-    background: var(--primary-green-dark, #0d9c4d);
-    transform: scale(0.97);
-}
-
-/* NAVEGAÇÃO */
-.leque-navegacao {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 24px;
-    margin: 20px 0 16px;
-    width: 100%;
-}
-
-.leque-nav-btn {
-    background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: white;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    font-size: 26px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.leque-nav-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    border-color: rgba(255, 255, 255, 0.6);
-    transform: scale(1.08);
-}
-
-.leque-nav-btn:active {
-    transform: scale(0.94);
-}
-
-/* DOTS INDICADORES */
-.leque-dots {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.leque-dots .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.4);
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.leque-dots .dot.active {
-    background: var(--primary-green, #0fb858);
-    width: 32px;
-    border-radius: 12px;
-}
-
-/* BOTÃO PULAR */
-.leque-skip {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    color: white;
-    padding: 12px 32px;
-    border-radius: 60px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-    backdrop-filter: blur(4px);
-    margin-top: 8px;
-}
-
-.leque-skip:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* TEMA ESCURO */
-@media (prefers-color-scheme: dark) {
-    .leque-card {
-        background: #1e242a;
-        border-color: #2c3e50;
-    }
-    .leque-card h4 {
-        color: #b0e0b0;
-    }
-    .leque-card p {
-        color: #cbd5e0;
-    }
-    .leque-nav-btn {
-        background: rgba(0, 0, 0, 0.4);
-        border-color: rgba(255, 255, 255, 0.15);
-        color: #e0e0e0;
-    }
-    .leque-nav-btn:hover {
-        background: rgba(0, 0, 0, 0.6);
-        border-color: rgba(255, 255, 255, 0.3);
-    }
-}
-
-/* ANIMAÇÃO DE ENTRADA */
-@keyframes fadeInLeque {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-/* RESPONSIVIDADE */
-@media (max-width: 480px) {
-    .leque-card {
-        width: 200px;
-        height: 270px;
-        padding: 20px 16px;
-    }
-    .leque-card .card-icon {
-        font-size: 50px;
-    }
-    .leque-card h4 {
-        font-size: 20px;
-    }
-    .leque-card.card-1 {
-        transform: rotate(-12deg) translateX(-55px) translateY(15px);
-    }
-    .leque-card.card-2 {
-        transform: rotate(-6deg) translateX(-28px) translateY(8px);
-    }
-    .leque-card.card-4 {
-        transform: rotate(6deg) translateX(28px) translateY(8px);
-    }
-    .leque-card.card-5 {
-        transform: rotate(12deg) translateX(55px) translateY(15px);
-    }
-    .leque-nav-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 24px;
-    }
-}
-
-
-/* =========================================== */
-/* TEMA ESCURO AUTOMÁTICO (v1.2.0) - CORREÇÃO GLOBAL */
-/* =========================================== */
-@media (prefers-color-scheme: dark) {
-  /* 1. VARIÁVEIS ESCURAS – SEM !IMPORTANT */
-  :root {
-    --bg-body: #0a0c10;
-    --bg-card: #1e242a;
-    --bg-header: #0f1217;
-    --bg-modal: #1e242a;
-    --text-primary: #e9ecef;
-    --text-secondary: #a0b3c2;
-    --text-light: #8696a3;
-    --text-white: #f8f9fa;
-    --border-color: #2c3e50;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.7);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.8);
-    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.85);
-    --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.9);
-  }
-
-  /* 2. RESET ESTRUTURAL – FUNDO ESCURO GARANTIDO */
-  body,
-  .app-main,
-  .content-section,
-  .container,
-  [class*="wrapper"],
-  .scoreboard-container,
-  .timeline-container,
-  .historico-item,
-  .stats-card,
-  .input-card,
-  .modal-content {
-    background-color: var(--bg-body) !important;
-    color: var(--text-primary) !important;
-  }
-
-  /* 3. HEADER – gradiente próprio */
-  .app-header {
-    background: linear-gradient(135deg, #0f1217, #0a0c10) !important;
-    border-bottom-color: var(--primary-green) !important;
-  }
-
-  /* 4. PLACAR – CORREÇÃO DE VISIBILIDADE */
-  .score-number {
-    background: linear-gradient(135deg, #2a2f3a, #1e232a) !important;
-    border-color: #3a4a5a !important;
-    color: #ffffff !important;
-    box-shadow: var(--shadow-md) !important;
-  }
-
-  .score-divider {
-    color: var(--text-secondary) !important;
-    opacity: 1 !important;
-  }
-
-  .team-name-display {
-    background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.08)) !important;
-    border-color: rgba(15, 184, 88, 0.4) !important;
-    color: #f0fff0 !important;
-  }
-
-  .game-timer {
-    background: linear-gradient(135deg, rgba(15, 184, 88, 0.2), rgba(15, 184, 88, 0.1)) !important;
-    border-color: rgba(15, 184, 88, 0.4) !important;
-    color: #e9ecef !important;
-  }
-
-  .game-timer.tempo-pausado {
-    color: var(--primary-red) !important;
-    border-color: rgba(255, 71, 87, 0.4) !important;
-    background: linear-gradient(135deg, rgba(255, 71, 87, 0.15), rgba(255, 71, 87, 0.08)) !important;
-  }
-
-  .foul-item {
-    background: rgba(255, 165, 2, 0.12) !important;
-    border-color: rgba(255, 165, 2, 0.25) !important;
-  }
-
-  .foul-count {
-    color: #ffb347 !important;
-  }
-
-  .edit-team-btn {
-    background: rgba(15, 184, 88, 0.2) !important;
-    border-color: rgba(15, 184, 88, 0.5) !important;
-    color: #a5d6a5 !important;
-  }
-
-  .edit-team-btn:active {
-    background: var(--primary-green) !important;
-    color: white !important;
-  }
-
-  /* 5. TIMELINE – AJUSTE DE CONTRASTE */
-  .timeline-container {
-    background: rgba(10, 12, 16, 0.95) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  .timeline-item {
-    background: rgba(255, 255, 255, 0.04) !important;
-  }
-
-  .timeline-empty {
-    color: var(--text-secondary) !important;
-  }
-
-  .event-time {
-    color: #a5d6a5 !important;
-  }
-
-  /* 6. BOTÕES FLUTUANTES – CORES OTIMIZADAS */
-  .install-btn {
-    background: linear-gradient(135deg, #2ea84c, #1e7e34) !important;
-    color: white !important;
-    box-shadow: 0 4px 14px rgba(46, 168, 76, 0.4) !important;
-  }
-
-  .undo-btn {
-    background: linear-gradient(135deg, #e68a2e, #c9701e) !important;
-    color: white !important;
-    box-shadow: 0 4px 14px rgba(230, 138, 46, 0.4) !important;
-  }
-
-  /* 7. SPLASH SCREEN */
-  #splashScreen {
-    background: linear-gradient(135deg, #0a3a1a 0%, #1a4a1a 40%, #2a5a2a 100%),
-                repeating-linear-gradient(90deg,
-                  transparent,
-                  transparent 49%,
-                  rgba(255,255,255,0.08) 49%,
-                  rgba(255,255,255,0.08) 51%,
-                  transparent 51%),
-                repeating-linear-gradient(0deg,
-                  transparent,
-                  transparent 49%,
-                  rgba(255,255,255,0.08) 49%,
-                  rgba(255,255,255,0.08) 51%,
-                  transparent 51%) !important;
-  }
-
-  /* 8. TOASTS */
-  .toast {
-    background: #1e293b !important;
-    color: white !important;
-    border-left-color: #4a5c6c !important;
-  }
-
-  .toast-success {
-    background: linear-gradient(135deg, #0d8a3d, #0a6b2f) !important;
-  }
-
-  .toast-error {
-    background: linear-gradient(135deg, #b91c1c, #991b1b) !important;
-  }
-
-  .toast-warning {
-    background: linear-gradient(135deg, #b45309, #92400e) !important;
-  }
-
-  .toast-info {
-    background: linear-gradient(135deg, #1e5f8e, #1a4d73) !important;
-  }
-
-  /* 9. OPACIDADE DE BOTÕES */
-  .control-btn,
-  .primary-btn,
-  .secondary-btn,
-  .danger-btn {
-    opacity: 0.95 !important;
-  }
-
-  /* 10. CORREÇÕES ADICIONAIS */
-  .tab-button.active {
-    color: var(--primary-green) !important;
-  }
-
-  .tab-button.active::after {
-    background: var(--primary-green) !important;
-  }
-
-  .players-list li {
-    background-color: var(--bg-card) !important;
-    border-color: var(--border-color) !important;
-  }
-
-  .player-name {
-    color: var(--text-primary) !important;
-  }
-
-  .modal-overlay {
-    background: rgba(0, 0, 0, 0.85) !important;
-    backdrop-filter: blur(6px) !important;
-  }
-}
-
-/* ===== PERFIL DO JOGADOR – CARD ESTILO FIFA (MODELO 1) ===== */
-.perfil-card {
-    max-width: 360px;
-    width: 90%;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    padding: 0;
-}
-
-.fifa-card {
-    width: 100%;
-    background: linear-gradient(145deg, #1e4a1e, #0a3a1a);
-    border-radius: 24px;
-    padding: 20px 16px;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid #b8860b;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 -2px 10px rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #fff;
-}
-
-/* Efeito de campo (listras) */
-.fifa-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 49px,
-        rgba(255,255,255,0.03) 49px,
-        rgba(255,255,255,0.03) 51px
-    );
-    pointer-events: none;
-}
-
-.fifa-card::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.1) 0%, transparent 70%);
-    pointer-events: none;
-}
-
-/* Silhueta do jogador */
-.fifa-card .player-silhouette {
-    width: 100px;
-    height: 100px;
-    background: rgba(0,0,0,0.4);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 10px 0 5px;
-    z-index: 2;
-    border: 2px solid rgba(255,215,0,0.3);
-    box-shadow: 0 0 20px rgba(255,215,0,0.2);
-}
-
-.fifa-card .player-silhouette i {
-    font-size: 60px;
-    color: rgba(255,255,255,0.5);
-    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.3));
-}
-
-.fifa-card .player-name {
-    font-size: 24px;
-    font-weight: 800;
-    color: #ffd700;
-    text-shadow: 2px 2px 0 #0a3a1a;
-    margin: 8px 0 4px;
-    z-index: 2;
-}
-
-.fifa-card .player-position {
-    font-size: 14px;
-    color: #ccc;
-    background: rgba(0,0,0,0.3);
-    padding: 4px 12px;
-    border-radius: 30px;
-    margin-bottom: 10px;
-    z-index: 2;
-}
-
-.fifa-card .stats-grid {
-    width: 100%;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px 12px;
-    margin-top: auto;
-    padding: 8px 0;
-    z-index: 2;
-}
-
-.fifa-card .stat-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 14px;
-    color: #fff;
-    background: rgba(0,0,0,0.3);
-    padding: 6px 12px;
-    border-radius: 30px;
-    border-left: 3px solid #ffd700;
-}
-
-.fifa-card .stat-label {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.fifa-card .stat-value {
-    font-weight: 700;
-    color: #ffd700;
 }
