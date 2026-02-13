@@ -377,8 +377,13 @@ const PlacarApp = (function() {
         const li = document.createElement('li');
         
         const span = document.createElement('span');
-        span.textContent = jogador;
-        span.className = 'player-name';
+              span.textContent = jogador;
+              span.className = 'player-name';
+              span.style.cursor = 'pointer';
+              span.onclick = (e) => {
+              e.stopPropagation();
+            mostrarPerfilJogador(jogador);
+        };
         
         const divBotoes = document.createElement('div');
         divBotoes.className = 'player-actions';
@@ -1114,18 +1119,23 @@ const PlacarApp = (function() {
           .forEach(([jogador, gols], index) => {
             const li = document.createElement('li');
             const medalha = index === 0 ? '🥇' : 
-                           index === 1 ? '🥈' : 
-                           index === 2 ? '🥉' : `${index + 1}º`;
-            
+                            index === 1 ? '🥈' : 
+                            index === 2 ? '🥉' : `${index + 1}º`;
+
             const spanNome = document.createElement('span');
-            spanNome.textContent = `${medalha} ${jogador}`;
-            
+                  spanNome.textContent = `${medalha} ${jogador}`;
+                  spanNome.style.cursor = 'pointer'; // ← NOVO
+                  spanNome.onclick = (e) => {        // ← NOVO
+                    e.stopPropagation();
+                        mostrarPerfilJogador(jogador);
+          };
+
             const spanGols = document.createElement('span');
-            spanGols.textContent = `${gols} gol${gols > 1 ? 's' : ''}`;
-            
-            li.appendChild(spanNome);
-            li.appendChild(spanGols);
-            listaGeral.appendChild(li);
+                  spanGols.textContent = `${gols} gol${gols > 1 ? 's' : ''}`;
+
+                li.appendChild(spanNome);
+                li.appendChild(spanGols);
+                listaGeral.appendChild(li);
           });
       }
     }
@@ -1174,7 +1184,12 @@ const PlacarApp = (function() {
                            index === 2 ? '🥉' : `${index + 1}º`;
             
             const spanNome = document.createElement('span');
-            spanNome.textContent = `${medalha} ${jogador}`;
+                  spanNome.textContent = `${medalha} ${jogador}`;
+                  spanNome.style.cursor = 'pointer';
+                  spanNome.onclick = (e) => {
+                          e.stopPropagation();
+                            mostrarPerfilJogador(jogador);
+          };
             
             const spanGols = document.createElement('span');
             spanGols.textContent = `${gols} gol${gols > 1 ? 's' : ''}`;
@@ -1207,7 +1222,12 @@ const PlacarApp = (function() {
           .forEach(([jogador, faltas]) => {
             const li = document.createElement('li');
             const spanNome = document.createElement('span');
-            spanNome.textContent = jogador;
+                  spanNome.textContent = jogador;
+                  spanNome.style.cursor = 'pointer';
+                  spanNome.onclick = (e) => {
+                            e.stopPropagation();
+                        mostrarPerfilJogador(jogador);
+        };
             
             const spanFaltas = document.createElement('span');
             spanFaltas.textContent = `${faltas} falta${faltas > 1 ? 's' : ''}`;
@@ -2130,6 +2150,115 @@ function initTutorial() {
     }
   }
 
+  // ===== ESTATÍSTICAS DO JOGADOR PARA PERFIL =====
+function calcularEstatisticasJogador(nomeJogador) {
+    const historico = JSON.parse(localStorage.getItem("historico")) || [];
+    let gols = 0;
+    let faltas = 0;
+    let craque = 0;
+    let partidasComGol = 0;
+    let partidasComFalta = 0;
+    let ultimosGols = []; // últimas 3 partidas com gols (data e quantidade)
+
+    historico.forEach(partida => {
+        // Gols
+        if (partida.gols && partida.gols[nomeJogador]) {
+            const qtd = partida.gols[nomeJogador].q;
+            gols += qtd;
+            partidasComGol++;
+            ultimosGols.push({
+                data: partida.data.split(',')[0],
+                gols: qtd
+            });
+        }
+        // Faltas
+        if (partida.faltas && partida.faltas.jogadores && partida.faltas.jogadores[nomeJogador]) {
+            const qtd = partida.faltas.jogadores[nomeJogador];
+            faltas += qtd;
+            partidasComFalta++;
+        }
+        // Craque
+        if (partida.craque && partida.craque.includes(nomeJogador)) {
+            craque++;
+        }
+    });
+
+    // Média de gols por partida (considerando partidas com gol)
+    const media = partidasComGol > 0 ? (gols / partidasComGol).toFixed(1) : 0;
+
+    // Últimos 3 gols (mais recentes primeiro)
+    ultimosGols = ultimosGols.slice(-3).reverse();
+
+    return {
+        gols,
+        faltas,
+        craque,
+        partidasComGol,
+        partidasComFalta,
+        media,
+        ultimosGols
+    };
+}
+  // ===== MOSTRAR PERFIL DO JOGADOR =====
+function mostrarPerfilJogador(nomeJogador) {
+    const stats = calcularEstatisticasJogador(nomeJogador);
+    const conteudo = document.getElementById('perfilJogadorConteudo');
+    
+    // Gerar HTML dos últimos gols
+    let ultimosGolsHTML = '';
+    if (stats.ultimosGols.length > 0) {
+        ultimosGolsHTML = stats.ultimosGols.map(g => 
+            `<div class="game-item"><span class="game-goal">⚽</span> ${g.data} (${g.gols} gol${g.gols>1?'s':''})</div>`
+        ).join('');
+    } else {
+        ultimosGolsHTML = '<div style="color: #ccc; font-size: 13px;">Nenhum gol recente</div>';
+    }
+
+    conteudo.innerHTML = `
+        <div class="fifa-card">
+            <div class="player-silhouette">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="player-name">${nomeJogador}</div>
+            <div class="player-position">JOGADOR</div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label"><i class="fas fa-futbol"></i> Gols</span>
+                    <span class="stat-value">${stats.gols}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label"><i class="fas fa-triangle-exclamation"></i> Faltas</span>
+                    <span class="stat-value">${stats.faltas}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label"><i class="fas fa-crown"></i> Craque</span>
+                    <span class="stat-value">${stats.craque}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label"><i class="fas fa-chart-line"></i> Média</span>
+                    <span class="stat-value">${stats.media}</span>
+                </div>
+            </div>
+            <div style="width:100%; margin-top: 16px; border-top: 1px solid rgba(255,215,0,0.3); padding-top: 12px;">
+                <div style="font-size: 14px; color: #ffd700; margin-bottom: 8px;">⚽ Últimos gols</div>
+                ${ultimosGolsHTML}
+            </div>
+        </div>
+    `;
+
+    document.getElementById('modalPerfilJogador').classList.add('show');
+}
+
+// ===== FECHAR MODAL DO PERFIL =====
+function fecharModalPerfil(event) {
+    if (event && event.target.classList.contains('modal-overlay')) {
+        document.getElementById('modalPerfilJogador').classList.remove('show');
+    } else {
+        document.getElementById('modalPerfilJogador').classList.remove('show');
+    }
+}
+
+
   // ===== INTERFACE PÚBLICA =====
   return {
     init: function() {
@@ -2166,6 +2295,8 @@ function initTutorial() {
     exportarBackup: exportarBackup,
     importarBackup: importarBackup,
     instalarApp: instalarApp,
+    mostrarPerfilJogador: mostrarPerfilJogador,
+    fecharModalPerfil: fecharModalPerfil,
     mostrarCardPartida: mostrarCardPartida,
     fecharModalCard: fecharModalCard,
             // ===== TUTORIAL LEQUE – ABERTURA AUTOMÁTICA (COM TRAVA) =====
