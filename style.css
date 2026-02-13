@@ -224,7 +224,7 @@ button:active {
     border-bottom: none;
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
     z-index: 1000;
-    padding: 4px 4px;
+    padding: 2px 4px;
 }
 
 .tabs-container {
