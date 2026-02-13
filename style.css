@@ -128,14 +128,13 @@ button:active {
 /* ===== 5. HEADER ===== */
 .app-header {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
-    padding: var(--space-md) 0;
+    padding-top: env(safe-area-inset-top);  /* ← NOVO */
+    padding-bottom: var(--space-md);
     position: sticky;
     top: 0;
     z-index: 1000;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     border-bottom: 3px solid var(--primary-green);
-    margin-top: -1px; /* 👈 faz o header encostar no topo real */
-    padding-top: env(safe-area-inset-top);
 }
 
 .header-container {
