@@ -183,9 +183,9 @@ button:active {
     background: transparent;
     border: none;
     color: var(--text-white);
-    font-size: 32px;
-    width: 64px;
-    height: 64px;
+    font-size: 40px;
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -193,7 +193,7 @@ button:active {
     cursor: pointer;
     transition: background 0.2s ease, transform 0.1s ease;
     -webkit-tap-highlight-color: transparent;
-    margin-left: 12px;
+    margin-left: 20px;
 }
 
 .header-icon-btn:active {
